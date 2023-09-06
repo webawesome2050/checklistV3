@@ -1,0 +1,79 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use Filament\Forms;
+use Filament\Tables;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use Filament\Resources\Resource;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Forms\Components\TextInput;
+use App\Models\SubSection as SubSections;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\SubSectionsResource\Pages;
+use App\Filament\Resources\SubSectionsResource\RelationManagers;
+use Filament\Forms\Components\Select;
+
+class SubSectionsResource extends Resource
+{
+    protected static ?string $model = SubSections::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationGroup = 'master';
+    protected static ?string $navigationLabel = 'Machinery / Utensils';
+
+    public static function form(Form $form): Form
+    {
+      
+
+        return $form
+        ->schema([
+            //
+            TextInput::make('name')
+            ->required(),
+            Select::make('section_id')
+            ->searchable()
+            ->required()
+            ->relationship('section', 'name'),
+        ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                //
+                TextColumn::make('id'),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('section.name')->searchable()
+
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\DeleteBulkAction::make(),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListSubSections::route('/'),
+            'create' => Pages\CreateSubSections::route('/create'),
+            'edit' => Pages\EditSubSections::route('/{record}/edit'),
+        ];
+    }
+}
