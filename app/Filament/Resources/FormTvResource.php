@@ -80,10 +80,10 @@ class FormTvResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('version')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('issues_by')
-                    ->searchable(),
-                    Tables\Columns\IconColumn::make('is_approved')
-                    ->boolean(),
+                // Tables\Columns\TextColumn::make('issues_by')
+                //     ->searchable(),
+                //     Tables\Columns\IconColumn::make('is_approved')
+                //     ->boolean(),
 
                 // Tables\Columns\TextColumn::make('')
                 // ->label('Status')
