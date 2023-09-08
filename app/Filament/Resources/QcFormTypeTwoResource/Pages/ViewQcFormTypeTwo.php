@@ -37,6 +37,7 @@ class ViewQcFormTypeTwo extends ViewRecord
                     $this->record->comments = $data['comments'];
                     $this->record->is_approved = true; // $data['status']; 
                     $this->record->save();
+                    $this->redirect('/qc-form-type-twos');
                 })
                 // ->slideOver()
                 // ->visible(auth()->user()->))

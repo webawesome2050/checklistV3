@@ -35,6 +35,7 @@ class ViewChecklists extends ViewRecord
                     $this->record->comments = $data['comments'];
                     $this->record->is_approved = true; // $data['status']; 
                     $this->record->save();
+                    $this->redirect('/checklists');
                 })
                 // ->slideOver()
                 // ->visible(auth()->user()->))
