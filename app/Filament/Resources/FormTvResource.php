@@ -59,7 +59,7 @@ class FormTvResource extends Resource
                 TextInput::make('temp_storage_2'),
                 TextInput::make('temp_storage_3'),
                 Toggle::make('is_verified')
-                ->visible(!auth()->user()->hasRole(Role::ROLES['approver'])), 
+                ->visible(auth()->user()->hasRole(Role::ROLES['approver'])), 
                 // TextInput::make('is_verified'),
                 // TextInput::make('is_verified'),
             ])
