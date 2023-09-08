@@ -18,5 +18,11 @@ class site extends Model
         
     }
 
+    public function hats()
+    {
+        return $this->hasMany(FormHat::class);
+    }
+    
+
     
 }

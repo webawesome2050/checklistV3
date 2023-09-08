@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Builder;
 use App\Filament\Resources\SiteResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\SiteResource\RelationManagers;
+use App\Filament\Resources\SiteResource\RelationManagers\HatsRelationManager;
 use App\Filament\Resources\SiteResource\RelationManagers\CheckListsRelationManager;
 
 class SiteResource extends Resource
@@ -61,7 +62,8 @@ class SiteResource extends Resource
     {
         return [
             //
-            CheckListsRelationManager::class
+            CheckListsRelationManager::class,
+            HatsRelationManager::class
         ];
     }
     

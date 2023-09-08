@@ -81,7 +81,7 @@ class CreateQcFormTypeTwo extends CreateRecord
 
         // $this->redirect($this->getRedirectUrl());
 
-        $this->redirect('/admin/qc-form-type-twos');
+        $this->redirect('/qc-form-type-twos');
 
     }
 

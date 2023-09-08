@@ -22,16 +22,16 @@ class ListFormTvs extends ListRecords
     }
 
 
-    public function getTabs(): array
-    {
-        return [
-            'All' => Tab::make()->icon('heroicon-m-check-badge'),
-            'Approved' => Tab::make()->icon('heroicon-m-check-circle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', true)),
-            'Pending' => Tab::make()->icon('heroicon-m-x-circle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', false)),
-        ];
-    }
+    // public function getTabs(): array
+    // {
+    //     return [
+    //         'All' => Tab::make()->icon('heroicon-m-check-badge'),
+    //         'Approved' => Tab::make()->icon('heroicon-m-check-circle')
+    //             ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', true)),
+    //         'Pending' => Tab::make()->icon('heroicon-m-x-circle')
+    //             ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', false)),
+    //     ];
+    // }
 
     
 }

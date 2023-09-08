@@ -2,12 +2,13 @@
 
 namespace App\Filament\Resources\ChecklistsResource\Pages;
 
-use App\Filament\Resources\ChecklistsResource;
+use App\Models\CheckList;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\ListRecords;
 
-use Filament\Resources\Pages\ListRecords\Tab;
 use Illuminate\Database\Eloquent\Builder; 
+use Filament\Resources\Pages\ListRecords\Tab;
+use App\Filament\Resources\ChecklistsResource;
 
 class ListChecklists extends ListRecords
 {
@@ -27,10 +28,13 @@ class ListChecklists extends ListRecords
     {
         return [
             'all' => Tab::make()->icon('heroicon-m-check-badge'),
+                    // ->badge(CheckList::query()->count()),
             'Approved' => Tab::make()->icon('heroicon-m-check-circle')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', true)),
+                // ->badge(CheckList::query()->where('is_approved', true)->count()),
             'Pending' => Tab::make()->icon('heroicon-m-x-circle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', false)),
+                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', false))
+                // ->badge(CheckList::query()->where('is_approved', false)->count()),
         ];
     }
 

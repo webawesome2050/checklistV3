@@ -6,9 +6,12 @@ use Filament\Forms;
 use App\Models\Role;
 use Filament\Tables;
 use App\Models\FormTv;
+use Filament\Infolists;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
@@ -17,8 +20,6 @@ use App\Filament\Resources\FormTvResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\FormTvResource\RelationManagers;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-use Filament\Infolists;
-use Filament\Infolists\Infolist;
 
 class FormTvResource extends Resource
 {
@@ -57,7 +58,8 @@ class FormTvResource extends Resource
                 TextInput::make('temp_storage_1'),
                 TextInput::make('temp_storage_2'),
                 TextInput::make('temp_storage_3'),
-                // TextInput::make('is_approved'),
+                Toggle::make('is_verified')
+                ->visible(!auth()->user()->hasRole(Role::ROLES['approver'])), 
                 // TextInput::make('is_verified'),
                 // TextInput::make('is_verified'),
             ])
@@ -80,17 +82,20 @@ class FormTvResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('issues_by')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('')
-                ->label('Status')
-                ->description(function (FormTv $record) {
-                    $res= $record->is_approved == false ;
-                    if ($res){
-                        return "Pending";
-                    }
-                    else{
-                        return "Approved";
-                    }
-                }),
+                    Tables\Columns\IconColumn::make('is_approved')
+                    ->boolean(),
+
+                // Tables\Columns\TextColumn::make('')
+                // ->label('Status')
+                // ->description(function (FormTv $record) {
+                //     $res= $record->is_approved == false ;
+                //     if ($res){
+                //         return "Pending";
+                //     }
+                //     else{
+                //         return "Approved";
+                //     }
+                // }),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -104,7 +109,7 @@ class FormTvResource extends Resource
                 //
             ])
             ->actions([ 
-                    Tables\Actions\ViewAction::make()->label('View and Approve')
+                    Tables\Actions\EditAction::make()->label('View and Approve')
                     ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
                      Tables\Actions\EditAction::make()
                      ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])), 

@@ -68,7 +68,7 @@ protected function getRedirectUrl(): string
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            // Actions\DeleteAction::make(),
         ];
     }
 

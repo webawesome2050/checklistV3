@@ -97,7 +97,7 @@ class CreateChecklists extends CreateRecord
 
         // $this->redirect($this->getRedirectUrl());
 
-        $this->redirect('/admin/checklists');
+        $this->redirect('/checklists');
 
     }
 

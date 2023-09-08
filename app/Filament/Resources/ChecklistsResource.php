@@ -81,8 +81,7 @@ class ChecklistsResource extends Resource
 
         $checklistItems = CheckListItem::where('check_list_id', 1)->get();
 
-        if($id == 1 || $id == 10) {
-            // dd($id);
+      
         $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
             $sectionName = $subsectionGroups->first()->first()->section->name;
@@ -169,92 +168,7 @@ class ChecklistsResource extends Resource
         $form->schema([
             Wizard::make($wizardSteps)->skippable(),
         ])->columns(1);
-        }
-        else if($id == 2)
-         { 
-            $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
-        foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
-            $sectionName = $subsectionGroups->first()->first()->section->name;
-            $itemCount = count($subsectionGroups); 
-            $sectionName =   $sectionName;
-
-            $sectionComponents = [];
-            $subsectionNameArray  = [];
-            foreach ($subsectionGroups as $subsectionId => $checklistItemsInSubsection) {
-                $subsectionName = $checklistItemsInSubsection->first()->first()->subSection->name; 
-
-                $matchingItem = $checklistItemsInSubsection->first(function ($item) use ($subsectionId) {
-                    return $item->sub_section_id === $subsectionId;
-                });
-
-                $matchingItem = $checklistItemsInSubsection->first(function ($item) use ($subsectionId) {
-                    return $item->sub_section_id === $subsectionId;
-                });
-
-                if ($matchingItem) {
-                    $subsectionName = $matchingItem->subSection->name;  
-                    $subsectionSection = Section::make($subsectionName)
-                    // ->description('Step Description')
-                    ->columns(4)
-                    ->compact()
-                    ->collapsed(); // Set the section to be collapsed by default
-                    
-                } else {
-                    $subsectionSection = Section::make('Section')
-                    // ->description('Step Description')
-                    ->columns(4)
-                    ->compact()
-                    ->collapsed(); // Set the section to be collapsed by default
-                }
-                
-                $formFields = [];
-                $stepFields = [];
-                foreach ($checklistItemsInSubsection as $checklistItem) {
-                    $stepFields[]   =  
-                 Section::make($checklistItem->name)
-                 ->aside()
-                // ->description($checklistItem->is_approved ? '' : 'Pending') 
-                ->schema([ 
-                     $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
-                        ->label('Condition')
-                        ->options([
-                            'Accept' => 'Yes',
-                            'Reject' => 'No',
-                            'Not in Use' => 'Not in Use'
-                        ]),
-                        $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                        ->rows(2),  
-                        $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Person Responsible')->name('micro_SPC_swab'),
-                        // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
-                        // $formFields[] = Select::make("TP_check_RLU_$checklistItem->id")
-                        //     ->label('ATP check RLU')
-                        //     ->options([
-                        //         'Pass' => 'Pass',
-                        //         'Fail' => 'Fail'
-                        //     ]),
-                        $formFields[] = Select::make("action_taken_$checklistItem->id")
-                            ->label('Action Taken')
-                            ->options([
-                                'Yes' => 'Yes',
-                                'No' => 'No'
-                            ]),
-                                              
-                    ])->columns(4)->compact(); 
-                } 
-
-                $subsectionSection->schema($stepFields); 
-                $sectionComponents[] = $subsectionSection; 
-            }
-            $sectionStep = Wizard\Step::make($sectionName)->schema($sectionComponents);
-            $wizardSteps[] = $sectionStep;
-        }
-        $form->schema([
-            Wizard::make($wizardSteps)->skippable(),
-        ])->columns(1);
-         } 
-        else {
-            // dd($id); 
-        } 
+       
 
         return $form;
     }
@@ -276,6 +190,8 @@ class ChecklistsResource extends Resource
                 TextColumn::make('created_at')
                 ->dateTime()
                 ->label('Created on'),
+                Tables\Columns\IconColumn::make('is_approved')
+                    ->boolean(),
                 TextColumn::make('')
                 ->label('Status')
                 ->description(function (CheckList $record) {

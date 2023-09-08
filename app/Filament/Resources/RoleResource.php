@@ -9,6 +9,7 @@ use Filament\Forms\Form;
 use Filament\Tables\Table;
 // use Forms\Components\TextInput;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,7 +33,15 @@ class RoleResource extends Resource
             TextInput::make('name')
                 ->required()
                 ->autofocus()
-                ->placeholder('Enter a title'),
+                ->placeholder('Name'),
+                TextInput::make('display_name')
+                ->required()
+                ->placeholder('Display Name'),
+                Select::make('Permissions')
+                ->relationship(name: 'permission', titleAttribute: 'key')
+                ->searchable()
+                ->multiple()
+                
         ]);
     }
 

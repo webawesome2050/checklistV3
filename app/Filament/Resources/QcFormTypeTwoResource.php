@@ -154,17 +154,19 @@ class QcFormTypeTwoResource extends Resource
                 // TextColumn::make('id'),
                 TextColumn::make('name'),
                 TextColumn::make('site.name'),
-                TextColumn::make('')
-                ->label('Status')
-                ->description(function (QcFormTypeTwo $record) {
-                    $res= $record->is_approved == false ;
-                    if ($res){
-                        return "Pending";
-                    }
-                    else{
-                        return "Approved";
-                    }
-                }),
+                Tables\Columns\IconColumn::make('is_approved')
+                ->boolean(),
+                // TextColumn::make('')
+                // ->label('Status')
+                // ->description(function (QcFormTypeTwo $record) {
+                //     $res= $record->is_approved == false;
+                //     if ($res){
+                //         return "Pending";
+                //     }
+                //     else{
+                //         return "Approved";
+                //     }
+                // }),
                 TextColumn::make('created_at')
                 ->dateTime()
                 ->label('Created on')
