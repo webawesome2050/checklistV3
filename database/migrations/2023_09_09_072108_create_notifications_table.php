@@ -13,14 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('roles_2', function (Blueprint $table) {
-            // $table->id();
-            // $table->timestamps();
-
+        Schema::create('notifications', function (Blueprint $table) {
+            // $table->uuid('id')->primary();
             $table->id();
-            $table->string('title');
+            $table->string('type');
+            $table->morphs('notifiable');
+            $table->text('data');
+            $table->timestamp('read_at')->nullable();
             $table->timestamps();
-
         });
     }
 
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('roles');
+        Schema::dropIfExists('notifications');
     }
 };

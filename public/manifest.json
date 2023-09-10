@@ -1,0 +1,16 @@
+{
+    "name": "AIF QC Forms Traking",
+    "short_name": "LPT",
+    "start_url": "/index.php",
+    "background_color": "#2563eb",
+    "description": "AIF QC Forms Traking",
+    "display": "fullscreen",
+    "theme_color": "#2563eb",
+    "icons": [
+        {
+            "src": "logo.PNG",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}
