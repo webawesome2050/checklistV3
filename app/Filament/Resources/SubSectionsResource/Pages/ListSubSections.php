@@ -9,11 +9,12 @@ use Filament\Resources\Pages\ListRecords;
 class ListSubSections extends ListRecords
 {
     protected static string $resource = SubSectionsResource::class;
+    protected static ?string $title = 'Machinery / Utensils';
 
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Create Machinery / Utensils'),
         ];
     }
 }

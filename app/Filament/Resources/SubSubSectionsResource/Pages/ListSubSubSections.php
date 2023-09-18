@@ -10,10 +10,12 @@ class ListSubSubSections extends ListRecords
 {
     protected static string $resource = SubSubSectionsResource::class;
 
+    protected static ?string $title = 'Machinery Parts';
+
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->label('Create Machinery Parts'),
         ];
     }
 }

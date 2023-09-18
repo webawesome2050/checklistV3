@@ -21,7 +21,7 @@ class SubSubSectionsResource extends Resource
     protected static ?string $model = SubSubSections::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
-    protected static ?string $navigationGroup = 'master';
+    protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Machinery Parts';
 
     public static function form(Form $form): Form
@@ -29,12 +29,14 @@ class SubSubSectionsResource extends Resource
         return $form
             ->schema([
                 //
-                TextInput::make('name')
-                ->required(),
                 Select::make('sub_section_id')
                 ->searchable()
                 ->required()
+                ->preload()
                 ->relationship('subSection', 'name'),
+                TextInput::make('name')
+                ->required(),
+                
             ]);
     }
 

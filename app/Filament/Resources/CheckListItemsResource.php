@@ -23,7 +23,7 @@ class CheckListItemsResource extends Resource
     protected static ?string $model = CheckListItems::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'master';
+    protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Checklist item master';
     protected static ?int $navigationSort = 1;
 
@@ -35,19 +35,26 @@ class CheckListItemsResource extends Resource
                 TextInput::make('name')
                 ->required(),
                 Select::make('section_id')
+                ->label('Area')
                 ->searchable()
                 ->required()
+                ->preload()
                 ->relationship('section', 'name'),
                 Select::make('sub_section_id')
                 ->searchable()
+                ->label(' Machinery / Utensils')
                 // ->required()
+                ->preload()
                 ->relationship('subSection', 'name'),
                 Select::make('sub_sub_section_id')
                 ->searchable()
+                ->preload()
+                ->label('Machinery Parts')
                 ->relationship('subSubSection', 'name'),
                 Select::make('check_list_id')
                 ->searchable()
                 ->required()
+                ->preload()
                 ->relationship('checkList', 'name'),
             ]);
     }

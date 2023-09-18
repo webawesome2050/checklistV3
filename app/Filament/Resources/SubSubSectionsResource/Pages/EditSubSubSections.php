@@ -10,6 +10,8 @@ class EditSubSubSections extends EditRecord
 {
     protected static string $resource = SubSubSectionsResource::class;
 
+    protected static ?string $title = 'Machinery Parts';
+    
     protected function getActions(): array
     {
         return [

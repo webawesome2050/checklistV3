@@ -9,4 +9,5 @@ use Filament\Resources\Pages\CreateRecord;
 class CreateSubSubSections extends CreateRecord
 {
     protected static string $resource = SubSubSectionsResource::class;
+    protected static ?string $title = 'Machinery Parts';
 }

@@ -10,6 +10,7 @@ use Filament\Tables\Table;
 use App\Models\CheckListItem;
 use App\Models\EntriesMaster;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -17,6 +18,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Illuminate\Support\Facades\Route;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
@@ -29,6 +31,8 @@ use App\Filament\Resources\QcFormTypeTwoResource\RelationManagers;
 use App\Filament\Resources\QcFormTypeTwoResource\RelationManagers\DetailsRelationManager;
 use App\Filament\Resources\QcFormTypeTwoResource\RelationManagers\TemperatureChecklistRelationManager;
  
+// use Filament\Infolists\Components\Tabs;
+
 class QcFormTypeTwoResource extends Resource
 {
     protected static ?string $model = QcFormTypeTwo::class;
@@ -101,7 +105,7 @@ class QcFormTypeTwoResource extends Resource
                 foreach ($checklistItemsInSubsection as $checklistItem) {
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
-                //  ->aside()
+                 ->aside()
                 ->description($checklistItem->is_approved ? '' : 'Pending') 
                 ->schema([ 
                      $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
@@ -112,7 +116,7 @@ class QcFormTypeTwoResource extends Resource
                             'Not in Use' => 'Not in Use'
                         ]),
                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                        ->rows(2),  
+                        ->rows(1),  
                         $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Person Responsible')->name('micro_SPC_swab'),
                         // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
                         // $formFields[] = Select::make("TP_check_RLU_$checklistItem->id")
@@ -134,11 +138,11 @@ class QcFormTypeTwoResource extends Resource
                 $subsectionSection->schema($stepFields); 
                 $sectionComponents[] = $subsectionSection; 
             }
-            $sectionStep = Wizard\Step::make($sectionName)->schema($sectionComponents);
+            $sectionStep = Tab::make($sectionName)->schema($sectionComponents);
             $wizardSteps[] = $sectionStep;
         }
         $form->schema([
-            Wizard::make($wizardSteps)->skippable(),
+            Tabs::make('Label')->tabs($wizardSteps),
         ])->columns(1);
          
         
