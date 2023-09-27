@@ -193,7 +193,6 @@ class QcFormTypeTwoResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->label('View'),
                 Tables\Actions\ViewAction::make()->label('View and Approve')
                     ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
                      Tables\Actions\EditAction::make()
