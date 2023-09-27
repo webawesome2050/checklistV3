@@ -12,6 +12,7 @@ use App\Models\EntriesMaster;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
@@ -42,6 +43,8 @@ class QcFormTypeTwoResource extends Resource
     protected static ?string $navigationGroup = 'QC Forms';
 
     protected static ?string $navigationLabel = 'GMP';
+
+    protected static ?string $breadcrumb = 'GMP';
      
 
     public static function form(Form $form): Form
@@ -114,7 +117,9 @@ class QcFormTypeTwoResource extends Resource
                             'Accept' => 'Yes',
                             'Reject' => 'No',
                             'Not in Use' => 'Not in Use'
-                        ]),
+                        ])
+                        ->native(false),
+                        $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
                         ->rows(1),  
                         $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Person Responsible')->name('micro_SPC_swab'),
@@ -125,13 +130,20 @@ class QcFormTypeTwoResource extends Resource
                         //         'Pass' => 'Pass',
                         //         'Fail' => 'Fail'
                         //     ]),
-                        $formFields[] = Select::make("action_taken_$checklistItem->id")
-                            ->label('Action Taken')
-                            ->options([
-                                'Yes' => 'Yes',
-                                'No' => 'No'
-                            ]),
-                                              
+                        // $formFields[] = Select::make("action_taken_$checklistItem->id")
+                        //     ->label('Action Taken')
+                        //     ->options([
+                        //         'Yes' => 'Yes',
+                        //         'No' => 'No'
+                        //     ]),
+
+                        $formFields[] = Radio::make("action_taken_$checklistItem->id")
+                        ->label('Action Taken')
+                        ->inline()
+                        ->options([
+                            'Yes' => 'Yes',
+                            'No' => 'No'
+                        ]), 
                     ])->columns(4)->compact(); 
                 } 
 
@@ -181,6 +193,7 @@ class QcFormTypeTwoResource extends Resource
                 //
             ])
             ->actions([
+                Tables\Actions\ViewAction::make()->label('View'),
                 Tables\Actions\ViewAction::make()->label('View and Approve')
                     ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
                      Tables\Actions\EditAction::make()

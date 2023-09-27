@@ -15,7 +15,7 @@ class EditQcFormTypeTwo extends EditRecord
 {
     protected static string $resource = QcFormTypeTwoResource::class;
 
-    protected static ?string $title = 'QC Forms';
+    protected static ?string $title = 'GMP Checklist'; 
 
     public function save(bool $shouldRedirect = true): void
 {
@@ -41,7 +41,9 @@ class EditQcFormTypeTwo extends EditRecord
         }
         // dd(@$dataByChecklistItem);
         foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
-            $record = Entries::where('check_list_items_id', $checklistItemId)->first();
+            $record = Entries::where('check_list_items_id', $checklistItemId)
+            ->where('entry_id', $entryData['entry_id'])
+            ->first(); 
             if ($record) {
                 $this->handleRecordUpdate($record, $entryData);
             }
@@ -105,7 +107,8 @@ protected function getRedirectUrl(): string
                 'chemical_residue_check',
                 'TP_check_RLU',
                 'comments_corrective_actions',
-                'action_taken'
+                'action_taken',
+                'entry_id'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {

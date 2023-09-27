@@ -45,17 +45,20 @@ class CheckListItemsResource extends Resource
                 ->label(' Machinery / Utensils')
                 // ->required()
                 ->preload()
-                ->relationship('subSection', 'name'),
+                ->relationship('subSection', 'name')
+                ->native(false),
                 Select::make('sub_sub_section_id')
                 ->searchable()
                 ->preload()
                 ->label('Machinery Parts')
-                ->relationship('subSubSection', 'name'),
+                ->relationship('subSubSection', 'name')
+                ->native(false),
                 Select::make('check_list_id')
                 ->searchable()
                 ->required()
                 ->preload()
-                ->relationship('checkList', 'name'),
+                ->relationship('checkList', 'name')
+                ->native(false),
             ]);
     }
 
