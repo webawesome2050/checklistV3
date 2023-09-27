@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\SubSectionItem;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class SubSection extends Model
 {
@@ -19,4 +20,11 @@ class SubSection extends Model
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
+
+    public function subSectionItems()
+    {
+        return $this->hasMany(SubSectionItem::class);
+    }
+
+
 }

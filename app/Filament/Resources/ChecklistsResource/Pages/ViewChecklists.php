@@ -27,7 +27,7 @@ class ViewChecklists extends ViewRecord
                 ->modalSubmitActionLabel('Approve')
                 ->modalIcon('heroicon-o-bolt')
                 ->form([ 
-                        Toggle::make('is_approved')->label('Approve'),
+                    Toggle::make('is_approved')->label('Approve'),
                     TextArea::make('comments')
                         ->rows(10) 
                 ])
@@ -38,7 +38,10 @@ class ViewChecklists extends ViewRecord
                     $this->redirect('/checklists');
                 })
                 // ->slideOver()
-                // ->visible(auth()->user()->))
+                // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
+                ->visible(function (array $data) { 
+                    return !$this->record->is_approved;
+                })
         ];
     } 
 }

@@ -11,6 +11,9 @@ class ListSubSections extends ListRecords
     protected static string $resource = SubSectionsResource::class;
     protected static ?string $title = 'Machinery / Utensils';
 
+
+    
+
     protected function getActions(): array
     {
         return [

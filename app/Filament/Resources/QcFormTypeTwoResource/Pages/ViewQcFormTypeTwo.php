@@ -39,6 +39,9 @@ class ViewQcFormTypeTwo extends ViewRecord
                     $this->record->save();
                     $this->redirect('/qc-form-type-twos');
                 })
+                ->visible(function (array $data) { 
+                    return !$this->record->is_approved;
+                })
                 // ->slideOver()
                 // ->visible(auth()->user()->))
         ];

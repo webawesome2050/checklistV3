@@ -24,6 +24,11 @@ class SubSubSectionsResource extends Resource
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Machinery Parts';
 
+    
+    protected static ?string $modelLabel = 'Machinery Parts';
+    protected static ?string $pluralModelLabel = 'Machinery Parts';
+    protected static ?string $breadcrumb = 'Machinery Parts';
+
     public static function form(Form $form): Form
     {
         return $form

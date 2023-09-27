@@ -41,6 +41,7 @@ class RoleResource extends Resource
                 ->relationship(name: 'permission', titleAttribute: 'key')
                 ->searchable()
                 ->multiple()
+                ->native(false)
                 
         ]);
     }

@@ -26,7 +26,8 @@ class CheckListItemsEntry extends Model
         'comments_corrective_actions',
         'action_taken',
         'is_approved',
-        'entry_id'
+        'entry_id',
+        'sub_section_items'
     ];
 
     public function section()

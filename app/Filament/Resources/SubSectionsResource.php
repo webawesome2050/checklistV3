@@ -24,6 +24,11 @@ class SubSectionsResource extends Resource
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Machinery / Utensils';
 
+    
+    protected static ?string $modelLabel = 'Machinery / Utensils';
+    protected static ?string $pluralModelLabel = 'Machinery / Utensils';
+    protected static ?string $breadcrumb = 'Machinery / Utensils';
+
     public static function form(Form $form): Form
     {
       
@@ -36,6 +41,7 @@ class SubSectionsResource extends Resource
             ->searchable()
             ->required()
             ->preload()
+            ->native(false)
             ->relationship('section', 'name'),
             TextInput::make('name')
             ->required(),
@@ -67,7 +73,7 @@ class SubSectionsResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\SubSectionItemsRelationManager::class,
         ];
     }
 

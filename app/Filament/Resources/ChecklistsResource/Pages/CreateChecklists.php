@@ -5,6 +5,7 @@ namespace App\Filament\Resources\ChecklistsResource\Pages;
 use App\Models\CheckList;
 
 use Filament\Pages\Actions;
+use App\Models\SubSectionItem;
 use App\Models\CheckListItemsEntry;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\ChecklistsResource;
@@ -26,6 +27,32 @@ class CreateChecklists extends CreateRecord
 
         $this->previousUrl = url()->previous();
     }
+
+
+            // Helper function to extract subsection ID from field name
+            private function getSubsectionIdFromFieldName($fieldName) {
+                // Extract subsection ID from the field name using a regular expression
+                $matches = [];
+                if (preg_match('/^subsection_(\d+)_/', $fieldName, $matches)) {
+                    return $matches[1];
+                }
+                return null; // Return null if no match is found
+            }
+
+
+            // Helper function to retrieve subsection item ID
+            private function getSubsectionItemId($subsectionId) {
+                // Query your database to retrieve the subsection item ID based on the subsection ID
+                // Replace 'SubSectionItem' with the actual model name for your subsection items
+                $subsectionItem = SubSectionItem::where('sub_section_id', $subsectionId)->first();
+                
+                if ($subsectionItem) {
+                    return $subsectionItem->id;
+                }
+                
+                return null; // Return null if no subsection item is found for the subsection ID
+            }
+
 
    
 
@@ -68,11 +95,22 @@ class CreateChecklists extends CreateRecord
                     $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
                     $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
                     $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+
+                    // Retrieve and include subsection item information
+                    $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
+                    $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
+
+
                 } else {
                     dd('No Match Found !');
                 }
             }
            
+            \Log::info('dataByChecklistItem');
+            \Log::info($dataByChecklistItem);
+            \Log::info('dataByChecklistItem');
+            
+            // dd('Create Flow');
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $this->record = $this->handleRecordCreation($entryData);
                 CheckListItemsEntry::create($entryData);
