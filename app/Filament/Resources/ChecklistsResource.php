@@ -53,6 +53,11 @@ class ChecklistsResource extends Resource
     { 
  
        
+        $optionsValue = [];
+        for ($i = 0; $i <= 60; $i++) {
+            $optionsValue[$i] = $i;
+        }
+
         $url = request()->url(); 
         preg_match('/\/checklists\/(\d+)\/edit/', $url, $matches);
         if (isset($matches[1])) {
@@ -125,7 +130,7 @@ class ChecklistsResource extends Resource
                 $stepFields = [];
                 if(count($subSectionItems) > 0) {
                     $stepFields[]   =  
-                    Section::make('Select Item Spec')
+                    Section::make('Select machine number')
                     ->icon('heroicon-m-megaphone')
                     // ->aside()
                    ->schema([ 
@@ -143,10 +148,17 @@ class ChecklistsResource extends Resource
                         ->label('Visual insp allergen free')
                         ->options([
                             'Accept' => 'Accept',
-                            'Reject' => 'Reject',
+                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
                             'Not in Use' => 'Not in Use'
                         ])
                         ->native(false),
+
+                        
+                        $formFields[] =  Select::make("atp_{$checklistItem->id}")
+                        ->label('ATP')
+                        ->options($optionsValue)
+                        ->native(false)
+                        ->visible($sectionName == 'HIGH RISK AREA'),
                         // $formFields[] = TextInput::hidden()
                         // ->label('Chemical Residue Check')->name('chemical_residue_check'),
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
@@ -156,12 +168,13 @@ class ChecklistsResource extends Resource
                         ->rows(1),        
                         $formFields[] = Radio::make("action_taken_$checklistItem->id")
                         ->label('Action Taken')
-                        ->inline()
                         ->options([
                             'Yes' => 'Yes',
                             'No' => 'No'
                         ]),                 
                     ])->columns(4)->compact(); 
+
+
                 } 
 
                 $subsectionSection->schema($stepFields); 
@@ -290,7 +303,7 @@ class ChecklistsResource extends Resource
                         ->label('Visual insp allergen free')
                         ->options([
                             'Accept' => 'Accept',
-                            'Reject' => 'Reject',
+                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
                             'Not in Use' => 'Not in Use'
                         ]),
                         
