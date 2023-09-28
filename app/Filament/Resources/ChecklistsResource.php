@@ -14,6 +14,7 @@ use App\Models\SubSectionItem;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -51,6 +52,7 @@ class ChecklistsResource extends Resource
     public static function form(Form $form): Form
     { 
  
+       
         $url = request()->url(); 
         preg_match('/\/checklists\/(\d+)\/edit/', $url, $matches);
         if (isset($matches[1])) {
@@ -59,9 +61,12 @@ class ChecklistsResource extends Resource
         } else {
             $id = session('checklist_id');
         } 
+
+        
          
         $checklistItems = CheckListItem::where('check_list_id', 1)->get();
         $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
+
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
             $sectionName = $subsectionGroups->first()->first()->section->name;
             $itemCount = count($subsectionGroups);
@@ -72,12 +77,9 @@ class ChecklistsResource extends Resource
             $subsectionNameArray  = [];
             foreach ($subsectionGroups as $subsectionId => $checklistItemsInSubsection) {
                 $subsectionName = $checklistItemsInSubsection->first()->first()->subSection->name;
-
                 // Retrieve sub-section items for the current sub-section
                 $subSectionItems = SubSectionItem::where('sub_section_id', $subsectionId)->get();
-
                 $formFields = [];
-
                 // Check if there are sub-section items
                 if ($subSectionItems->count() > 0) {
                     // There are sub-section items, so add radio buttons
@@ -121,7 +123,6 @@ class ChecklistsResource extends Resource
                 } 
                 // $formFields = [];
                 $stepFields = [];
-
                 if(count($subSectionItems) > 0) {
                     $stepFields[]   =  
                     Section::make('Select Item Spec')
@@ -206,14 +207,33 @@ class ChecklistsResource extends Resource
                 TextColumn::make('site.name')
                 // TextColumn::make('checklist.name'),
             ])
+            ->striped()
             ->filters([
                 //
             ])
             ->actions([
+
+                Action::make('Download Report')->label('Download Report')
+                ->url(fn (CheckList $record): string => route('generate.pdf', $record))
+                ->openUrlInNewTab()
+                ->visible(function (CheckList $record): bool {
+                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                })
+                ->icon('heroicon-m-arrow-down-on-square'),
+                // ->action(fn (CheckList $record) => $record->delete()),
+                
+
                 // auth()->user()->hasRole(Role::ROLES['approver']) ?   
+                // Tables\Actions\ViewAction::make()->label('View and Approve')
+                // ->visible(auth()->user()->hasRole(Role::ROLES['admin'])),
+                
                 Tables\Actions\ViewAction::make()->label('View and Approve')
-                ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
-                 Tables\Actions\EditAction::make()
+                // ->visible((fn (CheckList $record): bool => !$record->is_approved)),
+                // ->visible((fn (CheckList $record): bool => !$record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']))),
+                ->visible(function (CheckList $record): bool {
+                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                }),
+                Tables\Actions\EditAction::make()
                  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             ])
             ->bulkActions([

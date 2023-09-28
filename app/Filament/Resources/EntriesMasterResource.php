@@ -103,6 +103,7 @@ class EntriesMasterResource extends Resource
                 TextColumn::make('id'),
                 TextColumn::make('name')
             ])
+            ->striped()
             ->filters([
                 //
             ])

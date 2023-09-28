@@ -19,7 +19,7 @@ class Role extends Model
     }
 
     const ROLES = [
-        'Admin' => 'Admin',
+        'admin' => 'admin',
         'Checker' => 'Checker',
         'approver' => 'approver',
     ];
