@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CommonController;
 
 /*
 |--------------------------------------------------------------------------
@@ -24,6 +25,12 @@ use Illuminate\Support\Facades\Route;
 //     }
 //     return redirect('/admin'); 
 // });
+
+
+
+// Route::get('/PDF', [CommonController::class, 'PDFGenerate'])->name('view.PDF');
+// Route::get('/generate-pdf/{entry_id}', [CommonController::class, 'generatePDF'])->name('view.PDF');
+Route::get('/generate-pdf/{entry_id}', [CommonController::class, 'generatePDF'])->name('generate.pdf');
 
 
 // Route::get('/admin/check-lists/{id}/edit', [CheckListController::class, 'edit']);

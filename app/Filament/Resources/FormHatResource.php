@@ -86,6 +86,7 @@ class FormHatResource extends Resource
                 // Tables\Columns\IconColumn::make('is_approved')
                 //     ->boolean(),
             ])
+            ->striped()
             ->filters([
                 //
             ])

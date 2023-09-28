@@ -75,6 +75,7 @@ class CheckListItemsResource extends Resource
                 TextColumn::make('checkList.name')->searchable(),
 
             ])
+            ->striped()
             ->filters([
                 //
             ])

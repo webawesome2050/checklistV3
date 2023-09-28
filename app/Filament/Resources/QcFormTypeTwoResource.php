@@ -189,6 +189,7 @@ class QcFormTypeTwoResource extends Resource
                 ->sortable(),
                 // TextColumn::make('checklist.name'),
             ])
+            ->striped() 
             ->filters([
                 //
             ])
