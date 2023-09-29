@@ -27,7 +27,8 @@ class CheckListItemsEntry extends Model
         'action_taken',
         'is_approved',
         'entry_id',
-        'sub_section_items'
+        'sub_section_items',
+        'ATP_check_RLU'
     ];
 
     public function section()
@@ -47,7 +48,8 @@ class CheckListItemsEntry extends Model
 
     public function checkList()
     {
-        return $this->belongsTo(CheckList::class, 'check_list_id');
+        // return $this->belongsTo(CheckList::class, 'check_list_id');
+        return $this->belongsTo(CheckList::class, 'entry_id');
     }
 
     public function checkListItem()

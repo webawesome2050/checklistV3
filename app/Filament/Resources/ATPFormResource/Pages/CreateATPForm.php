@@ -1,21 +1,21 @@
 <?php
 
-namespace App\Filament\Resources\ChecklistsResource\Pages;
+namespace App\Filament\Resources\ATPFormResource\Pages;
 
+use Filament\Actions;
 use App\Models\CheckList;
-
-use Filament\Pages\Actions;
 use App\Models\SubSectionItem;
 use App\Models\CheckListItemsEntry;
 use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\ChecklistsResource;
+use App\Filament\Resources\ATPFormResource;
 
-class CreateChecklists extends CreateRecord
+class CreateATPForm extends CreateRecord
 {
-    protected static string $resource = ChecklistsResource::class;
+    protected static string $resource = ATPFormResource::class;
+    // protected static ?string $getTitle = 'QC Forms - Type I';
 
-    protected static ?string $title = 'Hygiene swab';
-
+    protected static ?string $title = 'ATP check RLU';
+    
 
     public function mount(): void
     {
@@ -60,13 +60,7 @@ class CreateChecklists extends CreateRecord
     public function create(bool $another = false): void
     {
         $this->authorizeAccess();
-
-
-       
-
-
-
-
+ 
         try {
             $this->callHook('beforeValidate');
 
@@ -76,41 +70,42 @@ class CreateChecklists extends CreateRecord
 
             $data = $this->mutateFormDataBeforeCreate($data);
 
-            dd($data); 
+            // dd($data['entry_detail']);
 
             $checkList  =  CheckList::create([
-                'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(), 
+                'name' => 'ATP check RLU'.'_'.now(), 
                 'site_id' => 2, 
-                'type_id' => 1
+                'type_id' => 3,
+                'entry_detail' => $data['entry_detail'],    
+                'next_inspection_detail' => $data['next_inspection_detail'],
             ]);
-    
+    +
             $entryId = $checkList->id;
-            
-            $this->callHook('beforeCreate'); 
+
+            $this->callHook('beforeCreate');  
+            // dd($data);
+
 
             foreach ($data as $fieldKey => $fieldValue) {
                 $matches = [];
                
-                if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
-                    $fieldName = $matches[1];
-                    $checklistItemId = $matches[2];
-                    $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
-                    $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
-                    $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
-
-                    // Retrieve and include subsection item information
-                    $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
-                    $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
-
-
-                } else {
-                    dd('No Match Found !');
-                }
+                // if(($fieldKey !=='entry_detail') || ($fieldKey !=='next_inspection_detail')) {
+                    if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
+                        $fieldName = $matches[1];
+                        $checklistItemId = $matches[2];
+                        $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
+                        $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
+                        $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                        // Retrieve and include subsection item information
+                        $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
+                        $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
+                    } else {
+                        // dd('No Match Found !');
+                        // $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                    }
+                // }
             }
-           
-            \Log::info('dataByChecklistItem');
-            \Log::info($dataByChecklistItem);
-            \Log::info('dataByChecklistItem');
+            // dd($dataByChecklistItem); 
             
             // dd('Create Flow');
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
@@ -137,11 +132,8 @@ class CreateChecklists extends CreateRecord
 
         // $this->redirect($this->getRedirectUrl());
 
-        $this->redirect('/checklists');
+        $this->redirect('/atp-check');
 
     }
-
-
-  
 
 }
