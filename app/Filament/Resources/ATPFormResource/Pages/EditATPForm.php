@@ -1,21 +1,30 @@
 <?php
 
-namespace App\Filament\Resources\ChecklistsResource\Pages;
+namespace App\Filament\Resources\ATPFormResource\Pages;
 
-use Filament\Pages\Actions;
-// use Symfony\Component\Routing\Route;
+use Filament\Actions;
+use App\Models\CheckList;
 use App\Models\SubSectionItem;
 use Illuminate\Support\Facades\Route;
-
 use Filament\Resources\Pages\EditRecord;
+
+use App\Filament\Resources\ATPFormResource;
 use App\Filament\Resources\ChecklistsResource;
 use App\Models\CheckListItemsEntry as Entries;
 
-class EditChecklists extends EditRecord
+class EditATPForm extends EditRecord
 {
-    protected static string $resource = ChecklistsResource::class;
+    protected static string $resource = ATPFormResource::class;
 
-    protected static ?string $title = 'QC Forms';
+    protected function getHeaderActions(): array
+    {
+        return [
+            Actions\DeleteAction::make(),
+        ];
+    }
+
+    
+
     public function save(bool $shouldRedirect = true): void
     {
         $this->authorizeAccess();
@@ -25,7 +34,17 @@ class EditChecklists extends EditRecord
             $this->callHook('afterValidate');
             $data = $this->mutateFormDataBeforeSave($data);
             $this->callHook('beforeSave');
-                // dd($data);
+
+                // $checkList  =  CheckList::create([
+                //     'entry_detail' => $data['entry_detail'],    
+                //     'next_inspection_detail' => $data['next_inspection_detail'],
+                // ]);
+
+               
+                // Optional: You can also retrieve the updated record after the update
+                
+
+
             foreach ($data as $fieldKey => $fieldValue) {
                 $matches = [];
                 if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
@@ -36,10 +55,21 @@ class EditChecklists extends EditRecord
                     // $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
                     
                 } else {
-                    dd('No Match Found !');
+                    // dd('No Match Found !');
                 }
             }
-            //  dd(@$dataByChecklistItem);
+            //  dd($dataByChecklistItem[1]['entry_id']);
+
+
+          
+            $checkList = CheckList::find($dataByChecklistItem[1]['entry_id']); 
+
+            $checkList->update([
+                'entry_detail' => $data['entry_detail'],
+                'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
+            
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $record = Entries::
                 // where('check_list_items_id', $checklistItemId)
@@ -94,15 +124,7 @@ class EditChecklists extends EditRecord
         
         return null; // Return null if no subsection item is found for the subsection ID
     }
-
-
-    
-        protected function getHeaderActions(): array
-        {
-            return [
-                // Actions\DeleteAction::make(),
-            ];
-        }
+ 
     
         public function mount($record): void
         {
@@ -126,21 +148,25 @@ class EditChecklists extends EditRecord
         {
             $id = Route::current()->parameter('record');
             // dd($id);
+            // $existingEntries = Entries::with('checkListItem')->where('entry_id', $id)->get();
             $existingEntries = Entries::where('entry_id', $id)->get();
             // dd($existingEntries);
         
+            // 'visual_insp_allergen_free',
+            // 'micro_SPC_swab',
+            // 'chemical_residue_check',
+            // 'TP_check_RLU',
+            // 'comments_corrective_actions',
+            // 'action_taken',
+            // 'sub_section_items',
+
             foreach ($existingEntries as $entry) {
                 $checklistItemId = $entry->check_list_items_id;
-                $fieldsToUpdate = [
-                    'visual_insp_allergen_free',
-                    'micro_SPC_swab',
-                    'chemical_residue_check',
-                    'TP_check_RLU',
-                    'comments_corrective_actions',
-                    'action_taken',
-                    'sub_section_items',
+                $fieldsToUpdate = [ 
                     'entry_id',
-                    'ATP_check_RLU'
+                    'ATP_check_RLU',
+                    'next_inspection_detail',
+                    'entry_detail'
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {

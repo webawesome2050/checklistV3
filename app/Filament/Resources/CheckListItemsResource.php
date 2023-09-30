@@ -55,7 +55,7 @@ class CheckListItemsResource extends Resource
                 ->native(false),
                 Select::make('check_list_id')
                 ->searchable()
-                ->required()
+                // ->required()
                 ->preload()
                 ->relationship('checkList', 'name')
                 ->native(false),

@@ -26,7 +26,9 @@ class CheckList extends Model
         'label',
         'type_id',
         'is_approved',
-        'comments'
+        'comments',
+        'entry_detail',
+        'next_inspection_detail'
     ];
 
 
