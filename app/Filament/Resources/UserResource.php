@@ -8,6 +8,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -32,6 +33,8 @@ class UserResource extends Resource
                 TextInput::make('email')->type('email'),
                 TextInput::make('password')
                     ->password()
+                    ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                    ->dehydrated(fn (?string $state): bool => filled($state))
                     ->hiddenOn(['edit'])
                     ->disableAutocomplete(),
             ]);
