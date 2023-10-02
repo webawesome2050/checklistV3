@@ -16,6 +16,7 @@ use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\SitesRelationManager;
 use App\Filament\Resources\RoleResource\RelationManagers\PermissionRelationManager;
 
 class UserResource extends Resource
@@ -35,7 +36,7 @@ class UserResource extends Resource
                     ->password()
                     ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
                     ->dehydrated(fn (?string $state): bool => filled($state))
-                    ->hiddenOn(['edit'])
+                    // ->hiddenOn(['edit'])
                     ->disableAutocomplete(),
             ]);
     }
@@ -65,6 +66,7 @@ class UserResource extends Resource
         return [
             //
             RolesRelationManager::class,
+            SitesRelationManager::class,
             // PermissionRelationManager::class
         ];
     }
