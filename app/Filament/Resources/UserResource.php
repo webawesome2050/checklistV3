@@ -8,6 +8,7 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
+use Illuminate\Support\Facades\Hash;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
@@ -15,6 +16,7 @@ use App\Filament\Resources\UserResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\RolesRelationManager;
+use App\Filament\Resources\UserResource\RelationManagers\SitesRelationManager;
 use App\Filament\Resources\RoleResource\RelationManagers\PermissionRelationManager;
 
 class UserResource extends Resource
@@ -32,7 +34,9 @@ class UserResource extends Resource
                 TextInput::make('email')->type('email'),
                 TextInput::make('password')
                     ->password()
-                    ->hiddenOn(['edit'])
+                    ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                    ->dehydrated(fn (?string $state): bool => filled($state))
+                    // ->hiddenOn(['edit'])
                     ->disableAutocomplete(),
             ]);
     }
@@ -62,6 +66,7 @@ class UserResource extends Resource
         return [
             //
             RolesRelationManager::class,
+            SitesRelationManager::class,
             // PermissionRelationManager::class
         ];
     }
