@@ -9,6 +9,9 @@ use App\Models\SubSectionItem;
 use App\Models\CheckListItemsEntry;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\ChecklistsResource;
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
+use App\Models\User;
 
 class CreateChecklists extends CreateRecord
 {
@@ -76,7 +79,7 @@ class CreateChecklists extends CreateRecord
 
             $data = $this->mutateFormDataBeforeCreate($data);
 
-            dd($data); 
+            // dd($data); 
 
             $checkList  =  CheckList::create([
                 'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(), 
@@ -104,13 +107,13 @@ class CreateChecklists extends CreateRecord
 
 
                 } else {
-                    dd('No Match Found !');
+                   // dd('No Match Found !');
                 }
             }
            
-            \Log::info('dataByChecklistItem');
-            \Log::info($dataByChecklistItem);
-            \Log::info('dataByChecklistItem');
+            // \Log::info('dataByChecklistItem');
+            // \Log::info($dataByChecklistItem);
+            // \Log::info('dataByChecklistItem');
             
             // dd('Create Flow');
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
@@ -120,7 +123,30 @@ class CreateChecklists extends CreateRecord
             // dd($entryData);
             // $this->record = $this->handleRecordCreation($data); 
             // $this->form->model($this->record)->saveRelationships();
-            $this->callHook('afterCreate');
+           
+            $recipient = User::whereHas('sites', function ($query) {
+                $query->where('site_id', 2);
+            })
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', 3);
+            })->get();
+
+            \Log::info($recipient);
+            
+            Notification::make()
+                    ->title('Hygiene swab Submitted!')
+                    ->success()
+                    // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
+                    ->body('Created Hygiene swab Form, kindly view and approve')
+                    ->actions([
+                        Action::make('View and Approve')
+                            ->button()
+                            ->url('/checklists/'.$entryId)
+                            ->markAsRead(),
+                    ])
+                    ->sendToDatabase($recipient);
+                    
+                    $this->callHook('afterCreate');
         } catch (Halt $exception) {
             return;
         }

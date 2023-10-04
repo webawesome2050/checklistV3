@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\ATPFormResource\Pages;
 
+use App\Models\User;
 use Filament\Actions;
 use App\Models\CheckList;
 use App\Models\SubSectionItem;
 use Illuminate\Support\Facades\Route;
-use Filament\Resources\Pages\EditRecord;
 
+use Filament\Notifications\Notification;
+use Filament\Resources\Pages\EditRecord;
+use Filament\Notifications\Actions\Action;
 use App\Filament\Resources\ATPFormResource;
 use App\Filament\Resources\ChecklistsResource;
 use App\Models\CheckListItemsEntry as Entries;
@@ -27,6 +30,9 @@ class EditATPForm extends EditRecord
 
     public function save(bool $shouldRedirect = true): void
     {
+
+       
+
         $this->authorizeAccess();
         try {
             $this->callHook('beforeValidate');
@@ -43,7 +49,7 @@ class EditATPForm extends EditRecord
                
                 // Optional: You can also retrieve the updated record after the update
                 
-
+            // dd($data);
 
             foreach ($data as $fieldKey => $fieldValue) {
                 $matches = [];
@@ -56,14 +62,17 @@ class EditATPForm extends EditRecord
                     
                 } else {
                     // dd('No Match Found !');
+                    $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
                 }
             }
             //  dd($dataByChecklistItem[1]['entry_id']);
 
+            // dd($data['id']);
 
           
-            $checkList = CheckList::find($dataByChecklistItem[1]['entry_id']); 
-
+            $checkList = CheckList::find($data['id']); 
+            // $checkList = CheckList::find(67); 
+            // dd($checkList);
             $checkList->update([
                 'entry_detail' => $data['entry_detail'],
                 'next_inspection_detail' => $data['next_inspection_detail'],
@@ -83,6 +92,39 @@ class EditATPForm extends EditRecord
                     $this->handleRecordUpdate($record, $entryData);
                 }
             }
+
+          
+
+
+            $recipient = User::whereHas('sites', function ($query) {
+                $query->where('site_id', 2);
+            })
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', 3);
+            })->get();
+
+            \Log::info($recipient);
+
+                // Notification::make()
+                // ->title('Updated ATP Form, kindly view and approve')
+                // ->sendToDatabase($recipient);
+
+                Notification::make()
+                    ->title('ATP Submitted!')
+                    ->success()
+                    // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
+                    ->body('Updated ATP Form, kindly view and approve')
+                    ->actions([
+                        Action::make('View and Approve')
+                            ->button()
+                            ->url('/atp-check/'.$this->record->id)
+                            ->markAsRead(),
+                    ])
+                    ->sendToDatabase($recipient);
+                  
+                    // /atp-check/89
+                    // $this->record->id
+
             $this->callHook('afterSave');
         } catch (Halt $exception) {
             return;
@@ -151,7 +193,6 @@ class EditATPForm extends EditRecord
             // $existingEntries = Entries::with('checkListItem')->where('entry_id', $id)->get();
             $existingEntries = Entries::where('entry_id', $id)->get();
             // dd($existingEntries);
-        
             // 'visual_insp_allergen_free',
             // 'micro_SPC_swab',
             // 'chemical_residue_check',
@@ -160,13 +201,17 @@ class EditATPForm extends EditRecord
             // 'action_taken',
             // 'sub_section_items',
 
+            // 'entry_id',
+
+
             foreach ($existingEntries as $entry) {
                 $checklistItemId = $entry->check_list_items_id;
                 $fieldsToUpdate = [ 
                     'entry_id',
                     'ATP_check_RLU',
                     'next_inspection_detail',
-                    'entry_detail'
+                    'entry_detail',
+                    'sub_section_items'
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {
@@ -174,5 +219,7 @@ class EditATPForm extends EditRecord
                     $this->data[$fullFieldName] = $entry->$fieldName;
                 }
             }
+
+            // dd($this->data);
         }
 }

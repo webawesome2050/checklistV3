@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\QcFormTypeTwoResource\Pages;
 
+use App\Models\User;
 use App\Filament\Resources\QcFormTypeTwoResource;
 use Filament\Actions;
 use Illuminate\Support\Facades\Route;
 use Filament\Resources\Pages\EditRecord;
+
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
 
 use App\Filament\Resources\ChecklistsResource;
 use App\Models\CheckListItemsEntry as Entries;
@@ -48,6 +52,32 @@ class EditQcFormTypeTwo extends EditRecord
                 $this->handleRecordUpdate($record, $entryData);
             }
         }
+
+        $recipient = User::whereHas('sites', function ($query) {
+            $query->where('site_id', 2);
+        })
+        ->whereHas('roles', function ($query) {
+            $query->where('role_id', 3);
+        })->get();
+
+        \Log::info($recipient);
+
+            // Notification::make()
+            // ->title('Updated ATP Form, kindly view and approve')
+            // ->sendToDatabase($recipient);
+
+            Notification::make()
+                ->title('GMP Submitted!')
+                ->success()
+                ->body('Updated GMP Form, kindly view and approve')
+                ->actions([
+                    Action::make('View and Approve')
+                        ->button()
+                        ->url('/qc-form-type-twos/'.$this->record->id)
+                        ->markAsRead(),
+                ])
+                ->sendToDatabase($recipient);
+
  
         $this->callHook('afterSave');
     } catch (Halt $exception) {

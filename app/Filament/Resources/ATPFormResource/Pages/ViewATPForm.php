@@ -89,7 +89,8 @@ class ViewATPForm extends ViewRecord
                 'entry_id',
                 'ATP_check_RLU',
                 'next_inspection_detail',
-                'entry_detail'
+                'entry_detail',
+                'sub_section_items'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {
@@ -97,6 +98,7 @@ class ViewATPForm extends ViewRecord
                 $this->data[$fullFieldName] = $entry->$fieldName;
             }
         }
+        // dd($this->data);
     }
 
 }

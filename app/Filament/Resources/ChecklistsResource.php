@@ -230,7 +230,7 @@ class ChecklistsResource extends Resource
                 ->url(fn (CheckList $record): string => route('generate.pdf', $record))
                 ->openUrlInNewTab()
                 ->visible(function (CheckList $record): bool {
-                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 })
                 ->icon('heroicon-m-arrow-down-on-square'),
                 // ->action(fn (CheckList $record) => $record->delete()),
@@ -246,7 +246,10 @@ class ChecklistsResource extends Resource
                 ->visible(function (CheckList $record): bool {
                     return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 }),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(function (CheckList $record): bool {
+                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                }),
                 //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             ])
             ->bulkActions([

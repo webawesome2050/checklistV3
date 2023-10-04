@@ -2,10 +2,13 @@
 
 namespace App\Filament\Resources\ATPFormResource\Pages;
 
+use App\Models\User;
 use Filament\Actions;
 use App\Models\CheckList;
 use App\Models\SubSectionItem;
 use App\Models\CheckListItemsEntry;
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\ATPFormResource;
 
@@ -78,8 +81,7 @@ class CreateATPForm extends CreateRecord
                 'type_id' => 3,
                 'entry_detail' => $data['entry_detail'],    
                 'next_inspection_detail' => $data['next_inspection_detail'],
-            ]);
-    +
+            ]); 
             $entryId = $checkList->id;
 
             $this->callHook('beforeCreate');  
@@ -94,11 +96,12 @@ class CreateATPForm extends CreateRecord
                         $fieldName = $matches[1];
                         $checklistItemId = $matches[2];
                         $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
-                        $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
                         $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
                         // Retrieve and include subsection item information
                         $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
                         $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
+                        $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
+
                     } else {
                         // dd('No Match Found !');
                         // $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
@@ -115,7 +118,34 @@ class CreateATPForm extends CreateRecord
             // dd($entryData);
             // $this->record = $this->handleRecordCreation($data); 
             // $this->form->model($this->record)->saveRelationships();
+
+            $recipient = User::whereHas('sites', function ($query) {
+                $query->where('site_id', 2);
+            })
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', 3);
+            })->get();
+
+            \Log::info($recipient);
+            
+            Notification::make()
+                    ->title('ATP Submitted!')
+                    ->success()
+                    // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
+                    ->body('Updated ATP Form, kindly view and approve')
+                    ->actions([
+                        Action::make('View and Approve')
+                            ->button()
+                            ->url('/atp-check/'.$entryId)
+                            ->markAsRead(),
+                    ])
+                    ->sendToDatabase($recipient);
+                    
+            
             $this->callHook('afterCreate');
+
+            
+                        
         } catch (Halt $exception) {
             return;
         }
