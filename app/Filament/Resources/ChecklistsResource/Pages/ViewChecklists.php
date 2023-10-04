@@ -11,6 +11,9 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Forms\Components\Placeholder;
 use App\Filament\Resources\ChecklistsResource;
+use Illuminate\Support\Facades\Route;
+
+use App\Models\CheckListItemsEntry as Entries;
 
 
 class ViewChecklists extends ViewRecord
@@ -44,6 +47,50 @@ class ViewChecklists extends ViewRecord
                 })
         ];
     } 
+    
 
+    public function mount($record): void
+    {
+
+        // dd($record);
+
+        $this->record = $this->resolveRecord($record);
+
+        $this->authorizeAccess();
+
+        $this->fillForm();
+
+        $this->fillExistingEntries(); // Add this line to fill existing entries
+
+        $this->previousUrl = url()->previous();
+    } 
+
+
+
+    protected function fillExistingEntries(): void
+    {
+        $id = Route::current()->parameter('record');
+        // dd($id);
+        $existingEntries = Entries::where('entry_id', $id)->get();
+        // dd($existingEntries);
+    
+        foreach ($existingEntries as $entry) {
+            $checklistItemId = $entry->check_list_items_id;
+            $fieldsToUpdate = [
+                'visual_insp_allergen_free',
+                'micro_SPC_swab',
+                'chemical_residue_check',
+                'TP_check_RLU',
+                'comments_corrective_actions',
+                'action_taken',
+                'entry_id'
+            ];
+    
+            foreach ($fieldsToUpdate as $fieldName) {
+                $fullFieldName = "{$fieldName}_$checklistItemId";
+                $this->data[$fullFieldName] = $entry->$fieldName;
+            }
+        }
+    }
     
 }

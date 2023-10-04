@@ -2,12 +2,15 @@
 
 namespace App\Filament\Resources\ChecklistsResource\Pages;
 
+use App\Models\User;
 use Filament\Pages\Actions;
-// use Symfony\Component\Routing\Route;
 use App\Models\SubSectionItem;
+// use Symfony\Component\Routing\Route;
 use Illuminate\Support\Facades\Route;
+use Filament\Notifications\Notification;
 
 use Filament\Resources\Pages\EditRecord;
+use Filament\Notifications\Actions\Action;
 use App\Filament\Resources\ChecklistsResource;
 use App\Models\CheckListItemsEntry as Entries;
 
@@ -36,7 +39,7 @@ class EditChecklists extends EditRecord
                     // $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
                     
                 } else {
-                    dd('No Match Found !');
+                    // dd('No Match Found !');
                 }
             }
             //  dd(@$dataByChecklistItem);
@@ -53,6 +56,29 @@ class EditChecklists extends EditRecord
                     $this->handleRecordUpdate($record, $entryData);
                 }
             }
+
+            $recipient = User::whereHas('sites', function ($query) {
+                $query->where('site_id', 2);
+            })
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', 3);
+            })->get();
+
+            \Log::info($recipient);
+            
+            Notification::make()
+            ->title('Hygiene Submitted!')
+            ->success()
+            ->body('Updated Hygiene swab, kindly view and approve')
+            ->actions([
+                Action::make('View and Approve')
+                    ->button()
+                    ->url('/checklists/'.$this->record->id)
+                    ->markAsRead(),
+            ])
+            ->sendToDatabase($recipient);
+
+
             $this->callHook('afterSave');
         } catch (Halt $exception) {
             return;
@@ -127,7 +153,6 @@ class EditChecklists extends EditRecord
             $id = Route::current()->parameter('record');
             // dd($id);
             $existingEntries = Entries::where('entry_id', $id)->get();
-            // dd($existingEntries);
         
             foreach ($existingEntries as $entry) {
                 $checklistItemId = $entry->check_list_items_id;
@@ -148,5 +173,7 @@ class EditChecklists extends EditRecord
                     $this->data[$fullFieldName] = $entry->$fieldName;
                 }
             }
+          
+            
         }
 }

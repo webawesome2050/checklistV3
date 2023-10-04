@@ -144,6 +144,7 @@ class ATPFormResource extends Resource
                         ->options($optionsValue)
                         ->native(false),
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
+                        
                     ])->columns(4)->compact(); 
                 } 
                 $subsectionSection->schema($stepFields); 
@@ -185,6 +186,7 @@ class ATPFormResource extends Resource
 
                 Forms\Components\Section::make()
                     ->schema([
+                        TextInput::make('id'),
                         DateTimePicker::make('entry_detail')
                         ->label('Entry Detail')
                         ->native(false),
@@ -228,17 +230,20 @@ class ATPFormResource extends Resource
             ->actions([
 
                 Action::make('Download Report')->label('Download Report')
-                ->url(fn (CheckList $record): string => route('generate.pdf', $record))
+                ->url(fn (CheckList $record): string => route('generate.atp', $record))
                 ->openUrlInNewTab()
                 ->visible(function (CheckList $record): bool {
-                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 })
                 ->icon('heroicon-m-arrow-down-on-square'),
                 Tables\Actions\ViewAction::make()->label('View and Approve')
                 ->visible(function (CheckList $record): bool {
                     return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 }),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible(function (CheckList $record): bool {
+                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                }),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),

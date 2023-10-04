@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Filament\Resources\QcFormTypeTwoResource\Pages;
-
+use App\Models\User;
 use App\Models\CheckList;
 use App\Filament\Resources\QcFormTypeTwoResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use App\Models\CheckListItemsEntry;
+
+use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action;
+
 
 class CreateQcFormTypeTwo extends CreateRecord
 {
@@ -25,10 +29,7 @@ class CreateQcFormTypeTwo extends CreateRecord
             'type_id' => 2
         ]);
 
-        $entryId = $checkList->id;
-
-
-
+        $entryId = $checkList->id; 
 
         try {
             $this->callHook('beforeValidate');
@@ -49,11 +50,13 @@ class CreateQcFormTypeTwo extends CreateRecord
                 if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
                     $fieldName = $matches[1];
                     $checklistItemId = $matches[2];
-                    $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
-                    $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
                     $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                    $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
+                    $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
+
+
                 } else {
-                    dd('No Match Found !');
+                    // dd('No Match Found !');
                 }
             }
            
@@ -64,6 +67,33 @@ class CreateQcFormTypeTwo extends CreateRecord
             // dd($entryData);
             // $this->record = $this->handleRecordCreation($data); 
             // $this->form->model($this->record)->saveRelationships();
+
+
+            $recipient = User::whereHas('sites', function ($query) {
+                $query->where('site_id', 2);
+            })
+            ->whereHas('roles', function ($query) {
+                $query->where('role_id', 3);
+            })->get();
+    
+            \Log::info($recipient);
+    
+                // Notification::make()
+                // ->title('Updated ATP Form, kindly view and approve')
+                // ->sendToDatabase($recipient);
+    
+                Notification::make()
+                    ->title('GMP Submitted!')
+                    ->success()
+                    ->body('Created GMP Form, kindly view and approve')
+                    ->actions([
+                        Action::make('View and Approve')
+                            ->button()
+                            ->url('/qc-form-type-twos/'.$entryId)
+                            ->markAsRead(),
+                    ])
+                    ->sendToDatabase($recipient);
+
             $this->callHook('afterCreate');
         } catch (Halt $exception) {
             return;
