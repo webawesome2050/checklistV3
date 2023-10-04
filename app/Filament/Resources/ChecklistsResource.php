@@ -193,9 +193,7 @@ class ChecklistsResource extends Resource
 
     public static function table(Table $table): Table
     { 
-
         // dd(Table::when('entry_id', 2));
-        
         return $table
             ->columns([
                 //

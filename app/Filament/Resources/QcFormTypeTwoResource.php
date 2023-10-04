@@ -6,12 +6,14 @@ use Filament\Forms;
 use App\Models\Role;
 use Filament\Tables;
 use Filament\Forms\Form;
+use App\Models\CheckList;
 use Filament\Tables\Table;
 use App\Models\CheckListItem;
 use App\Models\EntriesMaster;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
+use Filament\Tables\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -115,7 +117,7 @@ class QcFormTypeTwoResource extends Resource
                         ->label('Condition')
                         ->options([
                             'Accept' => 'Yes',
-                            'Reject' => 'No',
+                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
                             'Not in Use' => 'Not in Use'
                         ])
                         ->native(false),
@@ -193,11 +195,40 @@ class QcFormTypeTwoResource extends Resource
             ->filters([
                 //
             ])
+            // ->actions([
+            //     Tables\Actions\ViewAction::make()->label('View and Approve')
+            //         ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
+            //          Tables\Actions\EditAction::make()
+            //          ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
+            // ])
+
             ->actions([
+
+                Action::make('Download Report')->label('Download Report')
+                ->url(fn (CheckList $record): string => route('generate.gmp', $record))
+                ->openUrlInNewTab()
+                ->visible(function (CheckList $record): bool {
+                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                })
+                ->icon('heroicon-m-arrow-down-on-square'),
+                // ->action(fn (CheckList $record) => $record->delete()),
+                
+
+                // auth()->user()->hasRole(Role::ROLES['approver']) ?   
+                // Tables\Actions\ViewAction::make()->label('View and Approve')
+                // ->visible(auth()->user()->hasRole(Role::ROLES['admin'])),
+                
                 Tables\Actions\ViewAction::make()->label('View and Approve')
-                    ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
-                     Tables\Actions\EditAction::make()
-                     ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
+                // ->visible((fn (CheckList $record): bool => !$record->is_approved)),
+                // ->visible((fn (CheckList $record): bool => !$record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']))),
+                ->visible(function (CheckList $record): bool {
+                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                }),
+                Tables\Actions\EditAction::make()
+                ->visible(function (CheckList $record): bool {
+                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                }),
+                //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             ])
             
 
