@@ -4,35 +4,36 @@ namespace App\Filament\Resources;
 
 use Filament\Forms;
 use App\Models\Role;
+
 use Filament\Tables;
-use App\Models\FormTv;
 use Filament\Infolists;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
+use App\Models\FormTvSite2 as FormTv;
 use Filament\Forms\Components\Toggle;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
 use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\FormTvResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\FormTvResource\RelationManagers;
+use App\Filament\Resources\FormTv1263Resource\Pages;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use App\Filament\Resources\FormTv1263Resource\RelationManagers;
 
-class FormTvResource extends Resource
+class FormTv1263Resource extends Resource
 {
     protected static ?string $model = FormTv::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // protected static ?string $navigationGroup = 'QC Forms';
-    protected static ?string $navigationGroup = 'Site 34';
+    protected static ?string $navigationGroup = 'Site 1263';
 
     protected static ?string $navigationLabel = 'TV';
 
-
+    protected static ?string $breadcrumb = 'Site 1263 - TV';
     
     public static function form(Form $form): Form
     {
@@ -51,20 +52,35 @@ class FormTvResource extends Resource
                     ->maxLength(65535)
                     ->required()
                     ->columnSpanFull(),
-            TableRepeater::make('tv_lines')
+                    Repeater::make('tv_lines')
+            // TableRepeater::make('tv_lines')
             ->relationship()
             ->schema([
                 DatePicker::make('date'),
-                TimePicker::make('time'), 
-                TextInput::make('temp_storage_1'),
-                TextInput::make('temp_storage_2'),
-                TextInput::make('temp_storage_3'),
+                TimePicker::make('time'),  
+
+                TextInput::make('base_area_f1')->label('BA F1'),
+                TextInput::make('base_area_f2')->label('BA F2'),
+                TextInput::make('base_area_cool_room')->label('BA Cool Room'),
+                TextInput::make('medium_area_cool_freezer')->label('BA Cool Freezer'),
+                TextInput::make('medium_area_cool_chiller1')->label('MA Cool Chiller'),
+                TextInput::make('medium_area_cool_chiller2')->label('MA Cool Chiller2'),
+                TextInput::make('medium_area_cool_cooked_wip_chiller')->label('MA Cooked WIP Chiller'),
+                TextInput::make('medium_area_cool_wip_chiller')->label('MA Cooked WIP Chiller'),
+                TextInput::make('high_area_cool_freezer')->label('HA cool freezer'),
+                TextInput::make('high_area_cool_chiller')->label('HA cool chiller'),
+                TextInput::make('outer_cartooning_room')->label('Outer cartooning room'),
+                TextInput::make('factory_lunch_room_fridge')->label('Factory lunch room fridge'),
+                TextInput::make('office_staff_lunch_room_fridge')->label('Staff lunch room fridge'),
+                
                 Toggle::make('is_verified')
                 ->visible(auth()->user()->hasRole(Role::ROLES['approver'])), 
                 // TextInput::make('is_verified'),
                 // TextInput::make('is_verified'),
             ])
             ->label('Temperature Daily Verification')
+            // ->grid(3)
+            ->columns(6)
             ->columnSpan('full')
             ]);
     }
@@ -134,42 +150,6 @@ class FormTvResource extends Resource
                 Tables\Actions\CreateAction::make()->label('New Temperature Verification'),
             ]);
     }
-    
-
-
-    // public static function infolist(Infolist $infolist): Infolist
-    // {
-    //     return $infolist
-    //         ->schema([
-    //             \Filament\Infolists\Components\Section::make()
-    //                 ->schema([
-    //                     \Filament\Infolists\Components\Split::make([
-    //                         \Filament\Infolists\Components\Grid::make(3)
-    //                             ->schema([
-    //                                 \Filament\Infolists\Components\Group::make([
-    //                                     \Filament\Infolists\Components\TextEntry::make('name'),
-                                      
-    //                                 ]),
-    //                                 \Filament\Infolists\Components\TextEntry::make('version'),
-    //                                 \Filament\Infolists\Components\TextEntry::make('issued_by')
-    //                                     ->badge()
-    //                                     ->date()
-    //                                     ->color('success'), 
-    //                             ]), 
-    //                     ])->from('lg'),
-    //                 ]),
-    //             \Filament\Infolists\Components\Section::make('Content')
-    //                 ->schema([
-    //                     \Filament\Infolists\Components\TextEntry::make('content')
-    //                         ->prose()
-    //                         ->markdown()
-    //                         ->hiddenLabel(),
-    //                 ])
-    //                 ->collapsible(),
-    //         ]);
-    // }
-
-    
     public static function getRelations(): array
     {
         return [
@@ -180,10 +160,9 @@ class FormTvResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListFormTvs::route('/'),
-            'create' => Pages\CreateFormTv::route('/create'),
-            'edit' => Pages\EditFormTv::route('/{record}/edit'),
-            'view' => Pages\ViewFormTvs::route('/{record}'),
+        'index' => Pages\ListFormTv1263s::route('/'),
+            'create' => Pages\CreateFormTv1263::route('/create'),
+            'edit' => Pages\EditFormTv1263::route('/{record}/edit'),
         ];
     }    
 }

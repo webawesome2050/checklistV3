@@ -10,7 +10,7 @@ class FormTvLine extends Model
     use HasFactory;
 
 
-protected $table =  "form_tv_lines"; 
+   protected $table =  "form_tv_lines"; 
 
    protected $fillable = [
         'form_tv_id',

@@ -22,13 +22,10 @@ use App\Filament\Resources\FormHatResource\RelationManagers;
 class FormHatResource extends Resource
 {
     protected static ?string $model = FormHat::class;
-
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
-    protected static ?string $navigationGroup = 'QC Forms';
-
+    // protected static ?string $navigationGroup = 'QC Forms';
+    protected static ?string $navigationGroup = 'Site 34';
     protected static ?string $navigationLabel = 'HAT';
-
 
     public static function form(Form $form): Form
     {

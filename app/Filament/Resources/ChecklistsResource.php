@@ -41,12 +41,12 @@ class ChecklistsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     // protected static ?string $title = 'QC Forms';
-    protected static ?string $navigationGroup = 'QC Forms';
+    protected static ?string $navigationGroup = 'Site 1263';
     // protected static ?string $navigationLabel = 'Cleanliness Checklist';
     protected static ?string $navigationLabel = 'Hygiene swab and Pre';
 
 
-    protected static ?string $breadcrumb = 'Machinery / Utensils';
+    protected static ?string $breadcrumb = 'Hygiene swab';
 
 
     public static function form(Form $form): Form
