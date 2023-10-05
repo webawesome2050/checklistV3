@@ -40,7 +40,9 @@ class ATPFormResource extends Resource
 
     protected static ?string $slug = 'atp-check';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'QC Forms';
+    // protected static ?string $navigationGroup = 'QC Forms';
+    protected static ?string $navigationGroup = 'Site 1263';
+
     protected static ?string $Title = 'ATP Forms';
     protected static ?string $breadcrumb = 'ATP Check';
     protected static ?string $navigationLabel = 'ATP Check';
@@ -186,7 +188,7 @@ class ATPFormResource extends Resource
 
                 Forms\Components\Section::make()
                     ->schema([
-                        TextInput::make('id'),
+                        Hidden::make('id'),
                         DateTimePicker::make('entry_detail')
                         ->label('Entry Detail')
                         ->native(false),

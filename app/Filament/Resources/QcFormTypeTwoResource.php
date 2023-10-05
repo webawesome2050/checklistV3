@@ -42,7 +42,8 @@ class QcFormTypeTwoResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'QC Forms';
+    // protected static ?string $navigationGroup = 'QC Forms';
+    protected static ?string $navigationGroup = 'Site 1263';
 
     protected static ?string $navigationLabel = 'GMP';
 
