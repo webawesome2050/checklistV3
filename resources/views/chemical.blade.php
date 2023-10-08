@@ -119,30 +119,34 @@ body {
 @foreach ($dataBySections as $sectionName => $sectionData)
     <table>
     <tr>
-            <th colspan="4">{{ $sectionName }}</th>
+            <th colspan="2" >{{ $sectionName }}</th>
         </tr>
-        <tr>
+        <tr>    
             <th>Checklist Item</th>
-            <th>Condition</th>
-            <th>Comments & Corrective Actions</th> 
-            <th>Action Taken</th>
+        
+            <th>Chemical Residue Check</th>
+     
         </tr>
         @foreach ($sectionData as $subSectionName => $subSectionData)
             @if (is_array($subSectionData))
             <tr>
-            <th class="left-text" colspan="4">{{ $subSectionName }}</th>
+            <th class="left-text" colspan="2">{{ $subSectionName }}</th>
           </tr>
                 @foreach ($subSectionData as $itemData)
                     <tr>
                         <td>{{ $itemData['Checklist Item'] }}</td>
-                        <td>{{ $itemData['Visual Insp Allergen Free'] }}</td>
-                        <td>{{ $itemData['Comments & Corrective Actions'] }}</td> 
-                        <td>{{ $itemData['Action Taken'] }}</td>
+                     
+                        <td class="text-center">
+                            <center>
+                                {{ $itemData['Chemical Residue Check'] }}
+                            </center>
+                            </td>
+                     
                     </tr>
                 @endforeach
             @else
                 <tr>
-                    <th colspan="4">{{ $subSectionData }}</th>
+                    <th colspan="5">{{ $subSectionData }}</th>
                 </tr>
             @endif
         @endforeach

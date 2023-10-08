@@ -72,7 +72,7 @@ class FormTv1263Resource extends Resource
                 TextInput::make('outer_cartooning_room')->label('Outer cartooning room'),
                 TextInput::make('factory_lunch_room_fridge')->label('Factory lunch room fridge'),
                 TextInput::make('office_staff_lunch_room_fridge')->label('Staff lunch room fridge'),
-                
+                TextInput::make('verified_by')->label('Approved By'),
                 Toggle::make('is_verified')
                 ->visible(auth()->user()->hasRole(Role::ROLES['approver'])), 
                 // TextInput::make('is_verified'),

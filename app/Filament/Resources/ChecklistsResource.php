@@ -160,9 +160,9 @@ class ChecklistsResource extends Resource
                         ->native(false)
                         ->visible($sectionName == 'HIGH RISK AREA'),
                         // $formFields[] = TextInput::hidden()
-                        // ->label('Chemical Residue Check')->name('chemical_residue_check'),
+                        // ->label('ChemicalResidueCheck')->name('chemical_residue_check'),
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
-                        $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
+                        // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
                        
                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
                         ->rows(1),        
@@ -171,7 +171,8 @@ class ChecklistsResource extends Resource
                         ->options([
                             'Yes' => 'Yes',
                             'No' => 'No'
-                        ]),                 
+                        ])
+                        ->inline(),                 
                     ])->columns(4)->compact(); 
 
 
