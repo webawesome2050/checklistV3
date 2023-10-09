@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\ATPFormResource\Pages;
+namespace App\Filament\Resources\ChemicalResidueCheckResource\Pages;
 
 use App\Models\User;
 use Filament\Actions;
@@ -15,9 +15,13 @@ use App\Filament\Resources\ATPFormResource;
 use App\Filament\Resources\ChecklistsResource;
 use App\Models\CheckListItemsEntry as Entries;
 
-class EditATPForm extends EditRecord
+
+use App\Filament\Resources\ChemicalResidueCheckResource;
+
+
+class EditChemicalResidueCheck extends EditRecord
 {
-    protected static string $resource = ATPFormResource::class;
+    protected static string $resource = ChemicalResidueCheckResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -26,7 +30,6 @@ class EditATPForm extends EditRecord
         ];
     }
 
-    
 
     public function save(bool $shouldRedirect = true): void
     {
@@ -59,7 +62,7 @@ class EditATPForm extends EditRecord
             $checkList = CheckList::find($data['id']); 
             $checkList->update([
                 'entry_detail' => $data['entry_detail'],
-                'next_inspection_detail' => $data['next_inspection_detail'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]);
 
             
@@ -177,8 +180,8 @@ class EditATPForm extends EditRecord
                 $checklistItemId = $entry->check_list_items_id;
                 $fieldsToUpdate = [ 
                     'entry_id',
-                    'ATP_check_RLU',
-                    'next_inspection_detail',
+                    'chemical_residue_check',
+                    // 'next_inspection_detail',
                     'entry_detail',
                     'sub_section_items'
                 ];
@@ -191,4 +194,5 @@ class EditATPForm extends EditRecord
 
             // dd($this->data);
         }
+
 }

@@ -1,33 +1,36 @@
 <?php
 
-namespace App\Filament\Resources\ATPFormResource\Pages;
+namespace App\Filament\Resources\MicroSwabResource\Pages;
+
+use App\Filament\Resources\MicroSwabResource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
 
 use App\Models\User;
-use Filament\Actions;
 use App\Models\CheckList;
 use App\Models\SubSectionItem;
 use Illuminate\Support\Facades\Route;
 
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Actions\Action;
 use App\Filament\Resources\ATPFormResource;
 use App\Filament\Resources\ChecklistsResource;
 use App\Models\CheckListItemsEntry as Entries;
 
-class EditATPForm extends EditRecord
+class EditMicroSwab extends EditRecord
 {
-    protected static string $resource = ATPFormResource::class;
+    protected static string $resource = MicroSwabResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
+            // Actions\ViewAction::make(),
             // Actions\DeleteAction::make(),
         ];
     }
 
-    
 
+    
     public function save(bool $shouldRedirect = true): void
     {
 
@@ -59,7 +62,7 @@ class EditATPForm extends EditRecord
             $checkList = CheckList::find($data['id']); 
             $checkList->update([
                 'entry_detail' => $data['entry_detail'],
-                'next_inspection_detail' => $data['next_inspection_detail'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]);
 
             
@@ -177,8 +180,8 @@ class EditATPForm extends EditRecord
                 $checklistItemId = $entry->check_list_items_id;
                 $fieldsToUpdate = [ 
                     'entry_id',
-                    'ATP_check_RLU',
-                    'next_inspection_detail',
+                    'micro_SPC_swab',
+                    // 'next_inspection_detail',
                     'entry_detail',
                     'sub_section_items'
                 ];
@@ -191,4 +194,5 @@ class EditATPForm extends EditRecord
 
             // dd($this->data);
         }
+
 }

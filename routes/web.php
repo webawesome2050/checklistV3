@@ -33,6 +33,8 @@ use App\Http\Controllers\CommonController;
 Route::get('/generate-pdf/{entry_id}/{type?}', [CommonController::class, 'generatePDF'])->name('generate.pdf');
 Route::get('/generate-pdf-atp/{entry_id}}', [CommonController::class, 'generatePDFATP'])->name('generate.atp');
 Route::get('/generate-pdf-gmp/{entry_id}}', [CommonController::class, 'generatePDFGMP'])->name('generate.gmp');
+Route::get('/generate-pdf-chemical/{entry_id}}', [CommonController::class, 'generatePDFChemical'])->name('generate.chemical');
+Route::get('/generate-pdf-micro/{entry_id}}', [CommonController::class, 'generatePDFMicro'])->name('generate.micro');
 
 
 // Route::get('/admin/check-lists/{id}/edit', [CheckListController::class, 'edit']);

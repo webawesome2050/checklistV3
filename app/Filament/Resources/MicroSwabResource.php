@@ -2,13 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
+use App\Filament\Resources\MicroSwabResource\Pages;
+use App\Filament\Resources\MicroSwabResource\RelationManagers;
 use App\Models\Role;
-use Filament\Tables;
-use Faker\Core\Number;
-use Filament\Forms\Form;
 use App\Models\CheckList;
-use Filament\Tables\Table;
 use App\Models\CheckListItem;
 use App\Models\EntriesMaster;
 use App\Models\SubSectionItem;
@@ -16,7 +13,11 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
 use Filament\Tables\Actions\Action;
-use App\Models\CheckList as ATPForm;
+use Filament\Forms;
+use Filament\Forms\Form;
+use Filament\Tables;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -29,26 +30,20 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DateTimePicker;
-use App\Filament\Resources\ATPFormResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ATPFormResource\RelationManagers;
 
-class ATPFormResource extends Resource
+class MicroSwabResource extends Resource
 {
-    protected static ?string $model = ATPForm::class;
+    protected static ?string $model = CheckList::class;
 
-    protected static ?string $slug = 'atp-check';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    // protected static ?string $navigationGroup = 'QC Forms';
+
     protected static ?string $navigationGroup = 'Site 1263';
+    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Micro SPC Swab Check';
+    protected static ?string $breadcrumb = 'Micro SPC Swab Check';
 
-    protected static ?int $navigationSort = 6;
-
-    protected static ?string $Title = 'ATP Forms';
-    protected static ?string $breadcrumb = 'ATP Check';
-    protected static ?string $navigationLabel = 'ATP Check';
     public static function form(Form $form): Form
     { 
  
@@ -143,14 +138,12 @@ class ATPFormResource extends Resource
                  Section::make($checklistItem->name)
                  ->aside()
                 ->schema([ 
-                        // $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
-                        $formFields[] =  Textinput::make("ATP_check_RLU_{$checklistItem->id}")
-                        ->numeric()
-                        ->label('ATP check RLU'),
-                        // ->options($optionsValue)
+                        $formFields[] =  Textinput::make("micro_SPC_swab_{$checklistItem->id}")
+                        // $formFields[] =  Select::make("micro_SPC_swab_{$checklistItem->id}")
+                        ->label('Micro SPC swab Check'),
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
                         
-                    ])->columns(4)->compact(); 
+                    ])->columns(3)->compact(); 
                 } 
                 $subsectionSection->schema($stepFields); 
                 $sectionComponents[] = $subsectionSection; 
@@ -161,25 +154,7 @@ class ATPFormResource extends Resource
         
 
         
-
-
-        // $form->schema([  
-        //     Forms\Components\Group::make()
-        //     ->schema([
-        //         Tabs::make('Label')->tabs($wizardSteps)
-        //     ])
-        //     ->columnSpan(['xl' => 2]), 
-
-        //     Forms\Components\Section::make()
-        //     ->schema([
-        //     Select::make('status')
-        //     ->options([
-        //         'draft' => 'Draft',
-        //         'reviewing' => 'Reviewing',
-        //         'published' => 'Published',
-        //     ]),
-        // ])
-        // ])->columns(2);
+ 
 
         return $form
             ->schema([
@@ -235,7 +210,7 @@ class ATPFormResource extends Resource
             ->actions([
 
                 Action::make('Download Report')->label('Download Report')
-                ->url(fn (CheckList $record): string => route('generate.atp', $record))
+                ->url(fn (CheckList $record): string => route('generate.micro', $record))
                 ->openUrlInNewTab()
                 ->visible(function (CheckList $record): bool {
                     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
@@ -254,23 +229,23 @@ class ATPFormResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]
         )
-        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 3));
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 5));
     }
-
     
     public static function getRelations(): array
     {
         return [
+            //
         ];
     }
     
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListATPForms::route('/'),
-            'create' => Pages\CreateATPForm::route('/create'),
-            'edit' => Pages\EditATPForm::route('/{record}/edit'),
-            'view' => Pages\ViewATPForm::route('/{record}'),
+            'index' => Pages\ListMicroSwabs::route('/'),
+            'create' => Pages\CreateMicroSwab::route('/create'),
+            'view' => Pages\ViewMicroSwab::route('/{record}'),
+            'edit' => Pages\EditMicroSwab::route('/{record}/edit'),
         ];
     }    
 }
