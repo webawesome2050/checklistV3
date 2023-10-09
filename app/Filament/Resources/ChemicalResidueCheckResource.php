@@ -39,6 +39,7 @@ class ChemicalResidueCheckResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Site 1263';
+    protected static ?int $navigationSort = 5;
     protected static ?string $navigationLabel = 'Chemical Residue Check';
     protected static ?string $breadcrumb = 'Chemical Residue Check';
 

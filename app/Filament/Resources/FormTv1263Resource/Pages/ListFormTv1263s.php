@@ -15,7 +15,8 @@ class ListFormTv1263s extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Create New'),
+            Actions\CreateAction::make()->label('Create New')
+            ->createAnother(false),
         ];
     }
 }

@@ -44,6 +44,8 @@ class ATPFormResource extends Resource
     // protected static ?string $navigationGroup = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263';
 
+    protected static ?int $navigationSort = 6;
+
     protected static ?string $Title = 'ATP Forms';
     protected static ?string $breadcrumb = 'ATP Check';
     protected static ?string $navigationLabel = 'ATP Check';
@@ -185,21 +187,21 @@ class ATPFormResource extends Resource
                     ->schema([
                         Tabs::make('Label')->tabs($wizardSteps)
                     ])
-                    ->columnSpan(['lg' =>12]),
+                    ->columnSpan(['lg' =>2]),
 
-                // Forms\Components\Section::make()
-                //     ->schema([
-                //         Hidden::make('id'),
-                //         DateTimePicker::make('entry_detail')
-                //         ->label('Entry Detail')
-                //         ->native(false),
-                //         DateTimePicker::make('next_inspection_detail')
-                //         ->label('Next Inspectin Date')
-                //         ->native(false),
-                //     ])
-                //     ->columnSpan(['lg' => 1]),
+                Forms\Components\Section::make()
+                    ->schema([
+                        Hidden::make('id'),
+                        DateTimePicker::make('entry_detail')
+                        ->label('Entry Detail')
+                        ->native(false),
+                        // DateTimePicker::make('next_inspection_detail')
+                        // ->label('Next Inspectin Date')
+                        // ->native(false),
+                    ])
+                    ->columnSpan(['lg' => 1]),
             ])
-            ->columns(12);
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
