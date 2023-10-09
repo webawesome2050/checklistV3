@@ -80,7 +80,7 @@ class CreateATPForm extends CreateRecord
                 'site_id' => 2, 
                 'type_id' => 3,
                 'entry_detail' => $data['entry_detail'],    
-                'next_inspection_detail' => $data['next_inspection_detail'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]); 
             $entryId = $checkList->id;
 

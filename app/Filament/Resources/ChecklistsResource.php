@@ -27,6 +27,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\DateTimePicker;
 use App\Models\CheckListItemsEntry as Entries;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ChecklistsResource\Pages;
@@ -184,9 +185,36 @@ class ChecklistsResource extends Resource
             $sectionStep = Tab::make($sectionName)->schema($sectionComponents);
             $wizardSteps[] = $sectionStep;
         }
-        $form->schema([
-            Tabs::make('Label')->tabs($wizardSteps),
-        ])->columns(1);
+        // $form->schema([
+        //     Tabs::make('Label')->tabs($wizardSteps),
+        // ])->columns(1);
+
+        return $form
+        ->schema([
+            Forms\Components\Section::make()
+                ->schema([
+                    Forms\Components\TextInput::make('person_name')
+                    ->label('Person Name')
+                    ->maxLength(255)
+                    ->required(), 
+                    Hidden::make('id'),
+                    DateTimePicker::make('entry_detail')
+                    ->label('Entry Date Detail')
+                    ->required()
+                    ->native(false),
+                ])
+               ->columns(2)
+                ->columnSpan(['lg' =>5]),
+
+            Forms\Components\Section::make()
+                ->schema([
+                    Tabs::make('Label')->tabs($wizardSteps)
+                ])
+                // ->columns(4)
+                ->columnSpan(['lg' => 12]),
+        ])
+        ->columns(12); 
+        
 
         return $form;
     }
