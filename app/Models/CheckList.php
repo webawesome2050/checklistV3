@@ -28,7 +28,8 @@ class CheckList extends Model
         'is_approved',
         'comments',
         'entry_detail',
-        'next_inspection_detail'
+        'next_inspection_detail',
+        'person_name'
     ];
 
 

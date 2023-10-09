@@ -165,7 +165,10 @@ class EditChecklists extends EditRecord
                     'action_taken',
                     'sub_section_items',
                     'entry_id',
-                    'ATP_check_RLU'
+                    'ATP_check_RLU',
+                    'person_name',
+                    'entry_detail'
+
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {

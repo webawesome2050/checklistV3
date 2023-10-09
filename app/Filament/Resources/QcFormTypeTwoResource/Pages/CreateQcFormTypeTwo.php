@@ -23,13 +23,7 @@ class CreateQcFormTypeTwo extends CreateRecord
         $this->authorizeAccess();
 
 
-        $checkList  =  CheckList::create([
-            'name' => 'Form GM1- GMP checklist'.'_'.now(), 
-            'site_id' => 2, 
-            'type_id' => 2
-        ]);
-
-        $entryId = $checkList->id; 
+        
 
         try {
             $this->callHook('beforeValidate');
@@ -41,6 +35,17 @@ class CreateQcFormTypeTwo extends CreateRecord
             $data = $this->mutateFormDataBeforeCreate($data);
 
             // dd($data); 
+
+            $checkList  =  CheckList::create([
+                'name' => 'Form GM1- GMP checklist'.'_'.now(), 
+                'site_id' => 2, 
+                'entry_detail' => $data['entry_detail'],    
+                'person_name' => $data['person_name'],    
+                'type_id' => 2
+            ]);
+    
+            $entryId = $checkList->id; 
+            
 
             $this->callHook('beforeCreate'); 
 

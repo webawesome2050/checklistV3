@@ -138,7 +138,9 @@ protected function getRedirectUrl(): string
                 'TP_check_RLU',
                 'comments_corrective_actions',
                 'action_taken',
-                'entry_id'
+                'entry_id',
+                'entry_detail',
+                'person_name'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {

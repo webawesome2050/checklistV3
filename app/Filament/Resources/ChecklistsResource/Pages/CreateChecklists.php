@@ -84,7 +84,9 @@ class CreateChecklists extends CreateRecord
             $checkList  =  CheckList::create([
                 'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(), 
                 'site_id' => 2, 
-                'type_id' => 1
+                'type_id' => 1,
+                'entry_detail' => $data['entry_detail'],    
+                'person_name' => $data['person_name']  
             ]);
     
             $entryId = $checkList->id;

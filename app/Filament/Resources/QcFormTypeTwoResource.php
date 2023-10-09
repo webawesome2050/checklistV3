@@ -25,8 +25,11 @@ use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TimePicker;
 use Illuminate\Database\Eloquent\Builder;
 use App\Models\CheckList as QcFormTypeTwo;
+use Filament\Forms\Components\DateTimePicker;
 use App\Models\CheckListItemsEntry as Entries;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\QcFormTypeTwoResource\Pages;
@@ -117,7 +120,7 @@ class QcFormTypeTwoResource extends Resource
                      $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
                         ->label('Condition')
                         ->options([
-                            'Accept' => 'Yes',
+                            'Accept' => 'Accepted',
                             'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
                             'Not in Use' => 'Not in Use'
                         ])
@@ -156,13 +159,64 @@ class QcFormTypeTwoResource extends Resource
             $sectionStep = Tab::make($sectionName)->schema($sectionComponents);
             $wizardSteps[] = $sectionStep;
         }
-        $form->schema([
-            Tabs::make('Label')->tabs($wizardSteps),
-        ])->columns(1);
+       
+        // $form->schema([
+        //     Tabs::make('Label')->tabs($wizardSteps),
+        // ])->columns(1);
+
+        return $form
+        ->schema([
+            Forms\Components\Section::make()
+                ->schema([
+                    Forms\Components\TextInput::make('person_name')
+                    ->label('Person Name')
+                    ->maxLength(255)
+                    ->required(), 
+                    Hidden::make('id'),
+                    DateTimePicker::make('entry_detail')
+                    ->label('Entry Date Detail')
+                    ->required()
+                    ->native(false),
+                ])
+               ->columns(2)
+                ->columnSpan(['lg' =>5]),
+
+            Forms\Components\Section::make()
+                ->schema([
+                    Tabs::make('Label')->tabs($wizardSteps)
+                ])
+                // ->columns(4)
+                ->columnSpan(['lg' => 12]),
+        ])
+        ->columns(12); 
+
+        return $form
+            ->schema([
+                Forms\Components\Group::make()
+                    ->schema([
+                        Hidden::make('id'),
+                        DateTimePicker::make('entry_detail')
+                        ->label('Entry Detail')
+                        ->native(false),
+                        // DateTimePicker::make('next_inspection_detail')
+                        // ->label('Next Inspectin Date')
+                        // ->native(false),
+                    ])
+                    ->columnSpan(['lg' =>3]),
+
+                Forms\Components\Section::make()
+                    ->schema([
+                        Tabs::make('Label')->tabs($wizardSteps)
+                     
+                    ])
+                    ->columnSpan(['lg' => 9])
+            ])
+            ->columns(3);
+
          
         
 
-        return $form;
+        // return $form;
     }
 
     public static function table(Table $table): Table
