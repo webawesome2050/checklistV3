@@ -121,8 +121,7 @@ class QcFormTypeTwoResource extends Resource
                         ->label('Condition')
                         ->options([
                             'Accept' => 'Accepted',
-                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
-                            'Not in Use' => 'Not in Use'
+                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions'
                         ])
                         ->native(false),
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),

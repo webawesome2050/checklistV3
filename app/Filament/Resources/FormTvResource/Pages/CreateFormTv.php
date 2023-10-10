@@ -12,4 +12,10 @@ class CreateFormTv extends CreateRecord
 
     protected static ?string $title = 'Temperature Daily Verification';
 
+    protected function getRedirectUrl(): string
+        {
+            return $this->getResource()::getUrl('index');
+        }
+
+
 }

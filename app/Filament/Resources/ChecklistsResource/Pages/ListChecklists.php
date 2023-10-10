@@ -14,12 +14,14 @@ class ListChecklists extends ListRecords
 {
     protected static string $resource = ChecklistsResource::class;
 
-    protected static ?string $title = 'Hygiene swab and Pre Op Checklist';
+    // protected static ?string $title = 'Hygiene swab and Pre Op Checklist';
+    protected static ?string $title = 'Pre-Op forms';
+
 
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Create Hygiene swab'),
+            Actions\CreateAction::make()->label('Create Pre-Op form'),
         ];
     }
 
