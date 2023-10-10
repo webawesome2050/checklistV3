@@ -17,7 +17,7 @@ class CreateChecklists extends CreateRecord
 {
     protected static string $resource = ChecklistsResource::class;
 
-    protected static ?string $title = 'Hygiene swab';
+    protected static ?string $title = 'Pre-Op forms';
 
 
     public function mount(): void
@@ -136,10 +136,10 @@ class CreateChecklists extends CreateRecord
             \Log::info($recipient);
             
             Notification::make()
-                    ->title('Hygiene swab Submitted!')
+                    ->title('Pre-Op forms Submitted!')
                     ->success()
                     // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
-                    ->body('Created Hygiene swab Form, kindly view and approve')
+                    ->body('Created Pre-Op forms Form, kindly view and approve')
                     ->actions([
                         Action::make('View and Approve')
                             ->button()

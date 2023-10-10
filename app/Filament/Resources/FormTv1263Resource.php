@@ -53,7 +53,7 @@ class FormTv1263Resource extends Resource
 
     protected static ?int $navigationSort = 3;
 
-    protected static ?string $navigationLabel = 'TV';
+    protected static ?string $navigationLabel = 'TV Chiller form ';
 
     protected static ?string $breadcrumb = 'Site 1263 - TV';
     
@@ -63,44 +63,44 @@ class FormTv1263Resource extends Resource
         ->schema([
             Forms\Components\Section::make()
                 ->schema([
-                    Forms\Components\TextInput::make('name')
+                    Forms\Components\TextInput::make('name')->label('Person name')
                     ->maxLength(255)
                     ->required(),
-                // Forms\Components\TextInput::make('version')
-                //     ->maxLength(255)
-                //     ->required(),
-                // Forms\Components\TextInput::make('issues_by')
-                //     ->maxLength(255)
-                //     ->required(),
+                    DatePicker::make('date')
+                    ->required()
+                    ->native(false),
+                    TimePicker::make('time')
+                    ->required(),  
                 Forms\Components\Textarea::make('notes')
                     ->label('Comments')
                     ->maxLength(123)
-                    ->required()
                     // ->columnSpanFull(),
                 ])
                 ->columnSpan(['lg' =>3]),
 
             Forms\Components\Section::make()
-                ->schema([
-                    DatePicker::make('date'),
-                    TimePicker::make('time'),  
-    
-                    TextInput::make('base_area_f1')->label('BA F1'),
-                    TextInput::make('base_area_f2')->label('BA F2'),
-                    TextInput::make('base_area_cool_room')->label('BA Cool Room'),
-                    TextInput::make('medium_area_cool_freezer')->label('BA Cool Freezer'),
-                    TextInput::make('medium_area_cool_chiller1')->label('MA Cool Chiller'),
-                    TextInput::make('medium_area_cool_chiller2')->label('MA Cool Chiller2'),
-                    TextInput::make('medium_area_cool_cooked_wip_chiller')->label('MA Cooked WIP Chiller'),
-                    TextInput::make('medium_area_cool_wip_chiller')->label('MA Cooked WIP Chiller'),
-                    TextInput::make('high_area_cool_freezer')->label('HA cool freezer'),
-                    TextInput::make('high_area_cool_chiller')->label('HA cool chiller'),
+                ->schema([ 
+                    TextInput::make('base_area_f1')->label('Base Area Finished Goods Freezer 1 & Freezer 2 new  F1'),
+                    TextInput::make('base_area_f2')->label('Base Area Finished Goods Freezer 1 & Freezer 2 new  F2'),
+                    TextInput::make('base_area_cool_room')->label('Base Area Main Cool Room'),
+                    TextInput::make('base_area_raw_chiller')->label('Base Area Raw Material Chiller'),
+                    
+                    TextInput::make('medium_area_cool_freezer')->label('Medium Area WIP Freezer'),
+                    TextInput::make('medium_area_cool_chiller1')->label('Medium Area Blast Chiller 1'),
+                    TextInput::make('medium_area_cool_chiller2')->label('Medium Area Blast Chiller 2'),
+                    TextInput::make('medium_area_cool_cooked_wip_chiller')->label('Medium Area Cooked WIP Chiller'),
+                    TextInput::make('medium_area_cool_wip_chiller')->label('Medium Area Raw WIP Chiller'),
+
+                    TextInput::make('high_area_cool_freezer')->label('High Risk Area- Blast Freezer'),
+                    TextInput::make('high_area_cool_chiller')->label('High Risk Area- Chiller'),
+                    
                     TextInput::make('outer_cartooning_room')->label('Outer cartooning room'),
-                    TextInput::make('factory_lunch_room_fridge')->label('Factory lunch room fridge'),
-                    TextInput::make('office_staff_lunch_room_fridge')->label('Staff lunch room fridge'),
-                    TextInput::make('verified_by')->label('Approved By'),
-                    Toggle::make('is_verified')
-                    ->visible(auth()->user()->hasRole(Role::ROLES['approver'])), 
+                    TextInput::make('factory_lunch_room_fridge')->label('Factory Lunch Room Fridge'),
+                    TextInput::make('office_staff_lunch_room_fridge')->label('Office Staff Lunch Room Fridge'),
+                    
+                    TextInput::make('verified_by')->label('Verified By'),
+                    // Toggle::make('is_verified')
+                    // ->visible(auth()->user()->hasRole(Role::ROLES['approver'])), 
                 ])
                 ->columns(4)
                 ->columnSpan(['lg' => 9]),
@@ -117,12 +117,27 @@ class FormTv1263Resource extends Resource
 
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('version')
-                    ->searchable(),
-                    Tables\Columns\TextColumn::make('date')
-                    ->searchable(),
+
+                Tables\Columns\TextColumn::make('date')
+                ->searchable(),
+            Tables\Columns\TextColumn::make('time')
+                ->searchable(),
+            Tables\Columns\TextColumn::make('name')
+                ->label('Person Name')
+                ->searchable(),
+            Tables\Columns\IconColumn::make('is_approved')
+                ->boolean(), 
+                Tables\Columns\TextColumn::make('')
+                ->label('Status')
+                ->description(function (FormTv $record) {
+                    $res= $record->is_approved == false ;
+                    if ($res){
+                        return "Pending";
+                    }
+                    else{
+                        return "Approved";
+                    }
+                }),
                 // Tables\Columns\TextColumn::make('issues_by')
                 //     ->searchable(),
                 //     Tables\Columns\IconColumn::make('is_approved')
@@ -154,13 +169,13 @@ class FormTv1263Resource extends Resource
             ])
             ->actions([  
 
-                Action::make('Download Report')->label('Download Report')
-                ->url(fn (FormTv $record): string => route('generate.atp', $record))
-                ->openUrlInNewTab()
-                ->visible(function (FormTv $record): bool {
-                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
-                })
-                ->icon('heroicon-m-arrow-down-on-square'),
+                // Action::make('Download Report')->label('Download Report')
+                // ->url(fn (FormTv $record): string => route('generate.atp', $record))
+                // ->openUrlInNewTab()
+                // ->visible(function (FormTv $record): bool {
+                //     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                // })
+                // ->icon('heroicon-m-arrow-down-on-square'),
                 Tables\Actions\ViewAction::make()->label('View and Approve')
                 ->visible(function (FormTv $record): bool {
                     return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
@@ -185,9 +200,9 @@ class FormTv1263Resource extends Resource
             //          ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             // ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+                // Tables\Actions\BulkActionGroup::make([
+                //     Tables\Actions\DeleteBulkAction::make(),
+                // ]),
             ])
             ->emptyStateActions([
                 // Tables\Actions\CreateAction::make()->label('New Temperature Verification'),

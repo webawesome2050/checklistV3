@@ -37,6 +37,8 @@ class ViewFormTvs extends ViewRecord
                     $this->record->comments = $data['comments'];
                     $this->record->is_approved = true; // $data['status']; 
                     $this->record->save();
+                    $this->redirect('/form-tvs');
+
                 })
                 // ->slideOver()
                 // ->visible(auth()->user()->))

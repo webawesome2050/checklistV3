@@ -19,7 +19,14 @@ class FormTv extends Model
         'issues_by',
         'notes',
         'created_at',
-        'updated_at'
+        'updated_at',
+        'date',
+        'time',
+        'temp_storage_1',
+        'temp_storage_2',
+        'temp_storage_3',
+        'is_verified',
+        'verified_by'
      ];
 
      public function tv_lines()

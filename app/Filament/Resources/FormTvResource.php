@@ -28,14 +28,50 @@ class FormTvResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     // protected static ?string $navigationGroup = 'QC Forms';
-    protected static ?string $navigationGroup = 'Site 34';
+    protected static ?string $navigationGroup = 'Site 1263';
 
-    protected static ?string $navigationLabel = 'TV';
+    protected static ?string $navigationLabel = 'TV - Storage Temp';
 
 
     
     public static function form(Form $form): Form
     {
+        return $form
+        ->schema([
+            Forms\Components\Section::make()
+                ->schema([
+                    Forms\Components\TextInput::make('name')->label('Person name')
+                    ->maxLength(255)
+                    ->required(),
+                    DatePicker::make('date')
+                    ->required()
+                    ->native(false),
+                    TimePicker::make('time')
+                    ->required(),  
+                Forms\Components\Textarea::make('notes')
+                    ->label('Comments')
+                    ->rows(1)
+                    // ->columnSpanFull(),
+                ])
+                ->columns(2)
+                ->columnSpan(['lg' =>4]),
+
+            Forms\Components\Section::make()
+                ->schema([ 
+                    // DatePicker::make('date'),
+                    // TimePicker::make('time'), 
+                    TextInput::make('temp_storage_1'),
+                    TextInput::make('temp_storage_2'),
+                    TextInput::make('temp_storage_3'),
+                    TextInput::make('verified_by'),
+                    // Toggle::make('is_verified')
+                    // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
+                ])
+                ->columns(2)
+                ->columnSpan(['lg' => 5]),
+        ])
+        ->columns(12); 
+
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
@@ -53,9 +89,7 @@ class FormTvResource extends Resource
                     ->columnSpanFull(),
             TableRepeater::make('tv_lines')
             ->relationship()
-            ->schema([
-                DatePicker::make('date'),
-                TimePicker::make('time'), 
+            ->schema([ 
                 TextInput::make('temp_storage_1'),
                 TextInput::make('temp_storage_2'),
                 TextInput::make('temp_storage_3'),
@@ -77,44 +111,52 @@ class FormTvResource extends Resource
 
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('date')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('time')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('name')
+                    ->label('Person Name')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('version')
-                    ->searchable(),
-                // Tables\Columns\TextColumn::make('issues_by')
-                //     ->searchable(),
-                //     Tables\Columns\IconColumn::make('is_approved')
-                //     ->boolean(),
-
-                // Tables\Columns\TextColumn::make('')
-                // ->label('Status')
-                // ->description(function (FormTv $record) {
-                //     $res= $record->is_approved == false ;
-                //     if ($res){
-                //         return "Pending";
-                //     }
-                //     else{
-                //         return "Approved";
-                //     }
-                // }),
-                Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\IconColumn::make('is_approved')
+                    ->boolean(),
+                Tables\Columns\TextColumn::make('')
+                ->label('Status')
+                ->description(function (FormTv $record) {
+                    $res= $record->is_approved == false ;
+                    if ($res){
+                        return "Pending";
+                    }
+                    else{
+                        return "Approved";
+                    }
+                }),
+                // Tables\Columns\TextColumn::make('created_at')
+                //     ->dateTime()
+                //     ->sortable(),
+                // Tables\Columns\TextColumn::make('updated_at')
+                //     ->dateTime()
+                //     ->sortable()
+                //     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->striped()
             ->filters([
                 //
             ])
             ->actions([ 
-                    Tables\Actions\EditAction::make()->label('View and Approve')
-                    ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
-                     Tables\Actions\EditAction::make()
-                     ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])), 
+                    // Tables\Actions\EditAction::make()->label('View and Approve')
+                    // ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
+                    //  Tables\Actions\EditAction::make()
+                    //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])), 
+
+                    Tables\Actions\ViewAction::make()->label('View and Approve')
+                    ->visible(function (FormTv $record): bool {
+                        return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                    }),
+                    Tables\Actions\EditAction::make()
+                    ->visible(function (FormTv $record): bool {
+                        return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                    }),
             ])
 
             // ->actions([
@@ -126,6 +168,7 @@ class FormTvResource extends Resource
             //          ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             // ])
             ->bulkActions([
+                
                 // Tables\Actions\BulkActionGroup::make([
                 //     Tables\Actions\DeleteBulkAction::make(),
                 // ]),

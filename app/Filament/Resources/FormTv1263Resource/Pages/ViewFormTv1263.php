@@ -36,7 +36,7 @@ class ViewFormTv1263 extends ViewRecord
                     $this->record->comments = $data['comments'];
                     $this->record->is_approved = true; // $data['status']; 
                     $this->record->save();
-                    $this->redirect('/chemical-residue-checks');
+                    $this->redirect('/form-tv1263s');
                 })
                 // ->slideOver()
                 // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))

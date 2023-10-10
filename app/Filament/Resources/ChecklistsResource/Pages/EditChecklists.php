@@ -69,7 +69,7 @@ class EditChecklists extends EditRecord
             Notification::make()
             ->title('Hygiene Submitted!')
             ->success()
-            ->body('Updated Hygiene swab, kindly view and approve')
+            ->body('Updated Pre-Op form, kindly view and approve')
             ->actions([
                 Action::make('View and Approve')
                     ->button()
