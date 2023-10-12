@@ -59,6 +59,8 @@ class EditATPForm extends EditRecord
             $checkList = CheckList::find($data['id']); 
             $checkList->update([
                 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                
                 // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]);
 
@@ -179,7 +181,10 @@ class EditATPForm extends EditRecord
                     'entry_id',
                     'ATP_check_RLU',
                     'entry_detail',
-                    'sub_section_items'
+                    'sub_section_items',
+                    'action_taken',
+                    'person_name',
+                    'comments_corrective_actions'
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {

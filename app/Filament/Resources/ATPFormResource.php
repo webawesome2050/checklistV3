@@ -147,10 +147,17 @@ class ATPFormResource extends Resource
                         $formFields[] =  Textinput::make("ATP_check_RLU_{$checklistItem->id}")
                         ->numeric()
                         ->label('ATP check RLU'),
+                        $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
+                        ->rows(1),  
+                        Radio::make("action_taken_$checklistItem->id")->label('Is Testing Done')
+                        ->options([
+                            'Yes' => 'Pass',
+                            'No' => 'Fail'
+                        ]),  
                         // ->options($optionsValue)
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
                         
-                    ])->columns(4)->compact(); 
+                    ])->columns(3)->compact(); 
                 } 
                 $subsectionSection->schema($stepFields); 
                 $sectionComponents[] = $subsectionSection; 
@@ -192,6 +199,10 @@ class ATPFormResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Hidden::make('id'),
+                        Forms\Components\TextInput::make('person_name')
+                        ->label('Person Name')
+                        ->maxLength(255)
+                        ->required(), 
                         DateTimePicker::make('entry_detail')
                         ->label('Entry Detail')
                         ->native(false),

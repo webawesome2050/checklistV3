@@ -90,7 +90,10 @@ class ViewATPForm extends ViewRecord
                 'ATP_check_RLU',
                 'next_inspection_detail',
                 'entry_detail',
-                'sub_section_items'
+                'sub_section_items',
+                'action_taken',
+                'person_name', 
+                'comments_corrective_actions'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {
