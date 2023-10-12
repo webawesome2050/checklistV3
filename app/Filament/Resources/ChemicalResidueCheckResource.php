@@ -108,6 +108,7 @@ class ChemicalResidueCheckResource extends Resource
                 if ($matchingItem) {
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
+                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->compact();
                     
@@ -134,8 +135,13 @@ class ChemicalResidueCheckResource extends Resource
 
                 foreach ($checklistItemsInSubsection as $checklistItem) {
                    
+                    $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
+                    $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
+
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
+                 ->description($description)
                  ->aside()
                 ->schema([ 
                         $formFields[] =  Textinput::make("chemical_residue_check_{$checklistItem->id}")

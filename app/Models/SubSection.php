@@ -13,7 +13,9 @@ class SubSection extends Model
 
     protected $fillable = [
         'name',
-        'section_id'
+        'section_id',
+        'atp_frequency',
+        'label',
     ];
 
     public function section()

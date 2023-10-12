@@ -45,6 +45,7 @@ class SubSectionsResource extends Resource
             ->relationship('section', 'name'),
             TextInput::make('name')
             ->required(),
+            TextInput::make('atp_frequency')
            
         ]);
     }

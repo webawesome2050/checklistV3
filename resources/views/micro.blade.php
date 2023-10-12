@@ -119,18 +119,20 @@ body {
 @foreach ($dataBySections as $sectionName => $sectionData)
     <table>
     <tr>
-            <th colspan="2" >{{ $sectionName }}</th>
+            <th colspan="4" >{{ $sectionName }}</th>
         </tr>
         <tr>    
             <th>Checklist Item</th>
         
             <th>Micro SPC Swab</th>
+            <th>Comments & Corrective Actions</th>
+            <th>Is Testing Done</th>
      
         </tr>
         @foreach ($sectionData as $subSectionName => $subSectionData)
             @if (is_array($subSectionData))
             <tr>
-            <th class="left-text" colspan="2">{{ $subSectionName }}</th>
+            <th class="left-text" colspan="4">{{ $subSectionName }}</th>
           </tr>
                 @foreach ($subSectionData as $itemData)
                     <tr>
@@ -141,12 +143,14 @@ body {
                                 {{ $itemData['Micro SPC Swab'] }}
                             </center>
                             </td>
+                            <td>{{ $itemData['Comments & Corrective Actions'] }}</td>
+                            <td>{{ $itemData['Action Taken'] }}</td>
                      
                     </tr>
                 @endforeach
             @else
                 <tr>
-                    <th colspan="5">{{ $subSectionData }}</th>
+                    <th colspan="4">{{ $subSectionData }}</th>
                 </tr>
             @endif
         @endforeach

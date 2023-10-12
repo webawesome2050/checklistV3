@@ -108,6 +108,7 @@ class MicroSwabResource extends Resource
                 if ($matchingItem) {
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
+                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->compact();
                     

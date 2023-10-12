@@ -119,34 +119,30 @@ body {
 @foreach ($dataBySections as $sectionName => $sectionData)
     <table>
     <tr>
-            <th colspan="6">{{ $sectionName }}</th>
+            <th colspan="4">{{ $sectionName }}</th>
         </tr>
         <tr>
             <th>Checklist Item</th>
-            <th>Visual Insp Allergen Free</th>
-            <th>Chemical Residue Check</th>
-            <th>TP Check RLU</th>
+            <th>Visual Insp Allergen Free</th> 
             <th>Comments & Corrective Actions</th>
             <th>Action Taken</th>
         </tr>
         @foreach ($sectionData as $subSectionName => $subSectionData)
             @if (is_array($subSectionData))
             <tr>
-            <th class="left-text" colspan="6">{{ $subSectionName }}</th>
+            <th class="left-text" colspan="4">{{ $subSectionName }}</th>
           </tr>
                 @foreach ($subSectionData as $itemData)
                     <tr>
                         <td>{{ $itemData['Checklist Item'] }}</td>
-                        <td>{{ $itemData['Visual Insp Allergen Free'] }}</td>
-                        <td>{{ $itemData['Chemical Residue Check'] }}</td>
-                        <td>{{ $itemData['TP Check RLU'] }}</td>
+                        <td>{{ $itemData['Visual Insp Allergen Free'] }}</td> 
                         <td>{{ $itemData['Comments & Corrective Actions'] }}</td>
                         <td>{{ $itemData['Action Taken'] }}</td>
                     </tr>
                 @endforeach
             @else
                 <tr>
-                    <th colspan="9">{{ $subSectionData }}</th>
+                    <th colspan="7">{{ $subSectionData }}</th>
                 </tr>
             @endif
         @endforeach
