@@ -141,6 +141,13 @@ class MicroSwabResource extends Resource
                         $formFields[] =  Textinput::make("micro_SPC_swab_{$checklistItem->id}")
                         // $formFields[] =  Select::make("micro_SPC_swab_{$checklistItem->id}")
                         ->label('Micro SPC swab Check'),
+                        $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
+                        ->rows(1),  
+                        Radio::make("action_taken_$checklistItem->id")->label('Is Testing Done')
+                        ->options([
+                            'Yes' => 'Yes',
+                            'No' => 'No'
+                        ]), 
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
                         
                     ])->columns(3)->compact(); 
@@ -167,6 +174,10 @@ class MicroSwabResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Hidden::make('id'),
+                        Forms\Components\TextInput::make('person_name')
+                        ->label('Person Name')
+                        ->maxLength(255)
+                        ->required(), 
                         DateTimePicker::make('entry_detail')
                         ->label('Entry Detail')
                         ->native(false),
