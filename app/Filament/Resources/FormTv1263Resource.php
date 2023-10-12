@@ -49,7 +49,7 @@ class FormTv1263Resource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Site 1263';
+    protected static ?string $navigationGroup = 'Forms';
 
     protected static ?int $navigationSort = 3;
 

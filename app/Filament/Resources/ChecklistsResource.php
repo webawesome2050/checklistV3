@@ -22,11 +22,13 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Illuminate\Support\Facades\Route;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use App\Models\CheckListItemsEntry as Entries;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -42,7 +44,7 @@ class ChecklistsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     // protected static ?string $title = 'QC Forms';
-    protected static ?string $navigationGroup = 'Site 1263';
+    protected static ?string $navigationGroup = 'Forms';
     // protected static ?string $navigationLabel = 'Cleanliness Checklist';
     protected static ?string $navigationLabel = 'Pre-Op forms ';
 
@@ -96,10 +98,9 @@ class ChecklistsResource extends Resource
                         $radioOptions[$subSectionItem->name] = $subSectionItem->name;
                     }
                     // \Log::info($radioOptions);
-                    $itemCode = Radio::make("sub_section_items_$subsectionId")
+                    $itemCode = CheckboxList::make("sub_section_items_$subsectionId")
                         ->label('')
-                        ->options($radioOptions)
-                        ->inline();
+                        ->options($radioOptions);
                 } else {
                     $formFields = [];
                 }
@@ -285,98 +286,7 @@ class ChecklistsResource extends Resource
         )
         ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 1));
     }
-
-
-
-
-
-
-
-
-    public static function formOLD(Form $form): Form
-    { 
-
-        $checklistItems = CheckListItem::where('check_list_id', 2)->get();
-
-        $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
-        foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
-            $sectionName = $subsectionGroups->first()->first()->section->name;
-            $itemCount = count($subsectionGroups);
-            $sectionName =   $sectionName;
-
-            $sectionComponents = [];
-            $subsectionNameArray  = [];
-            foreach ($subsectionGroups as $subsectionId => $checklistItemsInSubsection) {
-                $subsectionName = $checklistItemsInSubsection->first()->first()->subSection->name;
-                 
-                $matchingItem = $checklistItemsInSubsection->first(function ($item) use ($subsectionId) {
-                    return $item->sub_section_id === $subsectionId;
-                });
-
-                if ($matchingItem) {
-                    $subsectionName = $matchingItem->subSection->name;
-                    $subsectionSection = Section::make($subsectionName)
-                    ->columns(4)
-                    ->compact()
-                    ->collapsed(); // Set the section to be collapsed by default
-                }
-                
-                $formFields = [];
-                $stepFields = [];
-                foreach ($checklistItemsInSubsection as $checklistItem) {
-                    $stepFields[]   =  
-                 Section::make($checklistItem->name)
-                 ->aside()
-                // ->description($checklistItem->is_approved ? '' : 'Pending') 
-                ->schema([ 
-                     $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
-                        ->label('Visual insp allergen free')
-                        ->options([
-                            'Accept' => 'Accept',
-                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
-                            'Not in Use' => 'Not in Use'
-                        ]),
-                        
-                        $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Micro SPC Swab *')->name('micro_SPC_swab'),
-                        $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
-                        $formFields[] = Select::make("TP_check_RLU_$checklistItem->id")
-                            ->label('ATP check RLU')
-                            ->options([
-                                'Pass' => 'Pass',
-                                'Fail' => 'Fail'
-                            ]),
-                        $formFields[] = Select::make("action_taken_$checklistItem->id")
-                            ->label('Action Taken')
-                            ->options([
-                                'Yes' => 'Yes',
-                                'No' => 'No'
-                            ]),
-                        $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                        ->rows(2),                         
-                    ])->columns(4)->compact(); 
-                } 
-
-                $subsectionSection->schema($stepFields); 
-                $sectionComponents[] = $subsectionSection; 
-            }
-            $sectionStep = Wizard\Step::make($sectionName)->schema($sectionComponents);
-            $wizardSteps[] = $sectionStep;
-        }
-        $form->schema([
-            Wizard::make($wizardSteps)->skippable(),
-        ])->columns(1);
-        return $form;
-    }
-
-
-
-
-
-
-
-
-
-
+ 
 
     public static function getRelations(): array
     {

@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ChemicalResidueCheckResource\Pages;
-use App\Filament\Resources\ChemicalResidueCheckResource\RelationManagers;
+use Filament\Forms;
 use App\Models\Role;
+use Filament\Tables;
+use Filament\Forms\Form;
 use App\Models\CheckList;
+use Filament\Tables\Table;
 use App\Models\CheckListItem;
 use App\Models\EntriesMaster;
 use App\Models\SubSectionItem;
@@ -13,11 +15,6 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
 use Filament\Tables\Actions\Action;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -25,20 +22,24 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Illuminate\Support\Facades\Route;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\ChemicalResidueCheckResource\Pages;
+use App\Filament\Resources\ChemicalResidueCheckResource\RelationManagers;
 
 class ChemicalResidueCheckResource extends Resource
 {
     protected static ?string $model = CheckList::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Site 1263';
+    protected static ?string $navigationGroup = 'Forms';
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationLabel = 'Chemical Residue Check';
     protected static ?string $breadcrumb = 'Chemical Residue Check';
@@ -141,7 +142,13 @@ class ChemicalResidueCheckResource extends Resource
                         // $formFields[] =  Select::make("chemical_residue_check_{$checklistItem->id}")
                         ->label('Chemical Residue Check'),
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
-                        
+                        $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
+                        ->rows(1),  
+                        Radio::make("action_taken_$checklistItem->id")->label('Is Testing Done')
+                        ->options([
+                            'Yes' => 'Yes',
+                            'No' => 'No'
+                        ]),  
                     ])->columns(3)->compact(); 
                 } 
                 $subsectionSection->schema($stepFields); 
@@ -166,7 +173,11 @@ class ChemicalResidueCheckResource extends Resource
                 Forms\Components\Section::make()
                     ->schema([
                         Hidden::make('id'),
-                        DateTimePicker::make('entry_detail')
+                        Forms\Components\TextInput::make('person_name')
+                        ->label('Person Name')
+                        ->maxLength(255)
+                        ->required(), 
+                        DateTimePicker::make('entry_detail')->required()
                         ->label('Entry Detail')
                         ->native(false),
                         // DateTimePicker::make('next_inspection_detail')

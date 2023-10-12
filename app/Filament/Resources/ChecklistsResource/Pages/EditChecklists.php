@@ -25,6 +25,7 @@ class EditChecklists extends EditRecord
         try {
             $this->callHook('beforeValidate');
             $data = $this->form->getState();
+            // dd($data);
             $this->callHook('afterValidate');
             $data = $this->mutateFormDataBeforeSave($data);
             $this->callHook('beforeSave');
@@ -35,23 +36,34 @@ class EditChecklists extends EditRecord
                     $fieldName = $matches[1];
                     $checklistItemId = $matches[2];
                     $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                    // \Log::info('$fieldName',$fieldName);
+                    //  \Log::info('$fieldName'); 
                     // $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
                     // $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
-                    
                 } else {
                     // dd('No Match Found !');
                 }
             }
-            //  dd(@$dataByChecklistItem);
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $record = Entries::
                 // where('check_list_items_id', $checklistItemId)
                 // ->where('entry_id', $id)
                 // ->first();
+
+                // if (is_array($entryData) && array_key_exists('sub_section_items', $entryData)) {
+                //     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
+                // } 
+              
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
+                    \Log::info('before entryData', $entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
+                }  
+                \Log::info('entryData', $entryData);
                 $query = Entries::
                 where('check_list_items_id', $checklistItemId)
                 ->where('entry_id', $entryData['entry_id']);
-                $record = $query->first();                
+                $record = $query->first();    
+
                 if ($record) {
                     $this->handleRecordUpdate($record, $entryData);
                 }
@@ -151,9 +163,8 @@ class EditChecklists extends EditRecord
         protected function fillExistingEntries(): void
         {
             $id = Route::current()->parameter('record');
-            // dd($id);
             $existingEntries = Entries::where('entry_id', $id)->get();
-        
+            // dd($existingEntries);
             foreach ($existingEntries as $entry) {
                 $checklistItemId = $entry->check_list_items_id;
                 $fieldsToUpdate = [
@@ -167,16 +178,22 @@ class EditChecklists extends EditRecord
                     'entry_id',
                     'ATP_check_RLU',
                     'person_name',
-                    'entry_detail'
-
+                    'entry_detail' 
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {
                     $fullFieldName = "{$fieldName}_$checklistItemId";
-                    $this->data[$fullFieldName] = $entry->$fieldName;
+
+                    // Check if the field is 'sub_section_items' and if its value is a string
+                    if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != '') {
+                        $this->data[$fullFieldName] = explode(', ', $entry->$fieldName);
+                    } else {
+                        // For other fields, use the value as is
+                        $this->data[$fullFieldName] = $entry->$fieldName;
+                    }
+
                 }
-            }
-          
-            
+            } 
+            // dd($this->data); 
         }
 }

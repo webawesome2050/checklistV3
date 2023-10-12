@@ -94,8 +94,11 @@ class ViewChemicalResidueCheck extends ViewRecord
                 'entry_id',
                 'chemical_residue_check',
                 // 'next_inspection_detail',
+                'person_name',
+                'action_taken',
                 'entry_detail',
-                'sub_section_items'
+                'sub_section_items',
+                'comments_corrective_actions'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {
