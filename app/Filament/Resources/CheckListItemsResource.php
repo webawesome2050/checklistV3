@@ -24,7 +24,9 @@ class CheckListItemsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Master';
-    protected static ?string $navigationLabel = 'Checklist item master';
+    protected static ?string $navigationLabel = 'Machine Parts';
+    protected static ?string $breadcrumb = 'Machine Parts';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
@@ -52,13 +54,12 @@ class CheckListItemsResource extends Resource
                 ->preload()
                 ->label('Machinery Parts')
                 ->relationship('subSubSection', 'name')
-                ->native(false),
-                Select::make('check_list_id')
-                ->searchable()
-                // ->required()
-                ->preload()
-                ->relationship('checkList', 'name')
-                ->native(false),
+                ->native(false)
+                // Select::make('check_list_id')
+                // ->searchable()
+                // ->preload()
+                // ->relationship('checkList', 'name')
+                // ->native(false),
             ]);
     }
 
@@ -72,7 +73,7 @@ class CheckListItemsResource extends Resource
                 TextColumn::make('section.name')->searchable(),
                 TextColumn::make('subSection.name')->searchable(),
                 TextColumn::make('subSubSection.name')->searchable(),
-                TextColumn::make('checkList.name')->searchable(),
+                // TextColumn::make('checkList.name')->searchable(),
 
             ])
             ->striped()

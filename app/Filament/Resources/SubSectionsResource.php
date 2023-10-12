@@ -22,12 +22,12 @@ class SubSectionsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Master';
-    protected static ?string $navigationLabel = 'Machinery / Utensils';
+    protected static ?string $navigationLabel = 'Machine Name / GMP QC';
 
     
-    protected static ?string $modelLabel = 'Machinery / Utensils';
-    protected static ?string $pluralModelLabel = 'Machinery / Utensils';
-    protected static ?string $breadcrumb = 'Machinery / Utensils';
+    protected static ?string $modelLabel = 'Machine Name / GMP QC';
+    protected static ?string $pluralModelLabel = 'Machine Name / GMP QC';
+    protected static ?string $breadcrumb = 'Machine Name / GMP QC';
 
     public static function form(Form $form): Form
     {

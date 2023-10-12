@@ -22,12 +22,12 @@ class SubSubSectionsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
     protected static ?string $navigationGroup = 'Master';
-    protected static ?string $navigationLabel = 'Machinery Parts';
+    protected static ?string $navigationLabel = 'Machine Sections';
 
     
-    protected static ?string $modelLabel = 'Machinery Parts';
-    protected static ?string $pluralModelLabel = 'Machinery Parts';
-    protected static ?string $breadcrumb = 'Machinery Parts';
+    protected static ?string $modelLabel = 'Machine Sections';
+    protected static ?string $pluralModelLabel = 'Machine Sections';
+    protected static ?string $breadcrumb = 'Machine Sections';
 
     public static function form(Form $form): Form
     {

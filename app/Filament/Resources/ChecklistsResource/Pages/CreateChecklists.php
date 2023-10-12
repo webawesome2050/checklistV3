@@ -111,17 +111,19 @@ class CreateChecklists extends CreateRecord
                 } else {
                    // dd('No Match Found !');
                 }
-            }
-           
-            // \Log::info('dataByChecklistItem');
-            // \Log::info($dataByChecklistItem);
-            // \Log::info('dataByChecklistItem');
-            
-            // dd('Create Flow');
+            } 
+
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
+                // \Log::info('$entryData',$entryData); 
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData)) {
+                    // \Log::info('$entryData[sub_section_items]',$entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
+                }  
                 // $this->record = $this->handleRecordCreation($entryData);
                 CheckListItemsEntry::create($entryData);
             }
+
+
             // dd($entryData);
             // $this->record = $this->handleRecordCreation($data); 
             // $this->form->model($this->record)->saveRelationships();

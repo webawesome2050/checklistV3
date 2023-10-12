@@ -62,6 +62,7 @@ class EditChemicalResidueCheck extends EditRecord
             $checkList = CheckList::find($data['id']); 
             $checkList->update([
                 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
                 // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]);
 
@@ -183,7 +184,10 @@ class EditChemicalResidueCheck extends EditRecord
                     'chemical_residue_check',
                     // 'next_inspection_detail',
                     'entry_detail',
-                    'sub_section_items'
+                    'action_taken',
+                    'person_name',
+                    'sub_section_items',
+                    'comments_corrective_actions'
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {
