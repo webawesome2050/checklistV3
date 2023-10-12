@@ -79,7 +79,8 @@ class CreateMicroSwab extends CreateRecord
                 'name' => 'Micro SPC Swab Check'.'_'.now(), 
                 'site_id' => 2, 
                 'type_id' => 5,
-                'entry_detail' => $data['entry_detail'],    
+                'entry_detail' => $data['person_name'],    
+                'entry_detail' => $data['entry_detail'],  
                 // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]); 
             $entryId = $checkList->id;

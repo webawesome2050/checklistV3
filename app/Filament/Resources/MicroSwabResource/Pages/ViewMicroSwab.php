@@ -91,7 +91,10 @@ class ViewMicroSwab extends ViewRecord
                 'micro_SPC_swab',
                 // 'next_inspection_detail',
                 'entry_detail',
-                'sub_section_items'
+                'sub_section_items',
+                'person_name',
+                'sub_section_items',
+                'comments_corrective_actions'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {
