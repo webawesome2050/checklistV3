@@ -54,7 +54,10 @@ class CheckListItemsResource extends Resource
                 ->preload()
                 ->label('Machinery Parts')
                 ->relationship('subSubSection', 'name')
-                ->native(false)
+                ->native(false),
+                TextInput::make('m_frequency')->label('Micro SPC Swab Frequency'),
+                TextInput::make('c_frequency')->label('Chemical Residue Check Frequency'),
+                TextInput::make('a_frequency')->label('ATP check RLU Frequency')
                 // Select::make('check_list_id')
                 // ->searchable()
                 // ->preload()

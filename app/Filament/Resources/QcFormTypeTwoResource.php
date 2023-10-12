@@ -112,10 +112,16 @@ class QcFormTypeTwoResource extends Resource
                 $formFields = [];
                 $stepFields = [];
                 foreach ($checklistItemsInSubsection as $checklistItem) {
+
+                    $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
+                    $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
+
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
                  ->aside()
-                ->description($checklistItem->is_approved ? '' : 'Pending') 
+                //  ->description($description)
+                // ->description($checklistItem->is_approved ? '' : 'Pending') 
                 ->schema([ 
                      $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
                         ->label('Condition')
@@ -127,7 +133,7 @@ class QcFormTypeTwoResource extends Resource
                         $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
                         ->rows(1),  
-                        $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Person Responsible')->name('micro_SPC_swab'),
+                        // $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Person Responsible')->name('micro_SPC_swab'),
                         // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
                         // $formFields[] = Select::make("TP_check_RLU_$checklistItem->id")
                         //     ->label('ATP check RLU')
@@ -296,7 +302,7 @@ class QcFormTypeTwoResource extends Resource
             // ])
 
             ->bulkActions([
-                // Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make(),
             ]
         )
         ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 2));

@@ -54,13 +54,10 @@ class ChecklistsResource extends Resource
 
     public static function form(Form $form): Form
     { 
- 
-       
         $optionsValue = [];
         for ($i = 0; $i <= 60; $i++) {
             $optionsValue[$i] = $i;
         }
-
         $url = request()->url(); 
         preg_match('/\/checklists\/(\d+)\/edit/', $url, $matches);
         if (isset($matches[1])) {
@@ -69,9 +66,6 @@ class ChecklistsResource extends Resource
         } else {
             $id = session('checklist_id');
         } 
-
-        
-         
         $checklistItems = CheckListItem::where('check_list_id', 1)->get();
         $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
 
@@ -116,6 +110,7 @@ class ChecklistsResource extends Resource
                 if ($matchingItem) {
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
+                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->compact();
                     
@@ -142,8 +137,17 @@ class ChecklistsResource extends Resource
 
                 foreach ($checklistItemsInSubsection as $checklistItem) {
                    
+                    // $description = $checklistItem->m_frequency ? 'Micro SPC Swab Frequency'.$checklistItem->m_frequency : '';
+                    // $description.=$checklistItem->c_frequency ? '\n'.'Chemical Residue Check Frequency'.$checklistItem->c_frequency : '';
+                    // $description.=$checklistItem->a_frequency ? '\n'.'ATP check RLU Frequency'.$checklistItem->a_frequency : '';
+
+                    $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
+                    $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
+
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
+                 ->description($description)
                  ->aside()
                 ->schema([ 
                      $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")

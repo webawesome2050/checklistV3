@@ -22,7 +22,7 @@ use App\Models\CheckListItemsEntry as Entries;
 class ViewQcFormTypeTwo extends ViewRecord
 {
     protected static string $resource = QcFormTypeTwoResource::class;
-
+    protected static ?string $title = 'GMP';
 
     protected function getHeaderActions(): array
     {

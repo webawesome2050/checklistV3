@@ -16,6 +16,7 @@ class CreateQcFormTypeTwo extends CreateRecord
 {
     protected static string $resource = QcFormTypeTwoResource::class;
 
+    protected static ?string $title = 'GMP';
 
 
     public function create(bool $another = false): void
