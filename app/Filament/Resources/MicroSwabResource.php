@@ -2,10 +2,12 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\MicroSwabResource\Pages;
-use App\Filament\Resources\MicroSwabResource\RelationManagers;
+use Filament\Forms;
 use App\Models\Role;
+use Filament\Tables;
+use Filament\Forms\Form;
 use App\Models\CheckList;
+use Filament\Tables\Table;
 use App\Models\CheckListItem;
 use App\Models\EntriesMaster;
 use App\Models\SubSectionItem;
@@ -13,11 +15,6 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
 use Filament\Tables\Actions\Action;
-use Filament\Forms;
-use Filament\Forms\Form;
-use Filament\Tables;
-use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -30,8 +27,12 @@ use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
+use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
+use App\Filament\Resources\MicroSwabResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use App\Filament\Resources\MicroSwabResource\RelationManagers;
 
 class MicroSwabResource extends Resource
 {
@@ -90,10 +91,13 @@ class MicroSwabResource extends Resource
                         $radioOptions[$subSectionItem->name] = $subSectionItem->name;
                     }
                     // \Log::info($radioOptions);
-                    $itemCode = Radio::make("sub_section_items_$subsectionId")
+                    // $itemCode = Radio::make("sub_section_items_$subsectionId")
+                    //     ->label('')
+                    //     ->options($radioOptions)
+                    //     ->inline();
+                    $itemCode = CheckboxList::make("sub_section_items_$subsectionId")
                         ->label('')
-                        ->options($radioOptions)
-                        ->inline();
+                        ->options($radioOptions);
                 } else {
                     $formFields = [];
                 }
@@ -135,8 +139,13 @@ class MicroSwabResource extends Resource
 
                 foreach ($checklistItemsInSubsection as $checklistItem) {
                    
+                    $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
+                    $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
+
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
+                 ->description($description)
                  ->aside()
                 ->schema([ 
                         $formFields[] =  Textinput::make("micro_SPC_swab_{$checklistItem->id}")

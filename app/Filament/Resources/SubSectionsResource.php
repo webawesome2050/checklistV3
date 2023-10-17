@@ -55,7 +55,7 @@ class SubSectionsResource extends Resource
         return $table
             ->columns([
                 //
-                TextColumn::make('id'),
+                // TextColumn::make('id'),
                 TextColumn::make('name')->searchable(),
                 TextColumn::make('section.name')->searchable()
 
@@ -67,7 +67,7 @@ class SubSectionsResource extends Resource
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\DeleteBulkAction::make(),
+                // Tables\Actions\DeleteBulkAction::make(),
             ]);
     }
 

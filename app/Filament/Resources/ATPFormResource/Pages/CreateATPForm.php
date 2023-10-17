@@ -78,8 +78,9 @@ class CreateATPForm extends CreateRecord
             $checkList  =  CheckList::create([
                 'name' => 'ATP check RLU'.'_'.now(), 
                 'site_id' => 2, 
-                'type_id' => 3,
-                'entry_detail' => $data['entry_detail'],    
+                'type_id' => 3, 
+                'entry_detail' => $data['entry_detail'],  
+                'person_name' => $data['person_name']    
                 // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]); 
             $entryId = $checkList->id;
@@ -113,6 +114,10 @@ class CreateATPForm extends CreateRecord
             // dd('Create Flow');
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $this->record = $this->handleRecordCreation($entryData);
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData)) {
+                    // \Log::info('$entryData[sub_section_items]',$entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
+                }  
                 CheckListItemsEntry::create($entryData);
             }
             // dd($entryData);

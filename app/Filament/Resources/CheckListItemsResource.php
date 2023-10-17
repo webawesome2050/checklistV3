@@ -44,7 +44,7 @@ class CheckListItemsResource extends Resource
                 ->relationship('section', 'name'),
                 Select::make('sub_section_id')
                 ->searchable()
-                ->label(' Machinery / Utensils')
+                ->label('Machine Name / GMP QC')
                 // ->required()
                 ->preload()
                 ->relationship('subSection', 'name')

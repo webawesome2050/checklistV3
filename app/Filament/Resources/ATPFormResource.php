@@ -30,6 +30,7 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
+use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use App\Filament\Resources\ATPFormResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -95,10 +96,13 @@ class ATPFormResource extends Resource
                         $radioOptions[$subSectionItem->name] = $subSectionItem->name;
                     }
                     // \Log::info($radioOptions);
-                    $itemCode = Radio::make("sub_section_items_$subsectionId")
-                        ->label('')
-                        ->options($radioOptions)
-                        ->inline();
+                    // $itemCode = Radio::make("sub_section_items_$subsectionId")
+                    //     ->label('')
+                    //     ->options($radioOptions)
+                    //     ->inline();
+                    $itemCode = CheckboxList::make("sub_section_items_$subsectionId")
+                    ->label('')
+                    ->options($radioOptions);
                 } else {
                     $formFields = [];
                 }

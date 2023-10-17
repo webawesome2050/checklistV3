@@ -80,7 +80,8 @@ class CreateChemicalResidueCheck extends CreateRecord
                 'name' => 'Chemical Residue Check'.'_'.now(), 
                 'site_id' => 2, 
                 'type_id' => 4,
-                'entry_detail' => $data['entry_detail'],    
+                'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name']      
                 // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]); 
             $entryId = $checkList->id;
@@ -114,6 +115,10 @@ class CreateChemicalResidueCheck extends CreateRecord
             // dd('Create Flow');
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $this->record = $this->handleRecordCreation($entryData);
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData)) {
+                    // \Log::info('$entryData[sub_section_items]',$entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
+                }  
                 CheckListItemsEntry::create($entryData);
             }
             // dd($entryData);

@@ -183,15 +183,11 @@ class EditChecklists extends EditRecord
         
                 foreach ($fieldsToUpdate as $fieldName) {
                     $fullFieldName = "{$fieldName}_$checklistItemId";
-
-                    // Check if the field is 'sub_section_items' and if its value is a string
                     if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != '') {
                         $this->data[$fullFieldName] = explode(', ', $entry->$fieldName);
                     } else {
-                        // For other fields, use the value as is
                         $this->data[$fullFieldName] = $entry->$fieldName;
                     }
-
                 }
             } 
             // dd($this->data); 
