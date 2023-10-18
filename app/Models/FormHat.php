@@ -21,7 +21,14 @@ class FormHat extends Model
         'created_at',
         'updated_at',
         'comments',
-        'site_id'
+        'site_id',
+        'date',
+        'time',
+        'room_temperature',
+        'air_flow_rate',
+        'temp_storage_3',
+        'room_pressure',
+        'verified_by'
      ];
 
      public function hat_lines()

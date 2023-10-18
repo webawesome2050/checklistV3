@@ -29,50 +29,82 @@ class FormHatResource extends Resource
 
     public static function form(Form $form): Form
     {
+
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->maxLength(255),
-                // Forms\Components\TextInput::make('version')
-                //     ->maxLength(255),
-                // Forms\Components\TextInput::make('issues_by')
-                //     ->maxLength(255),
-                // Forms\Components\Textarea::make('notes')
-                //     ->maxLength(65535)
-                //     ->columnSpanFull(),
-                // Forms\Components\Toggle::make('is_approved'),
-                Forms\Components\Textarea::make('comments')
-                    ->maxLength(65535)
-                    ->columnSpanFull(),
-                    TableRepeater::make('hat_lines')
-            ->relationship()
-            ->schema([
-                DatePicker::make('date'),
-                TimePicker::make('time'), 
-                TextInput::make('room_temperature'),
-                TextInput::make('air_flow_rate'),
-                TextInput::make('room_pressure'),
-                Toggle::make('is_verified')
-                ->hidden(auth()->user()->hasRole(Role::ROLES['Checker'])),
-                // TextInput::make('is_approved'),
-                // TextInput::make('is_verified'),
-                // TextInput::make('is_verified'),
-            ])
-            ->label('New Entry')
-            ->columnSpan('full')
-            ]);
+        ->schema([
+            Forms\Components\Section::make()
+                ->schema([
+                    Forms\Components\TextInput::make('name')->label('Person name')
+                    ->maxLength(255)
+                    ->required(),
+                    DatePicker::make('date')
+                    ->required()
+                    ->native(false),
+                    TimePicker::make('time')
+                    ->required(),  
+                Forms\Components\Textarea::make('notes')
+                    ->label('Comments')
+                    ->rows(1)
+                    // ->columnSpanFull(),
+                ])
+                ->columns(2)
+                ->columnSpan(['lg' =>4]),
+
+            Forms\Components\Section::make()
+                ->schema([ 
+                    // DatePicker::make('date'),
+                    // TimePicker::make('time'), 
+                    TextInput::make('room_temperature'),
+                    TextInput::make('air_flow_rate'),
+                    TextInput::make('room_pressure'),
+                    TextInput::make('verified_by'),
+                    // Toggle::make('is_verified')
+                    // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
+                ])
+                ->columns(2)
+                ->columnSpan(['lg' => 5]),
+        ])
+        ->columns(12); 
+
+        // return $form
+        //     ->schema([
+        //         Forms\Components\TextInput::make('name')
+        //             ->maxLength(255), 
+        //         DatePicker::make('date')
+        //         ->required()
+        //         ->native(false),
+        //         TimePicker::make('time')
+        //         ->required(),  
+        //         Forms\Components\Textarea::make('comments')
+        //             ->maxLength(65535),
+        //             TableRepeater::make('hat_lines')
+        //     ->relationship()
+        //     ->schema([
+        //         DatePicker::make('date'),
+        //         TimePicker::make('time'), 
+        //         TextInput::make('room_temperature'),
+        //         TextInput::make('air_flow_rate'),
+        //         TextInput::make('room_pressure'),
+        //         Toggle::make('is_verified')
+        //         ->hidden(auth()->user()->hasRole(Role::ROLES['Checker'])), 
+        //     ])
+        //     ->label('New Entry')
+        //     ->columnSpan('full')
+        //     ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                // Tables\Columns\TextColumn::make('name')
+                //     ->searchable(),
                 // Tables\Columns\TextColumn::make('version')
                 //     ->searchable(),
                 // Tables\Columns\TextColumn::make('issues_by')
                 //     ->searchable(),
+                Tables\Columns\TextColumn::make('room_temperature')
+                ->label('Room Temperature'),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),

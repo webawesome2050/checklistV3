@@ -140,7 +140,9 @@ protected function getRedirectUrl(): string
                 'action_taken',
                 'entry_id',
                 'entry_detail',
-                'person_name'
+                'person_name', 
+                'date',
+                'time'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {

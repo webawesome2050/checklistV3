@@ -178,12 +178,17 @@ class QcFormTypeTwoResource extends Resource
                     ->maxLength(255)
                     ->required(), 
                     Hidden::make('id'),
-                    DateTimePicker::make('entry_detail')
-                    ->label('Entry Date Detail')
+                    DatePicker::make('date')
                     ->required()
                     ->native(false),
+                    TimePicker::make('time')
+                    ->required(), 
+                    // DateTimePicker::make('entry_detail')
+                    // ->label('Entry Date Detail')
+                    // ->required()
+                    // ->native(false),
                 ])
-               ->columns(2)
+               ->columns(3)
                 ->columnSpan(['lg' =>5]),
 
             Forms\Components\Section::make()
