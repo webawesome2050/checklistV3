@@ -66,6 +66,13 @@ class EditATPForm extends EditRecord
 
             
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
+
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
+                    // \Log::info('before entryData', $entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
+                }  
+                // \Log::info('entryData', $entryData);
+
                 $query = Entries::
                 where('check_list_items_id', $checklistItemId)
                 ->where('entry_id', $entryData['entry_id']);
@@ -187,10 +194,20 @@ class EditATPForm extends EditRecord
                     'comments_corrective_actions'
                 ];
         
+                // foreach ($fieldsToUpdate as $fieldName) {
+                //     $fullFieldName = "{$fieldName}_$checklistItemId";
+                //     $this->data[$fullFieldName] = $entry->$fieldName;
+                // }
+
                 foreach ($fieldsToUpdate as $fieldName) {
                     $fullFieldName = "{$fieldName}_$checklistItemId";
-                    $this->data[$fullFieldName] = $entry->$fieldName;
+                    if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != '') {
+                        $this->data[$fullFieldName] = explode(', ', $entry->$fieldName);
+                    } else {
+                        $this->data[$fullFieldName] = $entry->$fieldName;
+                    } 
                 }
+
             }
 
             // dd($this->data);

@@ -62,12 +62,16 @@ class EditMicroSwab extends EditRecord
             $checkList = CheckList::find($data['id']); 
             $checkList->update([
                 'entry_detail' => $data['entry_detail'],
-                'person_name' => $data['person_name'],
+                'person_name' => $data['person_name']   
                 // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]);
 
             
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
+                    \Log::info('before entryData', $entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
+                }  
                 $query = Entries::
                 where('check_list_items_id', $checklistItemId)
                 ->where('entry_id', $entryData['entry_id']);
@@ -190,9 +194,18 @@ class EditMicroSwab extends EditRecord
                     'comments_corrective_actions'
                 ];
         
+                // foreach ($fieldsToUpdate as $fieldName) {
+                //     $fullFieldName = "{$fieldName}_$checklistItemId";
+                //     $this->data[$fullFieldName] = $entry->$fieldName;
+                // }
+
                 foreach ($fieldsToUpdate as $fieldName) {
                     $fullFieldName = "{$fieldName}_$checklistItemId";
-                    $this->data[$fullFieldName] = $entry->$fieldName;
+                    if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != '') {
+                        $this->data[$fullFieldName] = explode(', ', $entry->$fieldName);
+                    } else {
+                        $this->data[$fullFieldName] = $entry->$fieldName;
+                    } 
                 }
             }
 

@@ -29,7 +29,9 @@ class CheckList extends Model
         'comments',
         'entry_detail',
         'next_inspection_detail',
-        'person_name'
+        'person_name',
+        'date',
+        'time'
     ];
 
 

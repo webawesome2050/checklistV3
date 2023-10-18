@@ -9,7 +9,7 @@ use Filament\Resources\Pages\ListRecords;
 class ListSubSections extends ListRecords
 {
     protected static string $resource = SubSectionsResource::class;
-    protected static ?string $title = 'Machinery / Utensils';
+    protected static ?string $title = 'Machine Name / GMP QC';
 
 
     
@@ -17,7 +17,7 @@ class ListSubSections extends ListRecords
     protected function getActions(): array
     {
         return [
-            Actions\CreateAction::make()->label('Create Machinery / Utensils'),
+            Actions\CreateAction::make()->label('Create Machine Name / GMP QC'),
         ];
     }
 }

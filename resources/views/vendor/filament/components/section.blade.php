@@ -60,7 +60,7 @@
             'fi-section',
             match ($aside) {
                 true => 'grid grid-cols-1 items-start gap-x-6 gap-y-4 md:grid-cols-3',
-                false => 'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
+                false => 'rounded-xl bg-gray-900shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10',
             },
         ])
     }}
@@ -71,7 +71,7 @@
                 x-on:click="isCollapsed = ! isCollapsed"
             @endif
             @class([
-                'flex items-center gap-x-3 overflow-hidden',
+                'flex items-center gap-x-3 overflow-hidden bg-gray-900',
                 'cursor-pointer' => $collapsible,
                 match ($compact) {
                     true => 'px-4 py-2.5',
@@ -150,7 +150,7 @@
         <div
             @class([
                 'fi-section-content',
-                'rounded-xl bg-white shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $aside,
+                'rounded-xl bg-gray-900shadow-sm ring-1 ring-gray-950/5 dark:bg-gray-900 dark:ring-white/10' => $aside,
                 match ($compact) {
                     true => 'p-4',
                     false => 'p-6',
