@@ -103,6 +103,10 @@ class FormHatResource extends Resource
                 //     ->searchable(),
                 // Tables\Columns\TextColumn::make('issues_by')
                 //     ->searchable(),
+                Tables\Columns\TextColumn::make('date')
+                ->searchable(),
+            Tables\Columns\TextColumn::make('time')
+                ->searchable(),
                 Tables\Columns\TextColumn::make('room_temperature')
                 ->label('Room Temperature'),
                 Tables\Columns\TextColumn::make('created_at')
