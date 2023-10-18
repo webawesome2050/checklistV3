@@ -40,7 +40,9 @@ class CreateQcFormTypeTwo extends CreateRecord
             $checkList  =  CheckList::create([
                 'name' => 'Form GM1- GMP checklist'.'_'.now(), 
                 'site_id' => 2, 
-                'entry_detail' => $data['entry_detail'],    
+                // 'entry_detail' => $data['entry_detail'],    
+                'date' => $data['date'],    
+                'time' => $data['time'],    
                 'person_name' => $data['person_name'],    
                 'type_id' => 2
             ]);
