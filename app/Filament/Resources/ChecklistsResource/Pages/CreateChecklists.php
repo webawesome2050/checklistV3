@@ -85,8 +85,10 @@ class CreateChecklists extends CreateRecord
                 'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(), 
                 'site_id' => 2, 
                 'type_id' => 1,
-                'entry_detail' => $data['entry_detail'],    
-                'person_name' => $data['person_name']  
+                // 'entry_detail' => $data['entry_detail'],    
+                'date' => $data['date'],    
+                'time' => $data['time'],
+                'person_name' => $data['person_name'] 
             ]);
     
             $entryId = $checkList->id;

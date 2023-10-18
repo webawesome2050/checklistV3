@@ -30,8 +30,8 @@ class ListQcFormTypeTwos extends ListRecords
             'All' => Tab::make()->icon('heroicon-m-check-badge'),
             'Approved' => Tab::make()->icon('heroicon-m-check-circle')
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', true)),
-            'Pending' => Tab::make()->icon('heroicon-m-x-circle')
-                ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', false)),
+            // 'Pending' => Tab::make()->icon('heroicon-m-x-circle')
+            //     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', false)),
         ];
     }
 

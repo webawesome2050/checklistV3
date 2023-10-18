@@ -83,13 +83,30 @@ class ViewChecklists extends ViewRecord
                 'TP_check_RLU',
                 'comments_corrective_actions',
                 'action_taken',
-                'entry_id'
+                'sub_section_items',
+                'entry_id',
+                'ATP_check_RLU',
+                'person_name',
+                'entry_detail',
+                'date',
+                'time'
             ];
     
+            // foreach ($fieldsToUpdate as $fieldName) {
+            //     $fullFieldName = "{$fieldName}_$checklistItemId";
+            //     $this->data[$fullFieldName] = $entry->$fieldName;
+            // }
+
             foreach ($fieldsToUpdate as $fieldName) {
                 $fullFieldName = "{$fieldName}_$checklistItemId";
-                $this->data[$fullFieldName] = $entry->$fieldName;
+                if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != '') {
+                    $this->data[$fullFieldName] = explode(', ', $entry->$fieldName);
+                } else {
+                    $this->data[$fullFieldName] = $entry->$fieldName;
+                }
             }
+
+            
         }
     }
     

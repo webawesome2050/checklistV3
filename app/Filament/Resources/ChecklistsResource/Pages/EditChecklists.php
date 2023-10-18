@@ -178,7 +178,9 @@ class EditChecklists extends EditRecord
                     'entry_id',
                     'ATP_check_RLU',
                     'person_name',
-                    'entry_detail' 
+                    'entry_detail',
+                    'date',
+                    'time'
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {

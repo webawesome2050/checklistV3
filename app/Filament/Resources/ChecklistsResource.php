@@ -30,6 +30,8 @@ use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TimePicker;
 use App\Models\CheckListItemsEntry as Entries;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use App\Filament\Resources\ChecklistsResource\Pages;
@@ -202,13 +204,18 @@ class ChecklistsResource extends Resource
                     ->label('Person Name')
                     ->maxLength(255)
                     ->required(), 
-                    Hidden::make('id'),
-                    DateTimePicker::make('entry_detail')
-                    ->label('Entry Date Detail')
+                    Hidden::make('id'), 
+                    DatePicker::make('date')
                     ->required()
                     ->native(false),
+                    TimePicker::make('time')
+                    ->required(),  
+                    // DateTimePicker::make('entry_detail')
+                    // ->label('Entry Date Detail')
+                    // ->required()
+                    // ->native(false),
                 ])
-               ->columns(2)
+               ->columns(3)
                 ->columnSpan(['lg' =>5]),
 
             Forms\Components\Section::make()
