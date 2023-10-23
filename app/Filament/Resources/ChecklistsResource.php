@@ -46,10 +46,9 @@ class ChecklistsResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     // protected static ?string $title = 'QC Forms';
-    protected static ?string $navigationGroup = 'Forms';
+    protected static ?string $navigationGroup = 'Site 1263 Forms';
     // protected static ?string $navigationLabel = 'Cleanliness Checklist';
     protected static ?string $navigationLabel = 'Pre-Op forms ';
-
 
     protected static ?string $breadcrumb = 'Pre-Op forms ';
 
@@ -110,11 +109,20 @@ class ChecklistsResource extends Resource
                 });
 
                 if ($matchingItem) {
+
+                   if($sectionName == 'HIGH RISK AREA') {  
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
                     ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->compact();
+                } else {
+                    $subsectionName = $matchingItem->subSection->name;  
+                    $subsectionSection = Section::make($subsectionName)
+                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    ->columns(4)
+                    ->compact(); 
+                }
                     
                 } else {
                     $subsectionSection = Section::make('Section')
@@ -143,10 +151,13 @@ class ChecklistsResource extends Resource
                     // $description.=$checklistItem->c_frequency ? '\n'.'Chemical Residue Check Frequency'.$checklistItem->c_frequency : '';
                     // $description.=$checklistItem->a_frequency ? '\n'.'ATP check RLU Frequency'.$checklistItem->a_frequency : '';
 
-                    $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
-                    $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
-                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
-
+                    if($sectionName == 'HIGH RISK AREA') {  
+                        $description = $checklistItem->m_frequency ? 'Micro SPC Swab =>'.$checklistItem->m_frequency : '';
+                        $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                        $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
+                    } else {
+                        $description = '';
+                    }
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
                  ->description($description)

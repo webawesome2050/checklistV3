@@ -13,11 +13,17 @@ class Section extends Model
 
     protected $fillable = [
         'name',
+        'site_id'
     ];
 
     public function checklist()
     {
         return $this->belongsTo(CheckList::class, 'check_list_id');
+    }
+
+    public function site()
+    {
+        return $this->belongsTo(Section::class, 'site_id');
     }
 
 

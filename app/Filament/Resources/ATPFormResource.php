@@ -43,7 +43,7 @@ class ATPFormResource extends Resource
     protected static ?string $slug = 'atp-check';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     // protected static ?string $navigationGroup = 'QC Forms';
-    protected static ?string $navigationGroup = 'Forms';
+    protected static ?string $navigationGroup = 'Site 1263 Forms';
 
     protected static ?int $navigationSort = 6;
 
@@ -117,6 +117,7 @@ class ATPFormResource extends Resource
                 if ($matchingItem) {
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
+                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->compact();
                     
@@ -142,9 +143,14 @@ class ATPFormResource extends Resource
                 }
 
                 foreach ($checklistItemsInSubsection as $checklistItem) {
+
+                    // $description = $checklistItem->m_frequency ? 'Micro SPC Swab =>'.$checklistItem->m_frequency : '';
+                    // $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                    $description = $checklistItem->a_frequency ? ' ATP check RLU. Frequency =>'.$checklistItem->a_frequency : '';
                    
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
+                 ->description($description)
                  ->aside()
                 ->schema([ 
                         // $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")

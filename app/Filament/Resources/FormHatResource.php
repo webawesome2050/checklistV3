@@ -24,7 +24,7 @@ class FormHatResource extends Resource
     protected static ?string $model = FormHat::class;
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     // protected static ?string $navigationGroup = 'QC Forms';
-    protected static ?string $navigationGroup = 'Forms';
+    protected static ?string $navigationGroup = 'Site 1263 Forms';
     protected static ?string $navigationLabel = 'HAT';
 
     public static function form(Form $form): Form
