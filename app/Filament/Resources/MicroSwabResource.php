@@ -112,6 +112,10 @@ class MicroSwabResource extends Resource
                 if ($matchingItem) {
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
+                    ->extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
+                    ->collapsible()
                     ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->compact();
@@ -130,6 +134,9 @@ class MicroSwabResource extends Resource
                 if(count($subSectionItems) > 0) {
                     $stepFields[]   =  
                     Section::make('Select machine number')
+                    ->extraAttributes([
+                        'class' => 'machine-section'
+                    ])
                     ->icon('heroicon-m-megaphone')
                     // ->aside()
                    ->schema([ 

@@ -97,14 +97,21 @@ class QcFormTypeTwoResource extends Resource
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
                     // ->description('Step Description')
+                    ->extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
                     ->columns(4)
                     ->compact()
-                    ->collapsed(); // Set the section to be collapsed by default
+                    ->collapsible(); // Set the section to be collapsed by default
                     
                 } else {
                     $subsectionSection = Section::make($sectionName)
+                    ->extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
                     // ->description('Step Description')
                     ->columns(4)
+                    ->collapsible()
                     ->compact();
                     // ->collapsed(); // Set the section to be collapsed by default
                 }
