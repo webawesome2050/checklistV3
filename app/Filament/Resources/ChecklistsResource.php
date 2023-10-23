@@ -113,22 +113,33 @@ class ChecklistsResource extends Resource
                    if($sectionName == 'HIGH RISK AREA') {  
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
+                    ->extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
                     ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
+                    ->collapsible()
                     ->compact();
                 } else {
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
+                    ->extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
                     // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
+                    ->collapsible()
                     ->compact(); 
                 }
                     
                 } else {
                     $subsectionSection = Section::make('Section')
+                    >extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
                     ->columns(4)
-                    ->compact()
-                    ->collapsed(); // Set the section to be collapsed by default
+                    ->compact() 
+                    ->collapsible(); // Set the section to be collapsed by default
                 }
                 if(count($subSectionItems) > 0) {
                     // \Log::info($formFields);
@@ -138,6 +149,9 @@ class ChecklistsResource extends Resource
                 if(count($subSectionItems) > 0) {
                     $stepFields[]   =  
                     Section::make('Select machine number')
+                    ->extraAttributes([
+                        'class' => 'machine-section'
+                    ])
                     ->icon('heroicon-m-megaphone')
                     // ->aside()
                    ->schema([ 

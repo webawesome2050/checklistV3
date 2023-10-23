@@ -115,6 +115,10 @@ class ChemicalResidueCheckResource extends Resource
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
                     // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    ->extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
+                    ->collapsible()
                     ->columns(4)
                     ->compact();
                     
@@ -132,6 +136,9 @@ class ChemicalResidueCheckResource extends Resource
                 if(count($subSectionItems) > 0) {
                     $stepFields[]   =  
                     Section::make('Select machine number')
+                    ->extraAttributes([
+                        'class' => 'machine-section'
+                    ])
                     ->icon('heroicon-m-megaphone')
                     // ->aside()
                    ->schema([ 
