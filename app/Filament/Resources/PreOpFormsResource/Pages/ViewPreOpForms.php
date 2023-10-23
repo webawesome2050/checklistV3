@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\ChecklistsResource\Pages;
+namespace App\Filament\Resources\PreOpFormsResource\Pages;
+
+
 
 use Filament\Actions;
 use Filament\Forms\Components\Select;
@@ -11,17 +13,15 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Placeholder;
 use Illuminate\Support\Facades\Route;
 
-use Filament\Resources\Pages\ViewRecord;
-use App\Filament\Resources\ChecklistsResource;
-
-
 use App\Models\CheckListItemsEntry as Entries;
 
 
-class ViewChecklists extends ViewRecord
-{
-    protected static string $resource = ChecklistsResource::class;
+use App\Filament\Resources\PreOpFormsResource;
+use Filament\Resources\Pages\ViewRecord;
 
+class ViewPreOpForms extends ViewRecord
+{
+    protected static string $resource = PreOpFormsResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -40,7 +40,7 @@ class ViewChecklists extends ViewRecord
                     $this->record->comments = $data['comments'];
                     $this->record->is_approved = true; // $data['status']; 
                     $this->record->save();
-                    $this->redirect('/checklists');
+                    $this->redirect('/pre-op-forms');
                 })
                 // ->slideOver()
                 // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))

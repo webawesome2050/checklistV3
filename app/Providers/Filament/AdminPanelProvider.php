@@ -30,8 +30,14 @@ class AdminPanelProvider extends PanelProvider
             ->maxContentWidth('full')
             ->login()
             ->colors([
-                'primary' => "#0E2C50",
-                'secondary' => "#000000",
+                // 'primary' => "#0E2C50",
+                // 'secondary' => "#000000",
+                // 'danger' => Color::Rose,
+                'gray' => Color::Gray,
+                'info' => Color::Blue,
+                'primary' => Color::Rose,
+                'success' => Color::Emerald,
+                'warning' => Color::Orange,
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
