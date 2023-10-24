@@ -29,6 +29,8 @@ class SubSectionsResource extends Resource
     protected static ?string $pluralModelLabel = 'Machine Name / GMP QC';
     protected static ?string $breadcrumb = 'Machine Name / GMP QC';
 
+    protected static ?string $slug = 'machine-gmp-qc';
+
     public static function form(Form $form): Form
     {
       

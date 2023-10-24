@@ -29,6 +29,10 @@ class SubSubSectionsResource extends Resource
     protected static ?string $pluralModelLabel = 'Machine Sections';
     protected static ?string $breadcrumb = 'Machine Sections';
 
+    protected static ?string $slug = 'machinery-sections';
+
+   
+
     public static function form(Form $form): Form
     {
         return $form

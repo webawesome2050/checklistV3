@@ -69,7 +69,7 @@ class PreOpFormsResource extends Resource
         $checklistItems = CheckListItem::where('check_list_id', 20)
         ->where('site_id', 1)
         ->get();
-        $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
+        $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id'])->sortKeys();
 
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
             $sectionName = $subsectionGroups->first()->first()->section->name;
