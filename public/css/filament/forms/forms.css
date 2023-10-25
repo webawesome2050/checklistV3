@@ -85,3 +85,54 @@ easymde/dist/easymde.min.css:
   background: #0e2c50 !important;
   color: #FFF !important;
 }
+
+
+.section-portion-yellow header.cursor-pointer {
+  /* background-color: #0E2C50 !important; */
+  background-color: #ffc107 !important;  
+  color: #FFFFFF !important;
+}
+
+
+.section-portion-yellow header.cursor-pointer h3 {
+  color: #FFFFFF !important;
+}
+
+
+.section-portion-yellow .fi-section-content {
+  background-color: #0e2c500d !important;  
+}
+
+
+
+.section-portion-orange header.cursor-pointer {
+  /* background-color: #0E2C50 !important; */
+  background-color: #f13636 !important;  
+  color: #FFFFFF !important;
+}
+
+
+.section-portion-orange header.cursor-pointer h3 {
+  color: #FFFFFF !important;
+}
+
+
+.section-portion-orange .fi-section-content {
+  background-color: #0e2c500d !important;  
+}
+
+.section-portion-green header.cursor-pointer {
+  /* background-color: #0E2C50 !important; */
+  background-color: #8bc34a !important;  
+  color: #FFFFFF !important;
+} 
+
+.section-portion-green header.cursor-pointer h3 {
+  color: #FFFFFF !important;
+}
+
+
+.section-portion-green .fi-section-content {
+  background-color: #0e2c500d !important;  
+}
+

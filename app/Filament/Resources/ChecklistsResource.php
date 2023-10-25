@@ -110,13 +110,33 @@ class ChecklistsResource extends Resource
 
                 if ($matchingItem) {
 
-                   if($sectionName == 'HIGH RISK AREA') {  
+                if($sectionName == 'HIGH RISK AREA') {  
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
-                        'class' => 'section-portion cursor-pointer'
+                        'class' => 'section-portion-yellow cursor-pointer'
                     ])
-                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    ->columns(4)
+                    ->collapsible()
+                    ->compact();
+                } else if($sectionName == 'BASE PACKING AREA') {  
+                    $subsectionName = $matchingItem->subSection->name;  
+                    $subsectionSection = Section::make($subsectionName)
+                    ->extraAttributes([
+                        'class' => 'section-portion-orange cursor-pointer'
+                    ])
+                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    ->columns(4)
+                    ->collapsible()
+                    ->compact();
+                } else if($sectionName == 'KITCHEN AREA') {  
+                    $subsectionName = $matchingItem->subSection->name;  
+                    $subsectionSection = Section::make($subsectionName)
+                    ->extraAttributes([
+                        'class' => 'section-portion-green cursor-pointer'
+                    ])
+                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->collapsible()
                     ->compact();
@@ -134,7 +154,7 @@ class ChecklistsResource extends Resource
                     
                 } else {
                     $subsectionSection = Section::make('Section')
-                    >extraAttributes([
+                    ->extraAttributes([
                         'class' => 'section-portion cursor-pointer'
                     ])
                     ->columns(4)
@@ -214,7 +234,8 @@ class ChecklistsResource extends Resource
                 $subsectionSection->schema($stepFields); 
                 $sectionComponents[] = $subsectionSection; 
             }
-            $sectionStep = Tab::make($sectionName)->schema($sectionComponents);
+            $sectionStep = Tab::make($sectionName) 
+            ->schema($sectionComponents);
             $wizardSteps[] = $sectionStep;
         }
         // $form->schema([

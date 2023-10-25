@@ -1,17 +1,18 @@
 <?php
 
-namespace App\Filament\Resources\QcFormTypeTwoResource\Pages;
+namespace App\Filament\Resources\GmpSiteOneResource\Pages;
 
-use App\Filament\Resources\QcFormTypeTwoResource;
+use App\Filament\Resources\GmpSiteOneResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+
 
 use Filament\Resources\Pages\ListRecords\Tab;
 use Illuminate\Database\Eloquent\Builder; 
 
-class ListQcFormTypeTwos extends ListRecords
+class ListGmpSiteOnes extends ListRecords
 {
-    protected static string $resource = QcFormTypeTwoResource::class;
+    protected static string $resource = GmpSiteOneResource::class;
 
     protected static ?string $title = 'GMP';
 
@@ -34,5 +35,4 @@ class ListQcFormTypeTwos extends ListRecords
             //     ->modifyQueryUsing(fn (Builder $query) => $query->where('is_approved', false)),
         ];
     }
-
 }

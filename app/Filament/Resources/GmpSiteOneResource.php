@@ -2,15 +2,18 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\GmpSiteOneResource\Pages;
+use App\Filament\Resources\GmpSiteOneResource\RelationManagers;
 use Filament\Forms;
-use App\Models\Role;
-use Filament\Tables;
 use Filament\Forms\Form;
-use App\Models\CheckList;
+use Filament\Resources\Resource;
+use Filament\Tables;
 use Filament\Tables\Table;
+
+use App\Models\Role;
+use App\Models\CheckList;
 use App\Models\CheckListItem;
 use App\Models\EntriesMaster;
-use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
 use Filament\Tables\Actions\Action;
@@ -28,30 +31,28 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\TimePicker;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\CheckList as QcFormTypeTwo;
+use App\Models\CheckList as GmpSiteOne;
 use Filament\Forms\Components\DateTimePicker;
 use App\Models\CheckListItemsEntry as Entries;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\QcFormTypeTwoResource\Pages;
-use App\Filament\Resources\QcFormTypeTwoResource\RelationManagers;
-use App\Filament\Resources\QcFormTypeTwoResource\RelationManagers\DetailsRelationManager;
-use App\Filament\Resources\QcFormTypeTwoResource\RelationManagers\TemperatureChecklistRelationManager;
- 
-// use Filament\Infolists\Components\Tabs;
 
-class QcFormTypeTwoResource extends Resource
+
+
+class GmpSiteOneResource extends Resource
 {
-    protected static ?string $model = QcFormTypeTwo::class;
+    protected static ?string $model = GmpSiteOne::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    // protected static ?string $navigationGroup = 'QC Forms';
-    protected static ?string $navigationGroup = 'Site 1263 Forms';
-    protected static ?string $navigationLabel = 'GMP';
-    protected static ?string $breadcrumb = 'GMP';
-     
 
-    public static function form(Form $form): Form
+     // protected static ?string $navigationGroup = 'QC Forms';
+     protected static ?string $navigationGroup = 'Site 34 Forms';
+     protected static ?string $navigationLabel = 'GMP';
+     protected static ?string $breadcrumb = 'GMP';
+      
+
+
+     public static function form(Form $form): Form
     { 
 
 
@@ -70,7 +71,7 @@ class QcFormTypeTwoResource extends Resource
             $id = session('checklist_id');
         } 
 
-        $checklistItems = CheckListItem::where('check_list_id', 2)->get();
+        $checklistItems = CheckListItem::where('check_list_id', 4)->get();
  
             $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
@@ -315,9 +316,10 @@ class QcFormTypeTwoResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]
         )
-        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 2));
+        ->modifyQueryUsing(fn (Builder $query) => $query
+        ->where('type_id', 7));
     }
-    
+
     public static function getRelations(): array
     {
         return [
@@ -328,10 +330,10 @@ class QcFormTypeTwoResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListQcFormTypeTwos::route('/'),
-            'create' => Pages\CreateQcFormTypeTwo::route('/create'),
-            'edit' => Pages\EditQcFormTypeTwo::route('/{record}/edit'),
-            'view' => Pages\ViewQcFormTypeTwo::route('/{record}'),
+            'index' => Pages\ListGmpSiteOnes::route('/'),
+            'create' => Pages\CreateGmpSiteOne::route('/create'),
+            'view' => Pages\ViewGmpSiteOne::route('/{record}'),
+            'edit' => Pages\EditGmpSiteOne::route('/{record}/edit'),
         ];
     }    
 }
