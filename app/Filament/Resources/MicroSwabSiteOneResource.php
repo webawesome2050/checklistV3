@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PreOpFormsResource\Pages;
-use App\Filament\Resources\PreOpFormsResource\RelationManagers;
-use App\Models\CheckList as PreOpForms;
- 
+use App\Filament\Resources\MicroSwabSiteOneResource\Pages;
+use App\Filament\Resources\MicroSwabSiteOneResource\RelationManagers;
+
+
 use Filament\Forms;
 use App\Models\Role;
 use Filament\Tables;
@@ -26,38 +26,40 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Illuminate\Support\Facades\Route;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TimePicker;
-use App\Models\CheckListItemsEntry as Entries;
+
+
+
 
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-
-
-class PreOpFormsResource extends Resource
+class MicroSwabSiteOneResource extends Resource
 {
-    protected static ?string $model = PreOpForms::class;
-
+    protected static ?string $model = CheckList::class;   
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    
     protected static ?string $navigationGroup = 'Site 34 Forms';
-    protected static ?string $navigationLabel = 'Pre-Op forms';
+    protected static ?int $navigationSort = 4;
+    protected static ?string $navigationLabel = 'Micro SPC Swab Check';
+    protected static ?string $breadcrumb = 'Micro SPC Swab Check';
 
-    protected static ?string $breadcrumb = 'Pre-Op forms ';
 
-  public static function form(Form $form): Form
+    public static function form(Form $form): Form
     { 
+ 
+       
         $optionsValue = [];
         for ($i = 0; $i <= 60; $i++) {
             $optionsValue[$i] = $i;
         }
+
         $url = request()->url(); 
         preg_match('/\/checklists\/(\d+)\/edit/', $url, $matches);
         if (isset($matches[1])) {
@@ -66,10 +68,11 @@ class PreOpFormsResource extends Resource
         } else {
             $id = session('checklist_id');
         } 
-        $checklistItems = CheckListItem::where('check_list_id', 20)
-        ->where('site_id', 1)
-        ->get();
-        $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id'])->sortKeys();
+
+        
+         
+        $checklistItems = CheckListItem::where('check_list_id', 20)->get();
+        $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
 
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
             $sectionName = $subsectionGroups->first()->first()->section->name;
@@ -94,6 +97,10 @@ class PreOpFormsResource extends Resource
                         $radioOptions[$subSectionItem->name] = $subSectionItem->name;
                     }
                     // \Log::info($radioOptions);
+                    // $itemCode = Radio::make("sub_section_items_$subsectionId")
+                    //     ->label('')
+                    //     ->options($radioOptions)
+                    //     ->inline();
                     $itemCode = CheckboxList::make("sub_section_items_$subsectionId")
                         ->label('')
                         ->options($radioOptions);
@@ -101,7 +108,6 @@ class PreOpFormsResource extends Resource
                     $formFields = [];
                 }
                 
-
                 $matchingItem = $checklistItemsInSubsection->first(function ($item) use ($subsectionId) {
                     return $item->sub_section_id === $subsectionId;
                 });
@@ -110,37 +116,21 @@ class PreOpFormsResource extends Resource
                 });
 
                 if ($matchingItem) {
-
-                   if($sectionName == 'HIGH RISK AREA') {  
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
                         'class' => 'section-portion cursor-pointer'
                     ])
+                    ->collapsible()
                     ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
-                    ->collapsible()
                     ->compact();
-                } else {
-                    $subsectionName = $matchingItem->subSection->name;  
-                    $subsectionSection = Section::make($subsectionName)
-                    ->extraAttributes([
-                        'class' => 'section-portion cursor-pointer'
-                    ])
-                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
-                    ->columns(4)
-                    ->collapsible()
-                    ->compact(); 
-                }
                     
                 } else {
                     $subsectionSection = Section::make('Section')
                     ->columns(4)
-                    ->extraAttributes([
-                        'class' => 'section-portion cursor-pointer'
-                    ])
                     ->compact()
-                    ->collapsible(); // Set the section to be collapsed by default
+                    ->collapsed(); // Set the section to be collapsed by default
                 }
                 if(count($subSectionItems) > 0) {
                     // \Log::info($formFields);
@@ -162,104 +152,69 @@ class PreOpFormsResource extends Resource
 
                 foreach ($checklistItemsInSubsection as $checklistItem) {
                    
-                    // $description = $checklistItem->m_frequency ? 'Micro SPC Swab Frequency'.$checklistItem->m_frequency : '';
-                    // $description.=$checklistItem->c_frequency ? '\n'.'Chemical Residue Check Frequency'.$checklistItem->c_frequency : '';
-                    // $description.=$checklistItem->a_frequency ? '\n'.'ATP check RLU Frequency'.$checklistItem->a_frequency : '';
-
-                    if($sectionName == 'HIGH RISK AREA') { 
-                    $description = $checklistItem->m_frequency ? 'Micro SPC Swab =>'.$checklistItem->m_frequency : '';
+                    $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
                     $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
-                    $description.=$checklistItem->a_frequency ? ' ---- ATP check RLU. Frequency =>'.$checklistItem->a_frequency : '';
-                    } else {
-                        $description = '';    
-                    }
+                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
+
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
                  ->description($description)
                  ->aside()
                 ->schema([ 
-                     $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
-                        ->label('Visual insp allergen free')
-                        ->options([
-                            'Accept' => 'Accept',
-                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
-                            'Not in Use' => 'Not in Use'
-                        ])
-                        ->native(false),
-
-                        
-                        $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
-                        ->label('ATP')
-                        ->options($optionsValue)
-                        ->native(false)
-                        ->visible($sectionName == 'HIGH RISK AREA'),
-                        // $formFields[] = TextInput::hidden()
-                        // ->label('ChemicalResidueCheck')->name('chemical_residue_check'),
-                        $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
-                        // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
-                       
+                        $formFields[] =  Textinput::make("micro_SPC_swab_{$checklistItem->id}")
+                        // $formFields[] =  Select::make("micro_SPC_swab_{$checklistItem->id}")
+                        ->label('Micro SPC swab Check'),
                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                        ->rows(1),        
-                        $formFields[] = Radio::make("action_taken_$checklistItem->id")
-                        ->label('Action Taken')
+                        ->rows(1),  
+                        Radio::make("action_taken_$checklistItem->id")->label('Is Testing Done')
                         ->options([
                             'Yes' => 'Yes',
                             'No' => 'No'
-                        ])
-                        ->inline(),                 
-                    ])->columns(4)->compact(); 
-
-
+                        ]), 
+                        $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
+                        
+                    ])->columns(3)->compact(); 
                 } 
-
                 $subsectionSection->schema($stepFields); 
                 $sectionComponents[] = $subsectionSection; 
             }
             $sectionStep = Tab::make($sectionName)->schema($sectionComponents);
             $wizardSteps[] = $sectionStep;
         }
-        // $form->schema([
-        //     Tabs::make('Label')->tabs($wizardSteps),
-        // ])->columns(1);
-
-        return $form
-        ->schema([
-            Forms\Components\Section::make()
-                ->schema([
-                    Forms\Components\TextInput::make('person_name')
-                    ->label('Person Name')
-                    ->maxLength(255)
-                    ->required(), 
-                    Hidden::make('id'), 
-                    DatePicker::make('date')
-                    ->required()
-                    ->native(false),
-                    TimePicker::make('time')
-                    ->required(),  
-                    // DateTimePicker::make('entry_detail')
-                    // ->label('Entry Date Detail')
-                    // ->required()
-                    // ->native(false),
-                ])
-               ->columns(3)
-                ->columnSpan(['lg' =>5]),
-
-            Forms\Components\Section::make()
-                ->schema([
-                    Tabs::make('Label')->tabs($wizardSteps)
-                ])
-                // ->columns(4)
-                ->columnSpan(['lg' => 12]),
-        ])
-        ->columns(12); 
         
 
-        return $form;
+        
+ 
+
+        return $form
+            ->schema([
+                Forms\Components\Group::make()
+                    ->schema([
+                        Tabs::make('Label')->tabs($wizardSteps)
+                    ])
+                    ->columnSpan(['lg' =>2]),
+
+                Forms\Components\Section::make()
+                    ->schema([
+                        Hidden::make('id'),
+                        Forms\Components\TextInput::make('person_name')
+                        ->label('Person Name')
+                        ->maxLength(255)
+                        ->required(), 
+                        DateTimePicker::make('entry_detail')
+                        ->label('Entry Detail')
+                        ->native(false),
+                        // DateTimePicker::make('next_inspection_detail')
+                        // ->label('Next Inspectin Date')
+                        // ->native(false),
+                    ])
+                    ->columnSpan(['lg' => 1]),
+            ])
+            ->columns(3);
     }
 
     public static function table(Table $table): Table
     { 
-        // dd(Table::when('entry_id', 2));
         return $table
             ->columns([
                 //
@@ -273,7 +228,7 @@ class PreOpFormsResource extends Resource
                 TextColumn::make('')
                 ->label('Status')
                 ->description(function (CheckList $record) {
-                    $res= $record->is_approved == false ;
+                    $res= $record->is_approved == 0 ;
                     if ($res){
                         return "Pending";
                     }
@@ -282,31 +237,20 @@ class PreOpFormsResource extends Resource
                     }
                 }),
                 TextColumn::make('site.name')
-                // TextColumn::make('checklist.name'),
             ])
             ->striped()
             ->filters([
-                //
             ])
             ->actions([
 
                 Action::make('Download Report')->label('Download Report')
-                ->url(fn (CheckList $record): string => route('generate.pdf', $record))
+                ->url(fn (CheckList $record): string => route('generate.micro', $record))
                 ->openUrlInNewTab()
                 ->visible(function (CheckList $record): bool {
                     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 })
                 ->icon('heroicon-m-arrow-down-on-square'),
-                // ->action(fn (CheckList $record) => $record->delete()),
-                
-
-                // auth()->user()->hasRole(Role::ROLES['approver']) ?   
-                // Tables\Actions\ViewAction::make()->label('View and Approve')
-                // ->visible(auth()->user()->hasRole(Role::ROLES['admin'])),
-                
                 Tables\Actions\ViewAction::make()->label('View and Approve')
-                // ->visible((fn (CheckList $record): bool => !$record->is_approved)),
-                // ->visible((fn (CheckList $record): bool => !$record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']))),
                 ->visible(function (CheckList $record): bool {
                     return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 }),
@@ -314,15 +258,15 @@ class PreOpFormsResource extends Resource
                 ->visible(function (CheckList $record): bool {
                     return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 }),
-                //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]
         )
-        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 6));
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 8));
     }
- 
+    
+    
     public static function getRelations(): array
     {
         return [
@@ -333,10 +277,10 @@ class PreOpFormsResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPreOpForms::route('/'),
-            'create' => Pages\CreatePreOpForms::route('/create'),
-            'view' => Pages\ViewPreOpForms::route('/{record}'),
-            'edit' => Pages\EditPreOpForms::route('/{record}/edit'),
+            'index' => Pages\ListMicroSwabSiteOnes::route('/'),
+            'create' => Pages\CreateMicroSwabSiteOne::route('/create'),
+            'view' => Pages\ViewMicroSwabSiteOne::route('/{record}'),
+            'edit' => Pages\EditMicroSwabSiteOne::route('/{record}/edit'),
         ];
     }    
 }
