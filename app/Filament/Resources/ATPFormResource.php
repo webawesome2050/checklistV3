@@ -71,7 +71,9 @@ class ATPFormResource extends Resource
 
         
          
-        $checklistItems = CheckListItem::where('check_list_id', 1)->get();
+        $checklistItems = CheckListItem::where('check_list_id', 1)
+        ->whereNotIn('section_id', [2,3])
+        ->get();
         $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
 
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
