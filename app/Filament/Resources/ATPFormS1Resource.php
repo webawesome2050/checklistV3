@@ -2,9 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ATPFormS1Resource\Pages;
+use App\Filament\Resources\ATPFormS1Resource\RelationManagers;
+
 use Filament\Forms;
 use App\Models\Role;
 use Filament\Tables;
+use Faker\Core\Number;
 use Filament\Forms\Form;
 use App\Models\CheckList;
 use Filament\Tables\Table;
@@ -15,6 +19,7 @@ use Filament\Resources\Resource;
 use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\Text;
 use Filament\Tables\Actions\Action;
+use App\Models\CheckList as ATPForm;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
@@ -22,7 +27,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Components\Wizard;
 use Illuminate\Support\Facades\Route;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
@@ -31,19 +35,25 @@ use Filament\Forms\Components\DatePicker;
 use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ChemicalResidueCheckResource\Pages;
-use App\Filament\Resources\ChemicalResidueCheckResource\RelationManagers;
 
-class ChemicalResidueCheckResource extends Resource
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class ATPFormS1Resource extends Resource
 {
-    protected static ?string $model = CheckList::class;
+    protected static ?string $model = ATPForm::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Site 1263 Forms';
-    protected static ?int $navigationSort = 5;
-    protected static ?string $navigationLabel = 'Chemical Residue Check';
-    protected static ?string $breadcrumb = 'Chemical Residue Check';
+
+    // protected static ?string $navigationGroup = 'QC Forms';
+    protected static ?string $navigationGroup = 'Site 34 Forms';
+
+    protected static ?int $navigationSort = 6;
+
+    protected static ?string $Title = 'ATP Forms';
+    protected static ?string $breadcrumb = 'ATP Check';
+    protected static ?string $navigationLabel = 'ATP Check';
+    
+
 
     public static function form(Form $form): Form
     { 
@@ -65,7 +75,7 @@ class ChemicalResidueCheckResource extends Resource
 
         
          
-        $checklistItems = CheckListItem::where('check_list_id', 1)->get();
+        $checklistItems = CheckListItem::where('check_list_id', 20)->get();
         $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
 
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
@@ -95,11 +105,9 @@ class ChemicalResidueCheckResource extends Resource
                     //     ->label('')
                     //     ->options($radioOptions)
                     //     ->inline();
-
                     $itemCode = CheckboxList::make("sub_section_items_$subsectionId")
-                        ->label('')
-                        ->options($radioOptions);
-
+                    ->label('')
+                    ->options($radioOptions);
                 } else {
                     $formFields = [];
                 }
@@ -114,17 +122,21 @@ class ChemicalResidueCheckResource extends Resource
                 if ($matchingItem) {
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
-                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->extraAttributes([
                         'class' => 'section-portion cursor-pointer'
                     ])
-                    ->collapsible()
+                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
+                    ->collapsible()
                     ->compact();
                     
                 } else {
                     $subsectionSection = Section::make('Section')
+                    ->extraAttributes([
+                        'class' => 'section-portion cursor-pointer'
+                    ])
                     ->columns(4)
+                    ->collapsible()
                     ->compact()
                     ->collapsed(); // Set the section to be collapsed by default
                 }
@@ -147,27 +159,30 @@ class ChemicalResidueCheckResource extends Resource
                 }
 
                 foreach ($checklistItemsInSubsection as $checklistItem) {
-                   
-                    $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
-                    $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
-                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
 
+                    // $description = $checklistItem->m_frequency ? 'Micro SPC Swab =>'.$checklistItem->m_frequency : '';
+                    // $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                    $description = $checklistItem->a_frequency ? ' ATP check RLU. Frequency =>'.$checklistItem->a_frequency : '';
+                   
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
-                //  ->description($description)
+                 ->description($description)
                  ->aside()
                 ->schema([ 
-                        $formFields[] =  Textinput::make("chemical_residue_check_{$checklistItem->id}")
-                        // $formFields[] =  Select::make("chemical_residue_check_{$checklistItem->id}")
-                        ->label('Chemical Residue Check'),
-                        $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
+                        // $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
+                        $formFields[] =  Textinput::make("ATP_check_RLU_{$checklistItem->id}")
+                        ->numeric()
+                        ->label('ATP check RLU'),
                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
                         ->rows(1),  
                         Radio::make("action_taken_$checklistItem->id")->label('Is Testing Done')
                         ->options([
-                            'Yes' => 'Yes',
-                            'No' => 'No'
+                            'Yes' => 'Pass',
+                            'No' => 'Fail'
                         ]),  
+                        // ->options($optionsValue)
+                        $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
+                        
                     ])->columns(3)->compact(); 
                 } 
                 $subsectionSection->schema($stepFields); 
@@ -179,7 +194,25 @@ class ChemicalResidueCheckResource extends Resource
         
 
         
- 
+
+
+        // $form->schema([  
+        //     Forms\Components\Group::make()
+        //     ->schema([
+        //         Tabs::make('Label')->tabs($wizardSteps)
+        //     ])
+        //     ->columnSpan(['xl' => 2]), 
+
+        //     Forms\Components\Section::make()
+        //     ->schema([
+        //     Select::make('status')
+        //     ->options([
+        //         'draft' => 'Draft',
+        //         'reviewing' => 'Reviewing',
+        //         'published' => 'Published',
+        //     ]),
+        // ])
+        // ])->columns(2);
 
         return $form
             ->schema([
@@ -196,7 +229,7 @@ class ChemicalResidueCheckResource extends Resource
                         ->label('Person Name')
                         ->maxLength(255)
                         ->required(), 
-                        DatePicker::make('entry_detail')->required()
+                        DatePicker::make('entry_detail')
                         ->label('Entry Detail')
                         ->native(false),
                         // DateTimePicker::make('next_inspection_detail')
@@ -239,7 +272,7 @@ class ChemicalResidueCheckResource extends Resource
             ->actions([
 
                 Action::make('Download Report')->label('Download Report')
-                ->url(fn (CheckList $record): string => route('generate.chemical', $record))
+                ->url(fn (CheckList $record): string => route('generate.atp', $record))
                 ->openUrlInNewTab()
                 ->visible(function (CheckList $record): bool {
                     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
@@ -258,8 +291,9 @@ class ChemicalResidueCheckResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]
         )
-        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 4));
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 10));
     }
+
     
     public static function getRelations(): array
     {
@@ -271,11 +305,10 @@ class ChemicalResidueCheckResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListChemicalResidueChecks::route('/'),
-            'create' => Pages\CreateChemicalResidueCheck::route('/create'),
-            'edit' => Pages\EditChemicalResidueCheck::route('/{record}/edit'),
-            'view' => Pages\ViewChemicalResidueCheck::route('/{record}'),
-
+            'index' => Pages\ListATPFormS1S::route('/'),
+            'create' => Pages\CreateATPFormS1::route('/create'),
+            'view' => Pages\ViewATPFormS1::route('/{record}'),
+            'edit' => Pages\EditATPFormS1::route('/{record}/edit'),
         ];
     }    
 }

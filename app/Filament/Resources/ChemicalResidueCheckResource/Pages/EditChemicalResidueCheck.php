@@ -101,7 +101,7 @@ class EditChemicalResidueCheck extends EditRecord
                     ->actions([
                         Action::make('View and Approve')
                             ->button()
-                            ->url('/atp-check/'.$this->record->id)
+                            ->url('/chemical-residue-check/'.$this->record->id)
                             ->markAsRead(),
                     ])
                     ->sendToDatabase($recipient);

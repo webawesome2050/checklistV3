@@ -121,6 +121,16 @@ easymde/dist/easymde.min.css:
   background-color: #0e2c500d !important;  
 }
 
+.section-portion-orange p {
+  color: #FFFFFF !important;  
+}
+
+
+.section-portion header.cursor-pointer div.grid p {
+  color: #FFFFFF !important;  
+}
+
+
 .section-portion-green header.cursor-pointer {
   /* background-color: #0E2C50 !important; */
   background-color: #8bc34a !important;  

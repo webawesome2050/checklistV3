@@ -1,26 +1,30 @@
 <?php
 
-namespace App\Filament\Resources\ATPFormResource\Pages;
+namespace App\Filament\Resources\ATPFormS1Resource\Pages;
+
+use App\Filament\Resources\ATPFormS1Resource;
+use Filament\Actions;
+use Filament\Resources\Pages\EditRecord;
+
 
 use App\Models\User;
-use Filament\Actions;
 use App\Models\CheckList;
 use App\Models\SubSectionItem;
 use Illuminate\Support\Facades\Route;
 
 use Filament\Notifications\Notification;
-use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Actions\Action;
 use App\Filament\Resources\ATPFormResource;
 use App\Filament\Resources\ChecklistsResource;
 use App\Models\CheckListItemsEntry as Entries;
 
-class EditATPForm extends EditRecord
-{
-    protected static string $resource = ATPFormResource::class;
-    
-    protected static ?string $title = 'ATP check RLU';
 
+class EditATPFormS1 extends EditRecord
+{
+    protected static string $resource = ATPFormS1Resource::class;
+
+    protected static ?string $title = 'ATP check RLU';
+    
     protected function getHeaderActions(): array
     {
         return [
@@ -88,7 +92,7 @@ class EditATPForm extends EditRecord
 
 
             $recipient = User::whereHas('sites', function ($query) {
-                $query->where('site_id', 2);
+                $query->where('site_id', 1);
             })
             ->whereHas('roles', function ($query) {
                 $query->where('role_id', 3);
@@ -104,7 +108,7 @@ class EditATPForm extends EditRecord
                     ->actions([
                         Action::make('View and Approve')
                             ->button()
-                            ->url('/atp-check/'.$this->record->id)
+                            ->url('/a-t-p-form-s1s/'.$this->record->id)
                             ->markAsRead(),
                     ])
                     ->sendToDatabase($recipient);

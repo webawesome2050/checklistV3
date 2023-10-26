@@ -180,7 +180,8 @@ class EditChecklists extends EditRecord
                     'person_name',
                     'entry_detail',
                     'date',
-                    'time'
+                    'time',
+                    'finish_time'
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {

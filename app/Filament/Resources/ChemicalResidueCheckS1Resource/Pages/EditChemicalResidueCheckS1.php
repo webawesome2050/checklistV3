@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\ATPFormResource\Pages;
+namespace App\Filament\Resources\ChemicalResidueCheckS1Resource\Pages;
 
+use App\Filament\Resources\ChemicalResidueCheckS1Resource;
 use App\Models\User;
 use Filament\Actions;
 use App\Models\CheckList;
@@ -13,14 +14,15 @@ use Filament\Resources\Pages\EditRecord;
 use Filament\Notifications\Actions\Action;
 use App\Filament\Resources\ATPFormResource;
 use App\Filament\Resources\ChecklistsResource;
+
+
 use App\Models\CheckListItemsEntry as Entries;
 
-class EditATPForm extends EditRecord
+class EditChemicalResidueCheckS1 extends EditRecord
 {
-    protected static string $resource = ATPFormResource::class;
-    
-    protected static ?string $title = 'ATP check RLU';
+    protected static string $resource = ChemicalResidueCheckS1Resource::class;
 
+ 
     protected function getHeaderActions(): array
     {
         return [
@@ -28,7 +30,6 @@ class EditATPForm extends EditRecord
         ];
     }
 
-    
 
     public function save(bool $shouldRedirect = true): void
     {
@@ -62,19 +63,15 @@ class EditATPForm extends EditRecord
             $checkList->update([
                 'entry_detail' => $data['entry_detail'],
                 'person_name' => $data['person_name'],
-                
                 // 'next_inspection_detail' => $data['next_inspection_detail'],
             ]);
 
             
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
-
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
-                    // \Log::info('before entryData', $entryData['sub_section_items']);
+                    \Log::info('before entryData', $entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
                 }  
-                // \Log::info('entryData', $entryData);
-
                 $query = Entries::
                 where('check_list_items_id', $checklistItemId)
                 ->where('entry_id', $entryData['entry_id']);
@@ -104,7 +101,7 @@ class EditATPForm extends EditRecord
                     ->actions([
                         Action::make('View and Approve')
                             ->button()
-                            ->url('/atp-check/'.$this->record->id)
+                            ->url('/chemical-residue-check-s1s/'.$this->record->id)
                             ->markAsRead(),
                     ])
                     ->sendToDatabase($recipient);
@@ -188,11 +185,12 @@ class EditATPForm extends EditRecord
                 $checklistItemId = $entry->check_list_items_id;
                 $fieldsToUpdate = [ 
                     'entry_id',
-                    'ATP_check_RLU',
+                    'chemical_residue_check',
+                    // 'next_inspection_detail',
                     'entry_detail',
-                    'sub_section_items',
                     'action_taken',
                     'person_name',
+                    'sub_section_items',
                     'comments_corrective_actions'
                 ];
         

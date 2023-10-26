@@ -36,13 +36,18 @@ class CreateQcFormTypeTwo extends CreateRecord
             $data = $this->mutateFormDataBeforeCreate($data);
 
             // dd($data); 
+            
+            $start_time =  $data['time'] ? $data['time'] : '';
+            $end_time =  $data['finish_time'] ? $data['finish_time'] : '';
+
 
             $checkList  =  CheckList::create([
-                'name' => 'Form GM1- GMP checklist'.'_'.now(), 
+                'name' => 'Form GM1 '.'_'.now().'_'.$end_time, 
                 'site_id' => 2, 
                 // 'entry_detail' => $data['entry_detail'],    
                 'date' => $data['date'],    
                 'time' => $data['time'],    
+                'finish_time' => $data['finish_time'],
                 'person_name' => $data['person_name'],    
                 'type_id' => 2
             ]);

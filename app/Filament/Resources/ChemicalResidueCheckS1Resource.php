@@ -2,6 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ChemicalResidueCheckS1Resource\Pages;
+use App\Filament\Resources\ChemicalResidueCheckS1Resource\RelationManagers;
+ 
+
 use Filament\Forms;
 use App\Models\Role;
 use Filament\Tables;
@@ -32,18 +36,19 @@ use Illuminate\Database\Eloquent\Builder;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\DateTimePicker;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\ChemicalResidueCheckResource\Pages;
-use App\Filament\Resources\ChemicalResidueCheckResource\RelationManagers;
 
-class ChemicalResidueCheckResource extends Resource
+
+class ChemicalResidueCheckS1Resource extends Resource
 {
     protected static ?string $model = CheckList::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    protected static ?string $navigationGroup = 'Site 1263 Forms';
+
+    protected static ?string $navigationGroup = 'Site 34 Forms';
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationLabel = 'Chemical Residue Check';
     protected static ?string $breadcrumb = 'Chemical Residue Check';
+
 
     public static function form(Form $form): Form
     { 
@@ -65,7 +70,7 @@ class ChemicalResidueCheckResource extends Resource
 
         
          
-        $checklistItems = CheckListItem::where('check_list_id', 1)->get();
+        $checklistItems = CheckListItem::where('check_list_id', 20)->get();
         $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
 
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
@@ -258,7 +263,7 @@ class ChemicalResidueCheckResource extends Resource
                 Tables\Actions\DeleteBulkAction::make(),
             ]
         )
-        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 4));
+        ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 9));
     }
     
     public static function getRelations(): array
@@ -267,15 +272,14 @@ class ChemicalResidueCheckResource extends Resource
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListChemicalResidueChecks::route('/'),
-            'create' => Pages\CreateChemicalResidueCheck::route('/create'),
-            'edit' => Pages\EditChemicalResidueCheck::route('/{record}/edit'),
-            'view' => Pages\ViewChemicalResidueCheck::route('/{record}'),
-
+            'index' => Pages\ListChemicalResidueCheckS1S::route('/'),
+            'create' => Pages\CreateChemicalResidueCheckS1::route('/create'),
+            'view' => Pages\ViewChemicalResidueCheckS1::route('/{record}'),
+            'edit' => Pages\EditChemicalResidueCheckS1::route('/{record}/edit'),
         ];
     }    
 }
