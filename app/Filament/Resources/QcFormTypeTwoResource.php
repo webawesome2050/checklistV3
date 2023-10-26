@@ -187,7 +187,10 @@ class QcFormTypeTwoResource extends Resource
                     ->required()
                     ->native(false),
                     TimePicker::make('time')
+                    ->label('Start Time')
                     ->required(), 
+                    TimePicker::make('finish_time')
+                    ->label('End Time'),
                     // DateTimePicker::make('entry_detail')
                     // ->label('Entry Date Detail')
                     // ->required()

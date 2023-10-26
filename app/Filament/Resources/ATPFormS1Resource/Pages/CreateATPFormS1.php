@@ -1,24 +1,30 @@
 <?php
 
-namespace App\Filament\Resources\ChecklistsResource\Pages;
+namespace App\Filament\Resources\ATPFormS1Resource\Pages;
 
+use App\Filament\Resources\ATPFormS1Resource;
+use Filament\Actions;
+use Filament\Resources\Pages\CreateRecord;
+
+
+
+use App\Models\User;
 use App\Models\CheckList;
-
-use Filament\Pages\Actions;
 use App\Models\SubSectionItem;
 use App\Models\CheckListItemsEntry;
-use Filament\Resources\Pages\CreateRecord;
-use App\Filament\Resources\ChecklistsResource;
 use Filament\Notifications\Notification;
 use Filament\Notifications\Actions\Action;
-use App\Models\User;
 
-class CreateChecklists extends CreateRecord
+
+class CreateATPFormS1 extends CreateRecord
 {
-    protected static string $resource = ChecklistsResource::class;
+    protected static string $resource = ATPFormS1Resource::class;
 
-    protected static ?string $title = 'Pre-Op forms';
 
+
+    
+    protected static ?string $title = 'ATP check RLU';
+    
 
     public function mount(): void
     {
@@ -63,13 +69,7 @@ class CreateChecklists extends CreateRecord
     public function create(bool $another = false): void
     {
         $this->authorizeAccess();
-
-
-       
-
-
-
-
+ 
         try {
             $this->callHook('beforeValidate');
 
@@ -79,60 +79,59 @@ class CreateChecklists extends CreateRecord
 
             $data = $this->mutateFormDataBeforeCreate($data);
 
-            // dd($data); 
+            // dd($data['entry_detail']);
 
             $checkList  =  CheckList::create([
-                'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(), 
-                'site_id' => 2, 
-                'type_id' => 1,
-                // 'entry_detail' => $data['entry_detail'],    
-                'date' => $data['date'],    
-                'time' => $data['time'],
-                'finish_time' => $data['finish_time'],
-                'person_name' => $data['person_name'] 
-            ]);
-    
+                'name' => 'ATP check RLU'.'_'.now(), 
+                'site_id' => 1, 
+                'type_id' => 10, 
+                'entry_detail' => $data['entry_detail'],  
+                'person_name' => $data['person_name']    
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]); 
             $entryId = $checkList->id;
-            
-            $this->callHook('beforeCreate'); 
+
+            $this->callHook('beforeCreate');  
+            // dd($data);
+
 
             foreach ($data as $fieldKey => $fieldValue) {
                 $matches = [];
                
-                if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
-                    $fieldName = $matches[1];
-                    $checklistItemId = $matches[2];
-                    $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
-                    $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
-                    $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                // if(($fieldKey !=='entry_detail') || ($fieldKey !=='next_inspection_detail')) {
+                    if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
+                        $fieldName = $matches[1];
+                        $checklistItemId = $matches[2];
+                        $dataByChecklistItem[$checklistItemId]['check_list_items_id'] = $checklistItemId;
+                        $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                        // Retrieve and include subsection item information
+                        $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
+                        $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
+                        $dataByChecklistItem[$checklistItemId]['entry_id'] = $entryId;
 
-                    // Retrieve and include subsection item information
-                    $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
-                    $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
-
-
-                } else {
-                   // dd('No Match Found !');
-                }
-            } 
-
+                    } else {
+                        // dd('No Match Found !');
+                        // $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                    }
+                // }
+            }
+            // dd($dataByChecklistItem); 
+            
+            // dd('Create Flow');
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
-                // \Log::info('$entryData',$entryData); 
+                // $this->record = $this->handleRecordCreation($entryData);
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData)) {
                     // \Log::info('$entryData[sub_section_items]',$entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }  
-                // $this->record = $this->handleRecordCreation($entryData);
                 CheckListItemsEntry::create($entryData);
             }
-
-
             // dd($entryData);
             // $this->record = $this->handleRecordCreation($data); 
             // $this->form->model($this->record)->saveRelationships();
-           
+
             $recipient = User::whereHas('sites', function ($query) {
-                $query->where('site_id', 2);
+                $query->where('site_id', 1);
             })
             ->whereHas('roles', function ($query) {
                 $query->where('role_id', 3);
@@ -141,19 +140,23 @@ class CreateChecklists extends CreateRecord
             \Log::info($recipient);
             
             Notification::make()
-                    ->title('Pre-Op forms Submitted!')
+                    ->title('ATP Submitted!')
                     ->success()
                     // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
-                    ->body('Created Pre-Op forms Form, kindly view and approve')
+                    ->body('Updated ATP Form, kindly view and approve')
                     ->actions([
                         Action::make('View and Approve')
                             ->button()
-                            ->url('/checklists/'.$entryId)
+                            ->url('/a-t-p-form-s1s/'.$entryId)
                             ->markAsRead(),
                     ])
                     ->sendToDatabase($recipient);
                     
-                    $this->callHook('afterCreate');
+            
+            $this->callHook('afterCreate');
+
+            
+                        
         } catch (Halt $exception) {
             return;
         }
@@ -170,11 +173,9 @@ class CreateChecklists extends CreateRecord
 
         // $this->redirect($this->getRedirectUrl());
 
-        $this->redirect('/checklists');
+        $this->redirect('/a-t-p-form-s1s');
 
     }
 
-
-  
 
 }

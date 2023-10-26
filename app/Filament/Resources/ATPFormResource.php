@@ -50,6 +50,7 @@ class ATPFormResource extends Resource
     protected static ?string $Title = 'ATP Forms';
     protected static ?string $breadcrumb = 'ATP Check';
     protected static ?string $navigationLabel = 'ATP Check';
+    
     public static function form(Form $form): Form
     { 
  
@@ -224,7 +225,7 @@ class ATPFormResource extends Resource
                         ->label('Person Name')
                         ->maxLength(255)
                         ->required(), 
-                        DateTimePicker::make('entry_detail')
+                        DatePicker::make('entry_detail')
                         ->label('Entry Detail')
                         ->native(false),
                         // DateTimePicker::make('next_inspection_detail')

@@ -114,9 +114,9 @@ class ChecklistsResource extends Resource
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
-                        'class' => 'section-portion-yellow cursor-pointer'
+                        'class' => 'section-portion-orange cursor-pointer'
                     ])
-                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->collapsible()
                     ->compact();
@@ -124,7 +124,7 @@ class ChecklistsResource extends Resource
                     $subsectionName = $matchingItem->subSection->name;  
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
-                        'class' => 'section-portion-orange cursor-pointer'
+                        'class' => 'section-portion-yellow cursor-pointer'
                     ])
                     // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
@@ -194,7 +194,7 @@ class ChecklistsResource extends Resource
                     }
                     $stepFields[]   =  
                  Section::make($checklistItem->name)
-                 ->description($description)
+                //  ->description($description)
                  ->aside()
                 ->schema([ 
                      $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
@@ -254,8 +254,9 @@ class ChecklistsResource extends Resource
                     DatePicker::make('date')
                     ->required()
                     ->native(false),
-                    TimePicker::make('time')
-                    ->required(),  
+                    TimePicker::make('time')->label('Start Time')
+                    ->required(), 
+                    TimePicker::make('finish_time')->label('End Time')
                     // DateTimePicker::make('entry_detail')
                     // ->label('Entry Date Detail')
                     // ->required()

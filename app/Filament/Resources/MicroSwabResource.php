@@ -195,7 +195,7 @@ class MicroSwabResource extends Resource
                         ->label('Person Name')
                         ->maxLength(255)
                         ->required(), 
-                        DateTimePicker::make('entry_detail')
+                        DatePicker::make('entry_detail')
                         ->label('Entry Detail')
                         ->native(false),
                         // DateTimePicker::make('next_inspection_detail')

@@ -40,7 +40,7 @@ class EditQcFormTypeTwo extends EditRecord
         
                 $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
             } else {
-                dd('No Match Found !');
+                // dd('No Match Found !');
             }
         }
         // dd(@$dataByChecklistItem);
@@ -142,7 +142,8 @@ protected function getRedirectUrl(): string
                 'entry_detail',
                 'person_name', 
                 'date',
-                'time'
+                'time',
+                'finish_time'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {

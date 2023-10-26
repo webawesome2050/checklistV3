@@ -31,7 +31,8 @@ class CheckList extends Model
         'next_inspection_detail',
         'person_name',
         'date',
-        'time'
+        'time',
+        'finish_time'
     ];
 
 
