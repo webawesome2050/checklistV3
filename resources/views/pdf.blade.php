@@ -116,6 +116,23 @@ body {
     <title>PDF</title>
 </head>
 <body>   
+<table>
+    <tr>
+            <th>Person Name </th>
+            <th>Date </th>
+            <th>Start Time </th>
+            <th>End Time </th>
+            <th>Arroved By</th>
+        </tr>
+        <tr>
+            <td>{{ $dataBySections['overallData']['person_name'] }}</td>
+            <td>{{ $dataBySections['overallData']['date'] }}</td> 
+            <td>{{ $dataBySections['overallData']['time'] }}</td>
+            <td>{{ $dataBySections['overallData']['finish_time'] }}</td>
+            <td>{{ $dataBySections['overallData']['approved_by'] }}</td>
+        </tr>
+</table>        
+
 @foreach ($dataBySections as $sectionName => $sectionData)
     <table>
     <tr>
