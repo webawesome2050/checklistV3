@@ -12,15 +12,29 @@ use App\Models\CheckListItemsEntry;
 class CommonController extends Controller
 { 
     public function generatePDF(Request $request) { 
+        // dd($request->entry_id);
         // Fetch the data with relationships and section/subsection information
+        // 'checkList.person_name',
         $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
             ->where('entry_id', $request->entry_id)
             ->get();
 
+            // dd($checklistItemsEntries->checkList);
         // Initialize an array to store data by sections
         $dataBySections = [];
 
         foreach ($checklistItemsEntries as $item) {
+
+            $checklist = $item->checkList;
+            $itemDataOverall = [
+                'person_name' =>  $checklist->person_name ?? '',
+                'time'        =>  $checklist->time ?? '',
+                'finish_time' => $checklist->finish_time ?? '',
+                'date'        => $checklist->date ?? '',
+                'approved_by' => $checklist->approved_by ?? '',
+                'inspected_by' => $checklist->inspected_by ?? ''
+            ];
+
             // Get the related section and subsection information from checkListItem
             $sectionName = $item->checkListItem->section->name ?? '';
             $subSectionName = $item->checkListItem->subSection->name ?? '';
@@ -40,12 +54,15 @@ class CommonController extends Controller
 
             // Append the item data to the corresponding section in the array
             $dataBySections[$sectionName][$subSectionName][] = $itemData;
+            $dataBySections['overallData'] = $itemDataOverall;
         }
 
         // Pass the data to the Blade view
         $data = [
             'dataBySections' => $dataBySections,
         ];
+
+        // dd($dataBySections);
 
         // dd($data);
 
@@ -82,6 +99,18 @@ class CommonController extends Controller
         $dataBySections = [];
 
         foreach ($checklistItemsEntries as $item) {
+
+
+            $checklist = $item->checkList;
+            $itemDataOverall = [
+                'person_name' =>  $checklist->person_name ?? '',
+                'time'        =>  $checklist->time ?? '',
+                'finish_time' => $checklist->finish_time ?? '',
+                'date'        => $checklist->date ?? '',
+                'approved_by' => $checklist->approved_by ?? '',
+                'inspected_by' => $checklist->inspected_by ?? ''
+            ];
+
             // Get the related section and subsection information from checkListItem
             $sectionName = $item->checkListItem->section->name ?? '';
             $subSectionName = $item->checkListItem->subSection->name ?? '';
@@ -143,6 +172,18 @@ class CommonController extends Controller
        $dataBySections = [];
 
        foreach ($checklistItemsEntries as $item) {
+
+
+        $checklist = $item->checkList;
+        $itemDataOverall = [
+            'person_name' =>  $checklist->person_name ?? '',
+            'time'        =>  $checklist->time ?? '',
+            'finish_time' => $checklist->finish_time ?? '',
+            'date'        => $checklist->date ?? '',
+            'approved_by' => $checklist->approved_by ?? '',
+            'inspected_by' => $checklist->inspected_by ?? ''
+        ];
+
            // Get the related section and subsection information from checkListItem
            $sectionName = $item->checkListItem->section->name ?? '';
            $subSectionName = $item->checkListItem->subSection->name ?? '';
@@ -204,6 +245,17 @@ class CommonController extends Controller
     $dataBySections = [];
 
     foreach ($checklistItemsEntries as $item) {
+
+        $checklist = $item->checkList;
+        $itemDataOverall = [
+            'person_name' =>  $checklist->person_name ?? '',
+            'time'        =>  $checklist->time ?? '',
+            'finish_time' => $checklist->finish_time ?? '',
+            'date'        => $checklist->date ?? '',
+            'approved_by' => $checklist->approved_by ?? '',
+            'inspected_by' => $checklist->inspected_by ?? ''
+        ];
+
         // Get the related section and subsection information from checkListItem
         $sectionName = $item->checkListItem->section->name ?? '';
         $subSectionName = $item->checkListItem->subSection->name ?? '';
@@ -265,6 +317,17 @@ class CommonController extends Controller
 $dataBySections = [];
 
 foreach ($checklistItemsEntries as $item) {
+
+    $checklist = $item->checkList;
+    $itemDataOverall = [
+        'person_name' =>  $checklist->person_name ?? '',
+        'time'        =>  $checklist->time ?? '',
+        'finish_time' => $checklist->finish_time ?? '',
+        'date'        => $checklist->date ?? '',
+        'approved_by' => $checklist->approved_by ?? '',
+        'inspected_by' => $checklist->inspected_by ?? ''
+    ];
+    
     // Get the related section and subsection information from checkListItem
     $sectionName = $item->checkListItem->section->name ?? '';
     $subSectionName = $item->checkListItem->subSection->name ?? '';
