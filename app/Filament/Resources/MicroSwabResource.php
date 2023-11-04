@@ -116,7 +116,7 @@ class MicroSwabResource extends Resource
                         'class' => 'section-portion cursor-pointer'
                     ])
                     ->collapsible()
-                    ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->compact();
                     
