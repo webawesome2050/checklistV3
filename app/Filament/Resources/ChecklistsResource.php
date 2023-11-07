@@ -286,10 +286,11 @@ class ChecklistsResource extends Resource
             ->columns([
                 //
                 // TextColumn::make('id'),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                ->searchable(),
                 TextColumn::make('created_at')
                 ->dateTime()
-                ->label('Created on'),
+                ->label('Created on')->searchable(),
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean(),
                 TextColumn::make('')
@@ -303,9 +304,10 @@ class ChecklistsResource extends Resource
                         return "Approved";
                     }
                 }),
-                TextColumn::make('site.name')
+                // TextColumn::make('site.name')
+                // ->searchable(),
                 // TextColumn::make('checklist.name'),
-            ])
+            ]) 
             ->striped()
             ->filters([
                 //

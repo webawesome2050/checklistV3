@@ -243,10 +243,10 @@ class QcFormTypeTwoResource extends Resource
             ->columns([
                 //
                 // TextColumn::make('id'),
-                TextColumn::make('name'),
-                TextColumn::make('site.name'),
+                TextColumn::make('name')->searchable(),
+                TextColumn::make('site.name')->searchable(),
                 Tables\Columns\IconColumn::make('is_approved')
-                ->boolean(),
+                ->boolean()->searchable(),
                 // TextColumn::make('')
                 // ->label('Status')
                 // ->description(function (QcFormTypeTwo $record) {

@@ -35,6 +35,9 @@ Route::get('/generate-pdf-atp/{entry_id}}', [CommonController::class, 'generateP
 Route::get('/generate-pdf-gmp/{entry_id}}', [CommonController::class, 'generatePDFGMP'])->name('generate.gmp');
 Route::get('/generate-pdf-chemical/{entry_id}}', [CommonController::class, 'generatePDFChemical'])->name('generate.chemical');
 Route::get('/generate-pdf-micro/{entry_id}}', [CommonController::class, 'generatePDFMicro'])->name('generate.micro');
+Route::get('/generate-pdf-hat/{entry_id}}', [CommonController::class, 'generatePDFHAT'])->name('generate.hat');
+Route::get('/generate-pdf-tvchiller/{entry_id}}', [CommonController::class, 'generatePDFTVC'])->name('generate.tvc');
+Route::get('/generate-pdf-tvs/{entry_id}}', [CommonController::class, 'generatePDFTVS'])->name('generate.tvs');
 
 
 // Route::get('/admin/check-lists/{id}/edit', [CheckListController::class, 'edit']);

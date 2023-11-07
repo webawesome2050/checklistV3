@@ -7,6 +7,7 @@ use App\Models\Role;
 use Filament\Tables;
 use App\Models\FormHat;
 use Filament\Forms\Form;
+use App\Models\CheckList;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
 use Filament\Forms\Components\Toggle;
@@ -18,6 +19,7 @@ use App\Filament\Resources\FormHatResource\Pages;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Awcodes\FilamentTableRepeater\Components\TableRepeater;
 use App\Filament\Resources\FormHatResource\RelationManagers;
+use Filament\Tables\Actions\Action;
 
 class FormHatResource extends Resource
 {
@@ -119,11 +121,20 @@ class FormHatResource extends Resource
                 // Tables\Columns\IconColumn::make('is_approved')
                 //     ->boolean(),
             ])
+            ->defaultGroup('date')
             ->striped()
             ->filters([
                 //
             ])
             ->actions([
+                
+                Action::make('Download Report')->label('Download Report')
+                ->url(fn (FormHat $record): string => route('generate.hat', $record))
+                ->openUrlInNewTab()
+                // ->visible(function (FormHat $record): bool {
+                //     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                // })
+                ->icon('heroicon-m-arrow-down-on-square'),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
