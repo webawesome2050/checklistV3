@@ -2,7 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
+use App\Models\FormTv;
+use App\Models\FormHat;
 use App\Models\Section;
+use App\Models\FormTvSite2;
 use Illuminate\Http\Request;
 use App\Models\CheckListItem;
 use App\Models\SubSectionItem;
@@ -307,16 +311,17 @@ class CommonController extends Controller
  }
 
 
- public function generatePDFMicro(Request $request) { 
+ public function generatePDFMicro(Request $request) 
+ { 
     // Fetch the data with relationships and section/subsection information
     $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
     ->where('entry_id', $request->entry_id)
     ->get();
 
-// Initialize an array to store data by sections
-$dataBySections = [];
+    // Initialize an array to store data by sections
+    $dataBySections = [];
 
-foreach ($checklistItemsEntries as $item) {
+    foreach ($checklistItemsEntries as $item) {
 
     $checklist = $item->checkList;
     $itemDataOverall = [
@@ -347,37 +352,167 @@ foreach ($checklistItemsEntries as $item) {
 
     // Append the item data to the corresponding section in the array
     $dataBySections[$sectionName][$subSectionName][] = $itemData;
+    }
+
+    // Pass the data to the Blade view
+    $data = [
+        'dataBySections' => $dataBySections,
+    ];
+
+    // dd($data);
+
+    $pdf = Pdf::loadView('micro', ['dataBySections' => $dataBySections]);
+
+    $pdf->setPaper('L');
+    $pdf->output();
+    $canvas = $pdf->getDomPDF()->getCanvas();
+
+    $height = $canvas->get_height();
+    $width = $canvas->get_width();
+
+    // $canvas->set_opacity(.1,"Multiply");
+
+    $canvas->set_opacity(.5);
+
+    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
+    20, array(1,0,0),3,2,-30);
+
+
+    // $pdf->setWatermarkImage(public_path('logo.png'));
+
+    return $pdf->stream();
 }
 
-// Pass the data to the Blade view
-$data = [
-    'dataBySections' => $dataBySections,
-];
-
-// dd($data);
-
-$pdf = Pdf::loadView('micro', ['dataBySections' => $dataBySections]);
-
-$pdf->setPaper('L');
-$pdf->output();
-$canvas = $pdf->getDomPDF()->getCanvas();
-
-$height = $canvas->get_height();
-$width = $canvas->get_width();
-
-// $canvas->set_opacity(.1,"Multiply");
-
-$canvas->set_opacity(.5);
-
-$canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-20, array(1,0,0),3,2,-30);
 
 
-// $pdf->setWatermarkImage(public_path('logo.png'));
 
-return $pdf->stream();
+public function generatePDFHAT(Request $request) 
+ { 
+    // dd($request->entry_id);
+    $record = FormHat::find($request->entry_id);
+    if ($record) {
+        // Extract the date from the retrieved record.
+        $date = $record->date;
+        // Calculate the start and end of the month for the extracted date.
+        $startOfMonth = Carbon::parse($date)->startOfMonth();
+        $endOfMonth = Carbon::parse($date)->endOfMonth();
+
+        // Query the database to get all records within the same month as the extracted date.
+        $recordsWithinMonth = FormHat::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+
+        // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+    }
+    // dd($recordsWithinMonth);
+    // $data = [
+    //     'dataBySections' => $recordsWithinMonth,
+    // ];
+
+    $pdf = Pdf::loadView('hat', ['dataBySections' => $recordsWithinMonth]);
+
+    $pdf->setPaper('L');
+    $pdf->output();
+    $canvas = $pdf->getDomPDF()->getCanvas();
+
+    $height = $canvas->get_height();
+    $width = $canvas->get_width();
+
+    // $canvas->set_opacity(.1,"Multiply");
+
+    $canvas->set_opacity(.5);
+
+    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
+    20, array(1,0,0),3,2,-30);
+
+
+    // $pdf->setWatermarkImage(public_path('logo.png'));
+
+    return $pdf->stream();
 }
 
+
+public function generatePDFTVC(Request $request) 
+ { 
+    // dd($request->entry_id);
+    $record = FormTvSite2::find($request->entry_id);
+    if ($record) {
+        // Extract the date from the retrieved record.
+        $date = $record->date;
+        // Calculate the start and end of the month for the extracted date.
+        $startOfMonth = Carbon::parse($date)->startOfMonth();
+        $endOfMonth = Carbon::parse($date)->endOfMonth();
+
+        // Query the database to get all records within the same month as the extracted date.
+        $recordsWithinMonth = FormTvSite2::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+
+        // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+    }
+    // dd($recordsWithinMonth);
+    // $data = [
+    //     'dataBySections' => $recordsWithinMonth,
+    // ];
+
+    $pdf = Pdf::loadView('tvchiller', ['dataBySections' => $recordsWithinMonth]);
+    // $pdf = PDF::loadView('pdf.test_pdf')->setPaper('a4', 'landscape');
+    $pdf->setPaper('L','landscape');
+    $pdf->output();
+    $canvas = $pdf->getDomPDF()->getCanvas();
+
+    $height = $canvas->get_height();
+    $width = $canvas->get_width();
+
+    // $canvas->set_opacity(.1,"Multiply");
+
+    $canvas->set_opacity(.5);
+
+    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
+    20, array(1,0,0),3,2,-30);
+
+
+    // $pdf->setWatermarkImage(public_path('logo.png'));
+
+    return $pdf->stream();
+}
+
+
+public function generatePDFTVS(Request $request) 
+ { 
+    $record = FormTv::find($request->entry_id);
+    if ($record) {
+        // Extract the date from the retrieved record.
+        $date = $record->date;
+        // Calculate the start and end of the month for the extracted date.
+        $startOfMonth = Carbon::parse($date)->startOfMonth();
+        $endOfMonth = Carbon::parse($date)->endOfMonth();
+        // Query the database to get all records within the same month as the extracted date.
+        $recordsWithinMonth = FormTv::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+        // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+    }
+    // dd($recordsWithinMonth);
+    // $data = [
+    //     'dataBySections' => $recordsWithinMonth,
+    // ];
+
+    $pdf = Pdf::loadView('tvs', ['dataBySections' => $recordsWithinMonth]);
+    // $pdf = PDF::loadView('pdf.test_pdf')->setPaper('a4', 'landscape');
+    $pdf->setPaper('L','landscape');
+    $pdf->output();
+    $canvas = $pdf->getDomPDF()->getCanvas();
+
+    $height = $canvas->get_height();
+    $width = $canvas->get_width();
+
+    // $canvas->set_opacity(.1,"Multiply");
+
+    $canvas->set_opacity(.5);
+
+    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
+    20, array(1,0,0),3,2,-30);
+
+
+    // $pdf->setWatermarkImage(public_path('logo.png'));
+
+    return $pdf->stream();
+}
 
 
 

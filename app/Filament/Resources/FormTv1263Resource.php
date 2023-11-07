@@ -120,24 +120,24 @@ class FormTv1263Resource extends Resource
 
                 Tables\Columns\TextColumn::make('date')
                 ->searchable(),
-            Tables\Columns\TextColumn::make('time')
-                ->searchable(),
+            // Tables\Columns\TextColumn::make('time')
+            //     ->searchable(),
             Tables\Columns\TextColumn::make('name')
-                ->label('Person Name')
+                ->label('Name')
                 ->searchable(),
-            Tables\Columns\IconColumn::make('is_approved')
-                ->boolean(), 
-                Tables\Columns\TextColumn::make('')
-                ->label('Status')
-                ->description(function (FormTv $record) {
-                    $res= $record->is_approved == false ;
-                    if ($res){
-                        return "Pending";
-                    }
-                    else{
-                        return "Approved";
-                    }
-                }),
+            // Tables\Columns\IconColumn::make('is_approved')
+            //     ->boolean(), 
+            //     Tables\Columns\TextColumn::make('')
+            //     ->label('Status')
+            //     ->description(function (FormTv $record) {
+            //         $res= $record->is_approved == false ;
+            //         if ($res){
+            //             return "Pending";
+            //         }
+            //         else{
+            //             return "Approved";
+            //         }
+            //     })
                 // Tables\Columns\TextColumn::make('issues_by')
                 //     ->searchable(),
                 //     Tables\Columns\IconColumn::make('is_approved')
@@ -163,27 +163,28 @@ class FormTv1263Resource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultGroup('date')
             ->striped()
             ->filters([
                 //
             ])
             ->actions([  
 
-                // Action::make('Download Report')->label('Download Report')
-                // ->url(fn (FormTv $record): string => route('generate.atp', $record))
-                // ->openUrlInNewTab()
+                Action::make('Download Report')->label('Download Report')
+                ->url(fn (FormTv $record): string => route('generate.tvc', $record))
+                ->openUrlInNewTab()
                 // ->visible(function (FormTv $record): bool {
                 //     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                 // })
-                // ->icon('heroicon-m-arrow-down-on-square'),
-                Tables\Actions\ViewAction::make()->label('View and Approve')
-                ->visible(function (FormTv $record): bool {
-                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
-                }),
+                ->icon('heroicon-m-arrow-down-on-square'),
+                // Tables\Actions\ViewAction::make()->label('View and Approve')
+                // ->visible(function (FormTv $record): bool {
+                //     return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                // }),
                 Tables\Actions\EditAction::make()
-                ->visible(function (FormTv $record): bool {
-                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
-                }),
+                // ->visible(function (FormTv $record): bool {
+                //     return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                // })
 
                     // Tables\Actions\EditAction::make()->label('View and Approve')
                     // ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),

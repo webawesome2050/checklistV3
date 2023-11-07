@@ -12,7 +12,7 @@ class ListFormTvs extends ListRecords
 {
     protected static string $resource = FormTvResource::class;
     
-    protected static ?string $title = 'TV: Chiller and Freezer Temperature Daily Verification';
+    protected static ?string $title = 'TV - Storage Temp';
 
     protected function getHeaderActions(): array
     {
