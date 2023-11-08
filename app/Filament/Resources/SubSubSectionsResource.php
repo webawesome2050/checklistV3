@@ -20,11 +20,12 @@ class SubSubSectionsResource extends Resource
 {
     protected static ?string $model = SubSubSections::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
+    // protected static ?string $navigationIcon = 'heroicon-o-cpu-chip';
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Machine Sections';
 
-    
+    protected static ?int $navigationSort = 4;
+
     protected static ?string $modelLabel = 'Machine Sections';
     protected static ?string $pluralModelLabel = 'Machine Sections';
     protected static ?string $breadcrumb = 'Machine Sections';

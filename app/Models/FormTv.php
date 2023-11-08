@@ -24,7 +24,7 @@ class FormTv extends Model
         'time',
         'temp_storage_1',
         'temp_storage_2',
-        'temp_storage_3',
+        'temp_storage_2',
         'is_verified',
         'verified_by'
      ];

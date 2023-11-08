@@ -44,7 +44,7 @@ class ChecklistsResource extends Resource
 {
     protected static ?string $model = CheckList::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     // protected static ?string $title = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
     // protected static ?string $navigationLabel = 'Cleanliness Checklist';
@@ -52,6 +52,10 @@ class ChecklistsResource extends Resource
 
     protected static ?string $breadcrumb = 'Pre-Op forms ';
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('type_id',1)->count();
+    }
 
     public static function form(Form $form): Form
     { 

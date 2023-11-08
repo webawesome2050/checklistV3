@@ -39,11 +39,16 @@ class ChemicalResidueCheckResource extends Resource
 {
     protected static ?string $model = CheckList::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
     protected static ?int $navigationSort = 5;
     protected static ?string $navigationLabel = 'Chemical Residue Check';
     protected static ?string $breadcrumb = 'Chemical Residue Check';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('type_id',4)->count();
+    }
 
     public static function form(Form $form): Form
     { 

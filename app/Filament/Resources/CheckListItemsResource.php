@@ -22,12 +22,12 @@ class CheckListItemsResource extends Resource
 {
     protected static ?string $model = CheckListItems::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Machine Parts';
     protected static ?string $breadcrumb = 'Machine Parts';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Form $form): Form
     {
@@ -73,8 +73,12 @@ class CheckListItemsResource extends Resource
                 //
                 TextColumn::make('id'),
                 TextColumn::make('name')->searchable(),
-                TextColumn::make('section.name')->searchable(),
-                TextColumn::make('subSection.name')->searchable(),
+                TextColumn::make('section.name')
+                ->label('Area')
+                ->searchable(),
+                TextColumn::make('subSection.name')
+                ->label('Machine Name / GMP QC')
+                ->searchable(),
                 TextColumn::make('subSubSection.name')->searchable(),
                 // TextColumn::make('checkList.name')->searchable(),
 

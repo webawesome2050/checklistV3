@@ -42,7 +42,7 @@ class GmpSiteOneResource extends Resource
 {
     protected static ?string $model = GmpSiteOne::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
 
      // protected static ?string $navigationGroup = 'QC Forms';
@@ -50,6 +50,10 @@ class GmpSiteOneResource extends Resource
      protected static ?string $navigationLabel = 'GMP';
      protected static ?string $breadcrumb = 'GMP';
       
+     public static function getNavigationBadge(): ?string
+     {
+         return static::getModel()::where('type_id',7)->count();
+     }
 
 
      public static function form(Form $form): Form

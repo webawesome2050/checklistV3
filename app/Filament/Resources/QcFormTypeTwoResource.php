@@ -43,13 +43,17 @@ class QcFormTypeTwoResource extends Resource
 {
     protected static ?string $model = QcFormTypeTwo::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     // protected static ?string $navigationGroup = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
     protected static ?string $navigationLabel = 'GMP';
     protected static ?string $breadcrumb = 'GMP';
      
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('type_id',2)->count();
+    }
 
     public static function form(Form $form): Form
     { 

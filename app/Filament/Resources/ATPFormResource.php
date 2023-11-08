@@ -41,7 +41,7 @@ class ATPFormResource extends Resource
     protected static ?string $model = ATPForm::class;
 
     protected static ?string $slug = 'atp-check';
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     // protected static ?string $navigationGroup = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
 
@@ -51,6 +51,11 @@ class ATPFormResource extends Resource
     protected static ?string $breadcrumb = 'ATP Check';
     protected static ?string $navigationLabel = 'ATP Check';
     
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('type_id',3)->count();
+    }
+
     public static function form(Form $form): Form
     { 
  
