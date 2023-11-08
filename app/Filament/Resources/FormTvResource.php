@@ -27,13 +27,19 @@ class FormTvResource extends Resource
 {
     protected static ?string $model = FormTv::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     // protected static ?string $navigationGroup = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
 
     protected static ?string $navigationLabel = 'TV - Storage Temp';
 
+
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     
     public static function form(Form $form): Form

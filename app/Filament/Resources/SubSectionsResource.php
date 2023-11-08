@@ -20,11 +20,11 @@ class SubSectionsResource extends Resource
 {
     protected static ?string $model = SubSections::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Machine Name / GMP QC';
 
-    
+    protected static ?int $navigationSort = 3;
     protected static ?string $modelLabel = 'Machine Name / GMP QC';
     protected static ?string $pluralModelLabel = 'Machine Name / GMP QC';
     protected static ?string $breadcrumb = 'Machine Name / GMP QC';

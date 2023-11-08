@@ -47,7 +47,7 @@ class FormTv1263Resource extends Resource
 {
     protected static ?string $model = FormTv::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Site 1263 Forms';
 
@@ -56,6 +56,13 @@ class FormTv1263Resource extends Resource
     protected static ?string $navigationLabel = 'TV Chiller form ';
 
     protected static ?string $breadcrumb = 'Site 1263 - TV';
+
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
+
     
     public static function form(Form $form): Form
     {

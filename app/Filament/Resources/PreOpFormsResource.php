@@ -46,11 +46,17 @@ class PreOpFormsResource extends Resource
 {
     protected static ?string $model = PreOpForms::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Site 34 Forms';
     protected static ?string $navigationLabel = 'Pre-Op forms';
 
     protected static ?string $breadcrumb = 'Pre-Op forms ';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('type_id',6)->count();
+    }
+
 
   public static function form(Form $form): Form
     { 

@@ -15,7 +15,8 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
-        "livewire/livewire": "^v3.0.0-beta.1"
+        "livewire/livewire": "^v3.0.0-beta.1",
+        "saade/filament-fullcalendar": "3.0"
     },
     "require-dev": {
         "doctrine/dbal": "^3.6",

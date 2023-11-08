@@ -122,7 +122,7 @@ body {
             <th>Date </th>
             <th>Start Time </th>
             <th>End Time </th>
-            <th>Arroved By</th>
+            <th>Approved By</th>
         </tr>
         <tr>
             <td>{{ $dataBySections['overallData']['person_name'] }}</td>

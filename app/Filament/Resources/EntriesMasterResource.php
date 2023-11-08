@@ -23,7 +23,7 @@ class EntriesMasterResource extends Resource
 {
     protected static ?string $model = EntriesMaster::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Master';
 
     
