@@ -83,6 +83,8 @@ class CheckListItemsResource extends Resource
                 // TextColumn::make('checkList.name')->searchable(),
 
             ])
+            ->modifyQueryUsing(fn (Builder $query) => $query
+            ->whereIn('check_list_id', [1,20]))
             ->striped()
             ->filters([
                 //

@@ -17,7 +17,7 @@ class CheckListItem extends Model
         'section_id',
         'sub_section_id',
         'sub_sub_section_id',
-        'checklist_id',
+        'check_list_id',
         'm_frequency',
         'c_frequency',
         'a_frequency'
