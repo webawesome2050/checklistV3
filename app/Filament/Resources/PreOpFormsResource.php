@@ -49,7 +49,7 @@ class PreOpFormsResource extends Resource
     // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationGroup = 'Site 34 Forms';
     protected static ?string $navigationLabel = 'Pre-Op forms';
-
+    protected static ?int $navigationSort = 12;
     protected static ?string $breadcrumb = 'Pre-Op forms ';
 
     public static function getNavigationBadge(): ?string

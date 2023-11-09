@@ -27,7 +27,7 @@ class CheckListItemsResource extends Resource
     protected static ?string $navigationLabel = 'Machine Parts';
     protected static ?string $breadcrumb = 'Machine Parts';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 60;
 
     public static function form(Form $form): Form
     {
