@@ -49,7 +49,7 @@ class GmpSiteOneResource extends Resource
      protected static ?string $navigationGroup = 'Site 34 Forms';
      protected static ?string $navigationLabel = 'GMP';
      protected static ?string $breadcrumb = 'GMP';
-      
+     protected static ?int $navigationSort = 13;
      public static function getNavigationBadge(): ?string
      {
          return static::getModel()::where('type_id',7)->count();

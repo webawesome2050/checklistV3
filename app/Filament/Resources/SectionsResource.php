@@ -22,7 +22,7 @@ class SectionsResource extends Resource
     // protected static ?string $navigationIcon = 'heroicon-o-paper-airplane';
     protected static ?string $navigationGroup = 'Master'; 
     protected static ?string $navigationLabel = 'Area';
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 57;
 
     public static function form(Form $form): Form
     {

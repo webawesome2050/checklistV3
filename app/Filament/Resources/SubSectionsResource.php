@@ -24,7 +24,7 @@ class SubSectionsResource extends Resource
     protected static ?string $navigationGroup = 'Master';
     protected static ?string $navigationLabel = 'Machine Name / GMP QC';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 58;
     protected static ?string $modelLabel = 'Machine Name / GMP QC';
     protected static ?string $pluralModelLabel = 'Machine Name / GMP QC';
     protected static ?string $breadcrumb = 'Machine Name / GMP QC';
