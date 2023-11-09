@@ -51,7 +51,7 @@ class FormTv1263Resource extends Resource
 
     protected static ?string $navigationGroup = 'Site 1263 Forms';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $navigationLabel = 'TV Chiller form ';
 

@@ -45,7 +45,8 @@ class ATPFormResource extends Resource
     // protected static ?string $navigationGroup = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 8;
+    
 
     protected static ?string $Title = 'ATP Forms';
     protected static ?string $breadcrumb = 'ATP Check';
