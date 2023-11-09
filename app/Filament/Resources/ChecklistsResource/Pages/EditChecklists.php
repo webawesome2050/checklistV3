@@ -181,7 +181,8 @@ class EditChecklists extends EditRecord
                     'entry_detail',
                     'date',
                     'time',
-                    'finish_time'
+                    'finish_time',
+                    'inspected_by'
                 ];
         
                 foreach ($fieldsToUpdate as $fieldName) {

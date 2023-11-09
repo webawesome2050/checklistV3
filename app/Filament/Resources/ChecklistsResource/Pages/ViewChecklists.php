@@ -3,18 +3,19 @@
 namespace App\Filament\Resources\ChecklistsResource\Pages;
 
 use Filament\Actions;
+use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
 use Filament\Support\Enums\Alignment;
+use Illuminate\Support\Facades\Route;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
-use Illuminate\Support\Facades\Route;
 
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Forms\Components\Placeholder;
+
+
 use App\Filament\Resources\ChecklistsResource;
-
-
 use App\Models\CheckListItemsEntry as Entries;
 
 
@@ -26,7 +27,6 @@ class ViewChecklists extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            // Actions\DeleteAction::make(),
             Actions\Action::make('Approve Form')
                 ->modalHeading('Approve this Checklist Form')
                 ->modalSubmitActionLabel('Approve')
@@ -37,13 +37,13 @@ class ViewChecklists extends ViewRecord
                         ->rows(10) 
                 ])
                 ->action(function (array $data): void { 
+                    $user = Auth::user();
                     $this->record->comments = $data['comments'];
                     $this->record->is_approved = true; // $data['status']; 
+                    $this->record->approved_by = $user->name;
                     $this->record->save();
                     $this->redirect('/checklists');
                 })
-                // ->slideOver()
-                // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
                 ->visible(function (array $data) { 
                     return !$this->record->is_approved;
                 })
@@ -91,7 +91,8 @@ class ViewChecklists extends ViewRecord
                 'person_name',
                 'entry_detail',
                 'date',
-                'time'
+                'time',
+                'inspected_by'
             ];
     
             // foreach ($fieldsToUpdate as $fieldName) {

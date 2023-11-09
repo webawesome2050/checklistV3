@@ -122,6 +122,7 @@ body {
             <th>Date </th>
             <th>Start Time </th>
             <th>End Time </th>
+            <th>Verified by </th>
             <th>Approved By</th>
         </tr>
         <tr>
@@ -129,6 +130,7 @@ body {
             <td>{{ $dataBySections['overallData']['date'] }}</td> 
             <td>{{ $dataBySections['overallData']['time'] }}</td>
             <td>{{ $dataBySections['overallData']['finish_time'] }}</td>
+            <td>{{ $dataBySections['overallData']['inspected_by'] }}</td>
             <td>{{ $dataBySections['overallData']['approved_by'] }}</td>
         </tr>
 </table>        
