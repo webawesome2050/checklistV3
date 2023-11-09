@@ -260,7 +260,9 @@ class ChecklistsResource extends Resource
                     ->native(false),
                     TimePicker::make('time')->label('Start Time')
                     ->required(), 
-                    TimePicker::make('finish_time')->label('End Time')
+                    TimePicker::make('finish_time')->label('End Time'),
+                    Forms\Components\TextInput::make('inspected_by')
+                    ->label('Verified By')
                     // DateTimePicker::make('entry_detail')
                     // ->label('Entry Date Detail')
                     // ->required()

@@ -89,7 +89,8 @@ class CreateChecklists extends CreateRecord
                 'date' => $data['date'],    
                 'time' => $data['time'],
                 'finish_time' => $data['finish_time'],
-                'person_name' => $data['person_name'] 
+                'person_name' => $data['person_name'], 
+                'inspected_by' => $data['inspected_by'] 
             ]);
     
             $entryId = $checkList->id;
