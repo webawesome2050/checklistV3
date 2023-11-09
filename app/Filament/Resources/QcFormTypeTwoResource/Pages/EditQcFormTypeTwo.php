@@ -143,7 +143,8 @@ protected function getRedirectUrl(): string
                 'person_name', 
                 'date',
                 'time',
-                'finish_time'
+                'finish_time',
+                'inspected_by'
             ];
     
             foreach ($fieldsToUpdate as $fieldName) {

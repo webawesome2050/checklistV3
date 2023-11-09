@@ -38,6 +38,8 @@ class ViewQcFormTypeTwo extends ViewRecord
                         ->rows(10) 
                 ])
                 ->action(function (array $data): void { 
+                    $user = Auth::user();
+                    $this->record->approved_by = $user->name;
                     $this->record->comments = $data['comments'];
                     $this->record->is_approved = true; // $data['status']; 
                     $this->record->save();
