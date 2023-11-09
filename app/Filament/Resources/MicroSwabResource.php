@@ -41,7 +41,7 @@ class MicroSwabResource extends Resource
     // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Site 1263 Forms';
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 6;
     protected static ?string $navigationLabel = 'Micro SPC Swab Check';
     protected static ?string $breadcrumb = 'Micro SPC Swab Check';
 

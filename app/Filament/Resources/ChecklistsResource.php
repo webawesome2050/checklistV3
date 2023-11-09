@@ -48,6 +48,9 @@ class ChecklistsResource extends Resource
     // protected static ?string $title = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
     // protected static ?string $navigationLabel = 'Cleanliness Checklist';
+
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $navigationLabel = 'Pre-Op forms ';
 
     protected static ?string $breadcrumb = 'Pre-Op forms ';

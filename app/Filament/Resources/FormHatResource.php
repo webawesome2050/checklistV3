@@ -28,7 +28,7 @@ class FormHatResource extends Resource
     // protected static ?string $navigationGroup = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
     protected static ?string $navigationLabel = 'HAT';
-
+    protected static ?int $navigationSort = 3;
 
     public static function getNavigationBadge(): ?string
     {

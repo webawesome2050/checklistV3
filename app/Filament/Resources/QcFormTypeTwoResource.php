@@ -47,9 +47,9 @@ class QcFormTypeTwoResource extends Resource
 
     // protected static ?string $navigationGroup = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
+    protected static ?int $navigationSort = 2;
     protected static ?string $navigationLabel = 'GMP';
     protected static ?string $breadcrumb = 'GMP';
-     
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::where('type_id',2)->count();

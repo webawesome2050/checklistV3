@@ -33,7 +33,7 @@ class FormTvResource extends Resource
     protected static ?string $navigationGroup = 'Site 1263 Forms';
 
     protected static ?string $navigationLabel = 'TV - Storage Temp';
-
+    protected static ?int $navigationSort = 5;
 
 
     public static function getNavigationBadge(): ?string
