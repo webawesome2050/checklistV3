@@ -47,3 +47,55 @@ easymde/dist/easymde.min.css:
    * @license MIT
    *)
 */
+
+
+.section-portion header.cursor-pointer {
+  background-color: #0E2C50 !important;
+  color: #FFFFFF !important;
+}
+
+
+.section-portion header.cursor-pointer h3 {
+  color: #FFFFFF !important;
+}
+
+
+.section-portion .fi-section-content {
+  background-color: #0e2c500d !important;
+}
+
+
+.machine-section .break-inside-avoid {
+  float: left;
+  margin: 0px 10px;
+}
+
+.machine-section header {
+  background-color: #FFFFFF;
+  padding: 10px !important;
+}
+
+.machine-section .fi-section-content {
+  background-color: #FFFFFF  !important;
+  padding: 10px !important;
+}
+
+
+.fi-topbar-item-active button, .fi-section-content .fi-tabs-item-active {
+  background: #0e2c50 !important;
+  color: #FFF !important;
+}
+
+.alternate-class header.cursor-pointer {
+    /* background-color: #0e2c5099 !important; */
+    padding: 10px !important;
+  }
+
+
+  .alternate-class header.cursor-pointer h3 {
+    /* color: #FFF !important; */
+  }
+
+
+
+

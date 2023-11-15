@@ -61,33 +61,52 @@ class ChecklistsResource extends Resource
     }
 
     public static function form(Form $form): Form
-    { 
+    {
         $optionsValue = [];
         for ($i = 0; $i <= 60; $i++) {
             $optionsValue[$i] = $i;
         }
-        $url = request()->url(); 
+        $url = request()->url();
         preg_match('/\/checklists\/(\d+)\/edit/', $url, $matches);
         if (isset($matches[1])) {
             $id = $matches[1];
-            session(['checklist_id' => $id]); 
+            session(['checklist_id' => $id]);
         } else {
             $id = session('checklist_id');
-        } 
+        }
         $checklistItems = CheckListItem::where('check_list_id', 1)->get();
-        $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
+
+        $checklistItemsBySectionAndSubsection = $checklistItems
+        ->groupBy(['section_id', 'sub_section_id'])
+        ->map(function ($subsectionGroups) {
+            return $subsectionGroups
+                ->sortBy(function ($items) {
+                    return $items->first()->subSection->sequence_number;
+                });
+                // ->take(7);
+        });
+
 
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
             $sectionName = $subsectionGroups->first()->first()->section->name;
+
+            $subsectionGroups = $subsectionGroups->sortBy(function ($item) {
+                return $item->first()->first()->subSection->sequence_number;
+            });
+
+
             $itemCount = count($subsectionGroups);
            // $sectionName =   $sectionName."-".$itemCount;
             $sectionName =   $sectionName;
 
             $sectionComponents = [];
             $subsectionNameArray  = [];
+
+
+
+
+
             foreach ($subsectionGroups as $subsectionId => $checklistItemsInSubsection) {
-                $subsectionName = $checklistItemsInSubsection->first()->first()->subSection->name;
-                // Retrieve sub-section items for the current sub-section
                 $subSectionItems = SubSectionItem::where('sub_section_id', $subsectionId)->get();
                 $formFields = [];
                 // Check if there are sub-section items
@@ -106,29 +125,27 @@ class ChecklistsResource extends Resource
                 } else {
                     $formFields = [];
                 }
-                
 
-                $matchingItem = $checklistItemsInSubsection->first(function ($item) use ($subsectionId) {
-                    return $item->sub_section_id === $subsectionId;
-                });
+
                 $matchingItem = $checklistItemsInSubsection->first(function ($item) use ($subsectionId) {
                     return $item->sub_section_id === $subsectionId;
                 });
 
                 if ($matchingItem) {
-
-                if($sectionName == 'HIGH RISK AREA') {  
-                    $subsectionName = $matchingItem->subSection->name;  
+                    // \Log::info($matchingItem->subSection->sequence_number.'<=>'.$matchingItem->subSection->name);
+                if($sectionName == 'HIGH RISK AREA') {
+                    $subsectionName = $matchingItem->subSection->name;
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
                         'class' => 'section-portion-orange cursor-pointer'
                     ])
                     ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
+                    // ->collapsed()
                     ->collapsible()
                     ->compact();
-                } else if($sectionName == 'BASE PACKING AREA') {  
-                    $subsectionName = $matchingItem->subSection->name;  
+                } else if($sectionName == 'BASE PACKING AREA') {
+                    $subsectionName = $matchingItem->subSection->name;
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
                         'class' => 'section-portion-yellow cursor-pointer'
@@ -137,8 +154,8 @@ class ChecklistsResource extends Resource
                     ->columns(4)
                     ->collapsible()
                     ->compact();
-                } else if($sectionName == 'KITCHEN AREA') {  
-                    $subsectionName = $matchingItem->subSection->name;  
+                } else if($sectionName == 'KITCHEN AREA') {
+                    $subsectionName = $matchingItem->subSection->name;
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
                         'class' => 'section-portion-green cursor-pointer'
@@ -148,107 +165,119 @@ class ChecklistsResource extends Resource
                     ->collapsible()
                     ->compact();
                 } else {
-                    $subsectionName = $matchingItem->subSection->name;  
+
+                    $isParent = $matchingItem->subSection->is_parent;
+                    $hasParentSubSection = $matchingItem->subSection->parent_sub_section_id !== null;
+                    $sectionClass = 'section-portion cursor-pointer';
+                    // If it has a parent sub-section, change the class
+                    if ($hasParentSubSection) {
+                        $sectionClass = 'alternate-class';
+                    }
+                    // // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                    $subsectionName = $matchingItem->subSection->name;
+                    // $subsectionName = $matchingItem->subSection->sequence_number." <=> ".$matchingItem->subSection->name;
+                    $subsectionName = $matchingItem->subSection->name;
                     $subsectionSection = Section::make($subsectionName)
                     ->extraAttributes([
-                        'class' => 'section-portion cursor-pointer'
+                        'class' =>  $sectionClass
                     ])
-                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
                     ->columns(4)
                     ->collapsible()
-                    ->compact(); 
+                    ->compact();
                 }
-                    
+
                 } else {
                     $subsectionSection = Section::make('Section')
                     ->extraAttributes([
                         'class' => 'section-portion cursor-pointer'
                     ])
                     ->columns(4)
-                    ->compact() 
+                    ->compact()
                     ->collapsible(); // Set the section to be collapsed by default
                 }
                 if(count($subSectionItems) > 0) {
                     // \Log::info($formFields);
-                } 
+                }
                 // $formFields = [];
                 $stepFields = [];
                 if(count($subSectionItems) > 0) {
-                    $stepFields[]   =  
+                    $stepFields[]   =
                     Section::make('Select machine number')
                     ->extraAttributes([
                         'class' => 'machine-section'
                     ])
                     ->icon('heroicon-m-megaphone')
                     // ->aside()
-                   ->schema([ 
+                   ->schema([
                     $formFields[] = $itemCode
                     ]);
                 }
 
                 foreach ($checklistItemsInSubsection as $checklistItem) {
-                   
+
                     // $description = $checklistItem->m_frequency ? 'Micro SPC Swab Frequency'.$checklistItem->m_frequency : '';
                     // $description.=$checklistItem->c_frequency ? '\n'.'Chemical Residue Check Frequency'.$checklistItem->c_frequency : '';
                     // $description.=$checklistItem->a_frequency ? '\n'.'ATP check RLU Frequency'.$checklistItem->a_frequency : '';
 
-                    if($sectionName == 'HIGH RISK AREA') {  
+                    if($sectionName == 'HIGH RISK AREA') {
                         $description = $checklistItem->m_frequency ? 'Micro SPC Swab =>'.$checklistItem->m_frequency : '';
                         $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
                         $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
                     } else {
                         $description = '';
                     }
-                    $stepFields[]   =  
-                 Section::make($checklistItem->name)
-                //  ->description($description)
-                 ->aside()
-                ->schema([ 
-                     $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
-                        ->label('Visual insp allergen free')
-                        ->options([
-                            'Accept' => 'Accept',
-                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
-                            'Not in Use' => 'Not in Use'
-                        ])
-                        ->native(false),
 
-                        
-                        $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
-                        ->label('ATP')
-                        ->options($optionsValue)
-                        ->native(false)
-                        ->visible($sectionName == 'HIGH RISK AREA'),
-                        // $formFields[] = TextInput::hidden()
-                        // ->label('ChemicalResidueCheck')->name('chemical_residue_check'),
-                        $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
-                        // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
-                       
-                        $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                        ->rows(1),        
-                        $formFields[] = Radio::make("action_taken_$checklistItem->id")
-                        ->label('Action Taken')
-                        ->options([
-                            'Yes' => 'Yes',
-                            'No' => 'No'
-                        ])
-                        ->inline(),                 
-                    ])->columns(4)->compact(); 
+                    if(!$matchingItem->subSection->is_parent) {
+                    $stepFields[]   =
+                        Section::make($checklistItem->name)
+                        //  ->description($description)
+                        ->aside()
+                        ->schema([
+                            $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
+                                ->label('Visual insp allergen free')
+                                ->options([
+                                    'Accept' => 'Accept',
+                                    'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
+                                    'Not in Use' => 'Not in Use'
+                                ])
+                                ->native(false),
 
 
-                } 
+                                $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
+                                ->label('ATP')
+                                ->options($optionsValue)
+                                ->native(false)
+                                ->visible($sectionName == 'HIGH RISK AREA'),
+                                // $formFields[] = TextInput::hidden()
+                                // ->label('ChemicalResidueCheck')->name('chemical_residue_check'),
+                                $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
+                                // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
 
-                $subsectionSection->schema($stepFields); 
-                $sectionComponents[] = $subsectionSection; 
+                                $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
+                                ->rows(1),
+                                $formFields[] = Radio::make("action_taken_$checklistItem->id")
+                                ->label('Action Taken')
+                                ->options([
+                                    'Yes' => 'Yes',
+                                    'No' => 'No'
+                                ])
+                                ->inline(),
+                            ])->columns(4)->compact();
+
+                    }
+
+                }
+
+
+                $subsectionSection->schema($stepFields);
+                $sectionComponents[] = $subsectionSection;
             }
-            $sectionStep = Tab::make($sectionName) 
+            // dd($sectionComponents);
+
+            $sectionStep = Tab::make($sectionName)
             ->schema($sectionComponents);
             $wizardSteps[] = $sectionStep;
         }
-        // $form->schema([
-        //     Tabs::make('Label')->tabs($wizardSteps),
-        // ])->columns(1);
-
         return $form
         ->schema([
             Forms\Components\Section::make()
@@ -256,13 +285,13 @@ class ChecklistsResource extends Resource
                     Forms\Components\TextInput::make('person_name')
                     ->label('Person Name')
                     ->maxLength(255)
-                    ->required(), 
-                    Hidden::make('id'), 
+                    ->required(),
+                    Hidden::make('id'),
                     DatePicker::make('date')
                     ->required()
                     ->native(false),
                     TimePicker::make('time')->label('Start Time')
-                    ->required(), 
+                    ->required(),
                     TimePicker::make('finish_time')->label('End Time'),
                     Forms\Components\TextInput::make('inspected_by')
                     ->label('Verified By')
@@ -281,15 +310,13 @@ class ChecklistsResource extends Resource
                 // ->columns(4)
                 ->columnSpan(['lg' => 12]),
         ])
-        ->columns(12); 
-        
-
+        ->columns(12);
         return $form;
     }
- 
+
 
     public static function table(Table $table): Table
-    { 
+    {
         // dd(Table::when('entry_id', 2));
         return $table
             ->columns([
@@ -316,7 +343,7 @@ class ChecklistsResource extends Resource
                 // TextColumn::make('site.name')
                 // ->searchable(),
                 // TextColumn::make('checklist.name'),
-            ]) 
+            ])
             ->striped()
             ->filters([
                 //
@@ -331,12 +358,12 @@ class ChecklistsResource extends Resource
                 })
                 ->icon('heroicon-m-arrow-down-on-square'),
                 // ->action(fn (CheckList $record) => $record->delete()),
-                
 
-                // auth()->user()->hasRole(Role::ROLES['approver']) ?   
+
+                // auth()->user()->hasRole(Role::ROLES['approver']) ?
                 // Tables\Actions\ViewAction::make()->label('View and Approve')
                 // ->visible(auth()->user()->hasRole(Role::ROLES['admin'])),
-                
+
                 Tables\Actions\ViewAction::make()->label('View and Approve')
                 // ->visible((fn (CheckList $record): bool => !$record->is_approved)),
                 // ->visible((fn (CheckList $record): bool => !$record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']))),
@@ -355,7 +382,7 @@ class ChecklistsResource extends Resource
         )
         ->modifyQueryUsing(fn (Builder $query) => $query->where('type_id', 1));
     }
- 
+
 
     public static function getRelations(): array
     {
