@@ -32,7 +32,8 @@ class CheckList extends Model
         'person_name',
         'date',
         'time',
-        'finish_time'
+        'finish_time',
+        'status'
     ];
 
 

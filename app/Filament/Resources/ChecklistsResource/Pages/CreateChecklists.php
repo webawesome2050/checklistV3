@@ -10,8 +10,10 @@ use App\Models\CheckListItemsEntry;
 use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\ChecklistsResource;
 use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Actions\Action as Action2;
 use App\Models\User;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 
 class CreateChecklists extends CreateRecord
 {
@@ -19,10 +21,45 @@ class CreateChecklists extends CreateRecord
 
     protected static ?string $title = 'Pre-Op forms';
 
+    // protected function getCreateFormAction(): Action
+    // {
+    //     return Action::make('create')
+    //         ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
+    //         ->submit('create')
+    //         ->keyBindings(['mod+s']);
+    // }
+
+
+    public function getFormActions(): array
+    {
+        return [
+            $this->getCreateFormAction(),
+            Action::make('saveAnother')
+                ->label('Save and Continue')
+                ->action('createAnother')
+                ->keyBindings(['mod+shift+s'])
+                ->color('gray'),
+            // $this->getCancelFormAction(),
+        ];
+    }
+
+
+
+
+    public function getCreateFormAction(): Action
+    {
+        return Action::make('create')
+        // ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
+            ->label('Submit')
+            ->submit('create')
+            ->keyBindings(['mod+s']);
+    }
+
+
 
     public function mount(): void
     {
-        // dd('form'); 
+        // dd('form');
 
         $this->authorizeAccess();
 
@@ -48,28 +85,21 @@ class CreateChecklists extends CreateRecord
                 // Query your database to retrieve the subsection item ID based on the subsection ID
                 // Replace 'SubSectionItem' with the actual model name for your subsection items
                 $subsectionItem = SubSectionItem::where('sub_section_id', $subsectionId)->first();
-                
+
                 if ($subsectionItem) {
                     return $subsectionItem->id;
                 }
-                
+
                 return null; // Return null if no subsection item is found for the subsection ID
             }
 
 
-   
+
 
 
     public function create(bool $another = false): void
     {
         $this->authorizeAccess();
-
-
-       
-
-
-
-
         try {
             $this->callHook('beforeValidate');
 
@@ -79,27 +109,43 @@ class CreateChecklists extends CreateRecord
 
             $data = $this->mutateFormDataBeforeCreate($data);
 
-            // dd($data); 
+            // dd($data);
 
+            if (!$another) {
             $checkList  =  CheckList::create([
-                'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(), 
-                'site_id' => 2, 
+                'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(),
+                'site_id' => 2,
                 'type_id' => 1,
-                // 'entry_detail' => $data['entry_detail'],    
-                'date' => $data['date'],    
+                // 'entry_detail' => $data['entry_detail'],
+                'date' => $data['date'],
                 'time' => $data['time'],
                 'finish_time' => $data['finish_time'],
-                'person_name' => $data['person_name'], 
-                'inspected_by' => $data['inspected_by'] 
+                'person_name' => $data['person_name'],
+                'inspected_by' => $data['inspected_by'],
+                'status' => 1
             ]);
-    
+            } else {
+                $checkList  =  CheckList::create([
+                    'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(),
+                    'site_id' => 2,
+                    'type_id' => 1,
+                    // 'entry_detail' => $data['entry_detail'],
+                    'date' => $data['date'],
+                    'time' => $data['time'],
+                    'finish_time' => $data['finish_time'],
+                    'person_name' => $data['person_name'],
+                    'inspected_by' => $data['inspected_by'],
+                    'status' => 0
+                ]);
+            }
+
             $entryId = $checkList->id;
-            
-            $this->callHook('beforeCreate'); 
+
+            $this->callHook('beforeCreate');
 
             foreach ($data as $fieldKey => $fieldValue) {
                 $matches = [];
-               
+
                 if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
                     $fieldName = $matches[1];
                     $checklistItemId = $matches[2];
@@ -115,45 +161,38 @@ class CreateChecklists extends CreateRecord
                 } else {
                    // dd('No Match Found !');
                 }
-            } 
+            }
 
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
-                // \Log::info('$entryData',$entryData); 
+                // \Log::info('$entryData',$entryData);
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData)) {
                     // \Log::info('$entryData[sub_section_items]',$entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
-                }  
-                // $this->record = $this->handleRecordCreation($entryData);
+                }
                 CheckListItemsEntry::create($entryData);
             }
 
+            if (!$another) {
+                $recipient = User::whereHas('sites', function ($query) {
+                    $query->where('site_id', 2);
+                })
+                ->whereHas('roles', function ($query) {
+                    $query->where('role_id', 3);
+                })->get();
+                Notification::make()
+                        ->title('Pre-Op forms Submitted!')
+                        ->success()
+                        // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
+                        ->body('Created Pre-Op forms Form, kindly view and approve')
+                        ->actions([
+                            Action2::make('View and Approve')
+                                ->button()
+                                ->url('/checklists/'.$entryId)
+                                ->markAsRead(),
+                        ])
+                        ->sendToDatabase($recipient);
+            }
 
-            // dd($entryData);
-            // $this->record = $this->handleRecordCreation($data); 
-            // $this->form->model($this->record)->saveRelationships();
-           
-            $recipient = User::whereHas('sites', function ($query) {
-                $query->where('site_id', 2);
-            })
-            ->whereHas('roles', function ($query) {
-                $query->where('role_id', 3);
-            })->get();
-
-            \Log::info($recipient);
-            
-            Notification::make()
-                    ->title('Pre-Op forms Submitted!')
-                    ->success()
-                    // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
-                    ->body('Created Pre-Op forms Form, kindly view and approve')
-                    ->actions([
-                        Action::make('View and Approve')
-                            ->button()
-                            ->url('/checklists/'.$entryId)
-                            ->markAsRead(),
-                    ])
-                    ->sendToDatabase($recipient);
-                    
                     $this->callHook('afterCreate');
         } catch (Halt $exception) {
             return;
@@ -176,6 +215,6 @@ class CreateChecklists extends CreateRecord
     }
 
 
-  
+
 
 }
