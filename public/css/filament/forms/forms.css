@@ -64,6 +64,64 @@ easymde/dist/easymde.min.css:
   background-color: #0e2c500d !important;
 }
 
+/*  ORANGE  */
+
+.section-portion-orange header.cursor-pointer {
+    background-color: #e73e32 !important;
+    color: #FFFFFF !important;
+  }
+
+  .section-portion-orange header.cursor-pointer h3 {
+    color: #FFFFFF !important;
+  }
+
+  .section-portion-orange .fi-section-content {
+    background-color: #0e2c500d !important;
+  }
+
+  .section-portion-orange .fi-section-header-description {
+    color: #FFFFFF !important;
+  }
+
+  /*  YELLOW  */
+
+.section-portion-yellow header.cursor-pointer {
+    background-color: #d9c72b !important;
+    color: #FFFFFF !important;
+  }
+
+  .section-portion-yellow header.cursor-pointer h3 {
+    color: #FFFFFF !important;
+  }
+
+  .section-portion-yellow .fi-section-content {
+    background-color: #0e2c500d !important;
+  }
+
+  .section-portion-yellow .fi-section-header-description {
+    color: #FFFFFF !important;
+  }
+
+/*  GREEN  */
+
+.section-portion-green header.cursor-pointer {
+    background-color: #8BC34A !important;
+    color: #FFFFFF !important;
+  }
+
+  .section-portion-green header.cursor-pointer h3 {
+    color: #FFFFFF !important;
+  }
+
+  .section-portion-green .fi-section-content {
+    background-color: #0e2c500d !important;
+  }
+
+  .section-portion-green .fi-section-header-description {
+    color: #FFFFFF !important;
+  }
+
+
 
 .machine-section .break-inside-avoid {
   float: left;
@@ -92,9 +150,8 @@ easymde/dist/easymde.min.css:
   }
 
 
-  .alternate-class header.cursor-pointer h3 {
-    /* color: #FFF !important; */
-  }
+  /* .alternate-class header.cursor-pointer h3 {
+  } */
 
 
 
