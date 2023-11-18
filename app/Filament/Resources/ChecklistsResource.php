@@ -313,13 +313,25 @@ class ChecklistsResource extends Resource
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean(),
                 TextColumn::make('')
-                    ->label('Status')
+                    ->label('Approval Status')
                     ->description(function (CheckList $record) {
                         $res = $record->is_approved == false;
                         if ($res) {
                             return 'Pending';
                         } else {
                             return 'Approved';
+                        }
+                    }),
+
+                TextColumn::make('status1')
+                    ->label('Submission Status')
+                    ->badge()
+                    ->description(function (CheckList $record) {
+                        $res = $record->status == false;
+                        if ($res) {
+                            return 'In Progress';
+                        } else {
+                            return 'Submitted';
                         }
                     }),
                 // TextColumn::make('site.name')
@@ -353,7 +365,7 @@ class ChecklistsResource extends Resource
                     }),
                 Tables\Actions\EditAction::make()
                     ->visible(function (CheckList $record): bool {
-                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
                 //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             ])
