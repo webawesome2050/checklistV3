@@ -48,11 +48,11 @@ class EditChecklists extends EditRecord
         try {
             $this->callHook('beforeValidate');
             $data = $this->form->getState();
-            // dd($data);
+
             $this->callHook('afterValidate');
             $data = $this->mutateFormDataBeforeSave($data);
             $this->callHook('beforeSave');
-            // dd($data);
+            dd($data);
             foreach ($data as $fieldKey => $fieldValue) {
                 $matches = [];
                 if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
@@ -67,6 +67,7 @@ class EditChecklists extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $record = Entries::
                 // where('check_list_items_id', $checklistItemId)
@@ -82,6 +83,7 @@ class EditChecklists extends EditRecord
                     $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
                 }
                 \Log::info('entryData', $entryData);
+
                 $query = Entries::where('check_list_items_id', $checklistItemId)
                     ->where('entry_id', $entryData['entry_id']);
                 $record = $query->first();
@@ -145,6 +147,17 @@ class EditChecklists extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
+            // foreach ($fieldsToUpdate as $fieldName) {
+            //     $fullFieldName = "{$fieldName}_$checklistItemId";
+            //     if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != '') {
+            //         $this->data[$fullFieldName] = explode(', ', $entry->$fieldName);
+            //     } else {
+            //         $this->data[$fullFieldName] = $entry->$fieldName;
+            //     }
+            // }
+            // dd($dataByChecklistItem);
+
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
                     \Log::info('before entryData', $entryData['sub_section_items']);
@@ -157,6 +170,7 @@ class EditChecklists extends EditRecord
 
                 if ($record) {
                     $this->handleRecordUpdate($record, $entryData);
+                    \Log::info('entryData', $entryData);
                 }
             }
 
@@ -225,26 +239,6 @@ class EditChecklists extends EditRecord
 
         return null; // Return null if no subsection item is found for the subsection ID
     }
-
-    //     protected function getFormActions(): array
-    //     {
-    //         return [
-    //             $this->getSaveFormAction(),
-    //             Action::make('saveAnother')
-    //                 ->label('Save & create another')
-    //                 ->action('saveAnother')
-    //                 ->keyBindings(['mod+shift+s'])
-    //                 ->color('secondary'),
-    //             $this->getCancelFormAction(),
-    //         ];
-    //     }
-
-    // public function saveAnother()
-    //     {
-    //         $resources = static::getResource();
-    //         $this->redirect($resources::getUrl('create'));
-    //         $this->save(true);
-    //     }
 
     protected function getHeaderActions(): array
     {

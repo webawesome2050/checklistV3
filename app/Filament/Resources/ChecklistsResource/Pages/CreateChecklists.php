@@ -40,52 +40,6 @@ class CreateChecklists extends CreateRecord
         ];
     }
 
-    public function getCreateFormAction(): Action
-    {
-        return Action::make('create')
-        // ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
-            ->label('Submit')
-            ->submit('create')
-            ->keyBindings(['mod+s']);
-    }
-
-    public function mount(): void
-    {
-        // dd('form');
-
-        $this->authorizeAccess();
-
-        $this->fillForm();
-
-        $this->previousUrl = url()->previous();
-    }
-
-    // Helper function to extract subsection ID from field name
-    private function getSubsectionIdFromFieldName($fieldName)
-    {
-        // Extract subsection ID from the field name using a regular expression
-        $matches = [];
-        if (preg_match('/^subsection_(\d+)_/', $fieldName, $matches)) {
-            return $matches[1];
-        }
-
-        return null; // Return null if no match is found
-    }
-
-    // Helper function to retrieve subsection item ID
-    private function getSubsectionItemId($subsectionId)
-    {
-        // Query your database to retrieve the subsection item ID based on the subsection ID
-        // Replace 'SubSectionItem' with the actual model name for your subsection items
-        $subsectionItem = SubSectionItem::where('sub_section_id', $subsectionId)->first();
-
-        if ($subsectionItem) {
-            return $subsectionItem->id;
-        }
-
-        return null; // Return null if no subsection item is found for the subsection ID
-    }
-
     public function create(bool $another = false): void
     {
         $this->authorizeAccess();
@@ -199,5 +153,51 @@ class CreateChecklists extends CreateRecord
 
         $this->redirect('/checklists');
 
+    }
+
+    public function getCreateFormAction(): Action
+    {
+        return Action::make('create')
+        // ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
+            ->label('Submit')
+            ->submit('create')
+            ->keyBindings(['mod+s']);
+    }
+
+    public function mount(): void
+    {
+        // dd('form');
+
+        $this->authorizeAccess();
+
+        $this->fillForm();
+
+        $this->previousUrl = url()->previous();
+    }
+
+    // Helper function to extract subsection ID from field name
+    private function getSubsectionIdFromFieldName($fieldName)
+    {
+        // Extract subsection ID from the field name using a regular expression
+        $matches = [];
+        if (preg_match('/^subsection_(\d+)_/', $fieldName, $matches)) {
+            return $matches[1];
+        }
+
+        return null; // Return null if no match is found
+    }
+
+    // Helper function to retrieve subsection item ID
+    private function getSubsectionItemId($subsectionId)
+    {
+        // Query your database to retrieve the subsection item ID based on the subsection ID
+        // Replace 'SubSectionItem' with the actual model name for your subsection items
+        $subsectionItem = SubSectionItem::where('sub_section_id', $subsectionId)->first();
+
+        if ($subsectionItem) {
+            return $subsectionItem->id;
+        }
+
+        return null; // Return null if no subsection item is found for the subsection ID
     }
 }
