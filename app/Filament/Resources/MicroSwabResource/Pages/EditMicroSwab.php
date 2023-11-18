@@ -8,7 +8,8 @@ use App\Models\CheckListItemsEntry as Entries;
 use App\Models\SubSectionItem;
 use App\Models\User;
 use Filament\Actions;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
+use Filament\Notifications\Actions\Action as SendNote;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Route;
@@ -23,6 +24,27 @@ class EditMicroSwab extends EditRecord
             // Actions\ViewAction::make(),
             // Actions\DeleteAction::make(),
         ];
+    }
+
+    public function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction(),
+            Action::make('saveAnother')
+                ->label('Save and Continue')
+                ->action('saveAnother')
+                ->keyBindings(['mod+shift+s'])
+                ->color('gray'),
+            // $this->getCancelFormAction(),
+        ];
+    }
+
+    public function getSaveFormAction(): Action
+    {
+        return Action::make('save')
+            ->label('Submit')
+            ->submit('save')
+            ->keyBindings(['mod+s']);
     }
 
     public function save(bool $shouldRedirect = true): void
@@ -80,7 +102,7 @@ class EditMicroSwab extends EditRecord
                 ->success()
                 ->body('Updated ATP Form, kindly view and approve')
                 ->actions([
-                    Action::make('View and Approve')
+                    SendNote::make('View and Approve')
                         ->button()
                         ->url('/atp-check/'.$this->record->id)
                         ->markAsRead(),
