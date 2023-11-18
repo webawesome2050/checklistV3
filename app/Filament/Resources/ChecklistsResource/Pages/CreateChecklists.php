@@ -2,18 +2,16 @@
 
 namespace App\Filament\Resources\ChecklistsResource\Pages;
 
-use App\Models\CheckList;
-
-use Filament\Pages\Actions;
-use App\Models\SubSectionItem;
-use App\Models\CheckListItemsEntry;
-use Filament\Resources\Pages\CreateRecord;
 use App\Filament\Resources\ChecklistsResource;
-use Filament\Notifications\Notification;
-use Filament\Notifications\Actions\Action as Action2;
+use App\Models\CheckList;
+use App\Models\CheckListItemsEntry;
+use App\Models\SubSectionItem;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Actions\ActionGroup;
+use Filament\Notifications\Actions\Action as Action2;
+use Filament\Notifications\Notification;
+use Filament\Pages\Actions;
+use Filament\Resources\Pages\CreateRecord;
 
 class CreateChecklists extends CreateRecord
 {
@@ -29,7 +27,6 @@ class CreateChecklists extends CreateRecord
     //         ->keyBindings(['mod+s']);
     // }
 
-
     public function getFormActions(): array
     {
         return [
@@ -43,9 +40,6 @@ class CreateChecklists extends CreateRecord
         ];
     }
 
-
-
-
     public function getCreateFormAction(): Action
     {
         return Action::make('create')
@@ -54,8 +48,6 @@ class CreateChecklists extends CreateRecord
             ->submit('create')
             ->keyBindings(['mod+s']);
     }
-
-
 
     public function mount(): void
     {
@@ -68,34 +60,31 @@ class CreateChecklists extends CreateRecord
         $this->previousUrl = url()->previous();
     }
 
+    // Helper function to extract subsection ID from field name
+    private function getSubsectionIdFromFieldName($fieldName)
+    {
+        // Extract subsection ID from the field name using a regular expression
+        $matches = [];
+        if (preg_match('/^subsection_(\d+)_/', $fieldName, $matches)) {
+            return $matches[1];
+        }
 
-            // Helper function to extract subsection ID from field name
-            private function getSubsectionIdFromFieldName($fieldName) {
-                // Extract subsection ID from the field name using a regular expression
-                $matches = [];
-                if (preg_match('/^subsection_(\d+)_/', $fieldName, $matches)) {
-                    return $matches[1];
-                }
-                return null; // Return null if no match is found
-            }
+        return null; // Return null if no match is found
+    }
 
+    // Helper function to retrieve subsection item ID
+    private function getSubsectionItemId($subsectionId)
+    {
+        // Query your database to retrieve the subsection item ID based on the subsection ID
+        // Replace 'SubSectionItem' with the actual model name for your subsection items
+        $subsectionItem = SubSectionItem::where('sub_section_id', $subsectionId)->first();
 
-            // Helper function to retrieve subsection item ID
-            private function getSubsectionItemId($subsectionId) {
-                // Query your database to retrieve the subsection item ID based on the subsection ID
-                // Replace 'SubSectionItem' with the actual model name for your subsection items
-                $subsectionItem = SubSectionItem::where('sub_section_id', $subsectionId)->first();
+        if ($subsectionItem) {
+            return $subsectionItem->id;
+        }
 
-                if ($subsectionItem) {
-                    return $subsectionItem->id;
-                }
-
-                return null; // Return null if no subsection item is found for the subsection ID
-            }
-
-
-
-
+        return null; // Return null if no subsection item is found for the subsection ID
+    }
 
     public function create(bool $another = false): void
     {
@@ -111,21 +100,8 @@ class CreateChecklists extends CreateRecord
 
             // dd($data);
 
-            if (!$another) {
-            $checkList  =  CheckList::create([
-                'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(),
-                'site_id' => 2,
-                'type_id' => 1,
-                // 'entry_detail' => $data['entry_detail'],
-                'date' => $data['date'],
-                'time' => $data['time'],
-                'finish_time' => $data['finish_time'],
-                'person_name' => $data['person_name'],
-                'inspected_by' => $data['inspected_by'],
-                'status' => 1
-            ]);
-            } else {
-                $checkList  =  CheckList::create([
+            if (! $another) {
+                $checkList = CheckList::create([
                     'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(),
                     'site_id' => 2,
                     'type_id' => 1,
@@ -135,7 +111,20 @@ class CreateChecklists extends CreateRecord
                     'finish_time' => $data['finish_time'],
                     'person_name' => $data['person_name'],
                     'inspected_by' => $data['inspected_by'],
-                    'status' => 0
+                    'status' => 1,
+                ]);
+            } else {
+                $checkList = CheckList::create([
+                    'name' => 'Form SW1 - Hygiene swab and Pre - Op checklist'.'_'.now(),
+                    'site_id' => 2,
+                    'type_id' => 1,
+                    // 'entry_detail' => $data['entry_detail'],
+                    'date' => $data['date'],
+                    'time' => $data['time'],
+                    'finish_time' => $data['finish_time'],
+                    'person_name' => $data['person_name'],
+                    'inspected_by' => $data['inspected_by'],
+                    'status' => 0,
                 ]);
             }
 
@@ -157,9 +146,8 @@ class CreateChecklists extends CreateRecord
                     $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
                     $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
 
-
                 } else {
-                   // dd('No Match Found !');
+                    // dd('No Match Found !');
                 }
             }
 
@@ -172,49 +160,44 @@ class CreateChecklists extends CreateRecord
                 CheckListItemsEntry::create($entryData);
             }
 
-            if (!$another) {
+            if (! $another) {
                 $recipient = User::whereHas('sites', function ($query) {
                     $query->where('site_id', 2);
                 })
-                ->whereHas('roles', function ($query) {
-                    $query->where('role_id', 3);
-                })->get();
+                    ->whereHas('roles', function ($query) {
+                        $query->where('role_id', 3);
+                    })->get();
                 Notification::make()
-                        ->title('Pre-Op forms Submitted!')
-                        ->success()
+                    ->title('Pre-Op forms Submitted!')
+                    ->success()
                         // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
-                        ->body('Created Pre-Op forms Form, kindly view and approve')
-                        ->actions([
-                            Action2::make('View and Approve')
-                                ->button()
-                                ->url('/checklists/'.$entryId)
-                                ->markAsRead(),
-                        ])
-                        ->sendToDatabase($recipient);
+                    ->body('Created Pre-Op forms Form, kindly view and approve')
+                    ->actions([
+                        Action2::make('View and Approve')
+                            ->button()
+                            ->url('/checklists/'.$entryId)
+                            ->markAsRead(),
+                    ])
+                    ->sendToDatabase($recipient);
             }
 
-                    $this->callHook('afterCreate');
+            $this->callHook('afterCreate');
         } catch (Halt $exception) {
             return;
         }
 
         $this->getCreatedNotification()?->send();
 
-        if ($another) {
-            // Ensure that the form record is anonymized so that relationships aren't loaded.
-            $this->form->model($this->record::class);
-            $this->record = null;
-            $this->fillForm();
-            return;
-        }
+        // if ($another) {
+        //     $this->form->model($this->record::class);
+        //     $this->record = null;
+        //     $this->fillForm();
+        //     return;
+        // }
 
         // $this->redirect($this->getRedirectUrl());
 
         $this->redirect('/checklists');
 
     }
-
-
-
-
 }

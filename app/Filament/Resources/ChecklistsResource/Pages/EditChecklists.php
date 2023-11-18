@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\ChecklistsResource\Pages;
 
 use App\Filament\Resources\ChecklistsResource;
+use App\Models\CheckList;
 use App\Models\CheckListItemsEntry as Entries;
-use App\Models\SubSectionItem;
 // use Symfony\Component\Routing\Route;
+use App\Models\SubSectionItem;
 use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Notifications\Actions\Action as SendNote;
@@ -125,11 +126,11 @@ class EditChecklists extends EditRecord
 
     public function save(bool $shouldRedirect = true): void
     {
+
         $this->authorizeAccess();
         try {
             $this->callHook('beforeValidate');
             $data = $this->form->getState();
-            // dd($data);
             $this->callHook('afterValidate');
             $data = $this->mutateFormDataBeforeSave($data);
             $this->callHook('beforeSave');
@@ -140,24 +141,11 @@ class EditChecklists extends EditRecord
                     $fieldName = $matches[1];
                     $checklistItemId = $matches[2];
                     $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
-                    // \Log::info('$fieldName',$fieldName);
-                    //  \Log::info('$fieldName');
-                    // $subsectionId = $this->getSubsectionIdFromFieldName($fieldName);
-                    // $dataByChecklistItem[$checklistItemId]['sub_section_item_id'] = $this->getSubsectionItemId($subsectionId);
                 } else {
                     // dd('No Match Found !');
                 }
             }
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
-                // $record = Entries::
-                // where('check_list_items_id', $checklistItemId)
-                // ->where('entry_id', $id)
-                // ->first();
-
-                // if (is_array($entryData) && array_key_exists('sub_section_items', $entryData)) {
-                //     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
-                // }
-
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
                     \Log::info('before entryData', $entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
@@ -180,7 +168,8 @@ class EditChecklists extends EditRecord
                 })->get();
 
             \Log::info($recipient);
-
+            // update Checklsit status
+            CheckList::where('id', $data['id'])->update(['status' => 1]);
             Notification::make()
                 ->title('Hygiene Submitted!')
                 ->success()
@@ -203,6 +192,7 @@ class EditChecklists extends EditRecord
         if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
             $this->redirect($redirectUrl);
         }
+
     }
 
     protected function getRedirectUrl(): string

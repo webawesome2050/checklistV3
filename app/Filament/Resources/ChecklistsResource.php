@@ -361,7 +361,7 @@ class ChecklistsResource extends Resource
                 // ->visible((fn (CheckList $record): bool => !$record->is_approved)),
                 // ->visible((fn (CheckList $record): bool => !$record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']))),
                     ->visible(function (CheckList $record): bool {
-                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return ($record->status && ! $record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']) || auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
                 Tables\Actions\EditAction::make()
                     ->visible(function (CheckList $record): bool {
