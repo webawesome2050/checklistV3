@@ -8,7 +8,8 @@ use App\Models\CheckListItemsEntry as Entries;
 use App\Models\SubSectionItem;
 use App\Models\User;
 use Filament\Actions;
-use Filament\Notifications\Actions\Action;
+use Filament\Actions\Action;
+use Filament\Notifications\Actions\Action as Action2;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Route;
@@ -24,6 +25,27 @@ class EditATPFormS1 extends EditRecord
         return [
             // Actions\DeleteAction::make(),
         ];
+    }
+
+    public function getFormActions(): array
+    {
+        return [
+            $this->getSaveFormAction(),
+            Action::make('saveAnother')
+                ->label('Save and Continue')
+                ->action('saveAnother')
+                ->keyBindings(['mod+shift+s'])
+                ->color('gray'),
+            // $this->getCancelFormAction(),
+        ];
+    }
+
+    public function getSaveFormAction(): Action
+    {
+        return Action::make('save')
+            ->label('Submit')
+            ->submit('save')
+            ->keyBindings(['mod+s']);
     }
 
     public function save(bool $shouldRedirect = true): void
@@ -72,7 +94,82 @@ class EditATPFormS1 extends EditRecord
                     $this->handleRecordUpdate($record, $entryData);
                 }
             }
+            $recipient = User::whereHas('sites', function ($query) {
+                $query->where('site_id', 1);
+            })
+                ->whereHas('roles', function ($query) {
+                    $query->where('role_id', 3);
+                })->get();
+            CheckList::where('id', $data['id'])->update(['status' => 1]);
+            Notification::make()
+                ->title('ATP Submitted!')
+                ->success()
+                ->body('Created ATP Form, kindly view and approve')
+                ->actions([
+                    Action2::make('View and Approve')
+                        ->button()
+                        ->url('/a-t-p-form-s1s/'.$this->record->id)
+                        ->markAsRead(),
+                ])
+                ->sendToDatabase($recipient);
+            $this->callHook('afterSave');
+        } catch (Halt $exception) {
+            return;
+        }
 
+        $this->getSavedNotification()?->send();
+
+        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
+            $this->redirect($redirectUrl);
+        }
+    }
+
+    public function saveAnother(bool $shouldRedirect = true): void
+    {
+
+        $this->authorizeAccess();
+        try {
+            $this->callHook('beforeValidate');
+            $data = $this->form->getState();
+            $this->callHook('afterValidate');
+            $data = $this->mutateFormDataBeforeSave($data);
+            $this->callHook('beforeSave');
+
+            foreach ($data as $fieldKey => $fieldValue) {
+                $matches = [];
+                if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
+                    $fieldName = $matches[1];
+                    $checklistItemId = $matches[2];
+                    $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+
+                } else {
+                    $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                }
+            }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
+            foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
+
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
+                    // \Log::info('before entryData', $entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
+                }
+                // \Log::info('entryData', $entryData);
+
+                $query = Entries::where('check_list_items_id', $checklistItemId)
+                    ->where('entry_id', $entryData['entry_id']);
+                $record = $query->first();
+                if ($record) {
+                    $this->handleRecordUpdate($record, $entryData);
+                }
+            }
             $recipient = User::whereHas('sites', function ($query) {
                 $query->where('site_id', 1);
             })
@@ -80,18 +177,17 @@ class EditATPFormS1 extends EditRecord
                     $query->where('role_id', 3);
                 })->get();
 
-            Notification::make()
-                ->title('ATP Submitted!')
-                ->success()
-                ->body('Updated ATP Form, kindly view and approve')
-                ->actions([
-                    Action::make('View and Approve')
-                        ->button()
-                        ->url('/a-t-p-form-s1s/'.$this->record->id)
-                        ->markAsRead(),
-                ])
-                ->sendToDatabase($recipient);
-
+            // Notification::make()
+            //     ->title('ATP Submitted!')
+            //     ->success()
+            //     ->body('Created ATP Form, kindly view and approve')
+            //     ->actions([
+            //         Action2::make('View and Approve')
+            //             ->button()
+            //             ->url('/a-t-p-form-s1s/'.$this->record->id)
+            //             ->markAsRead(),
+            //     ])
+            //     ->sendToDatabase($recipient);
             $this->callHook('afterSave');
         } catch (Halt $exception) {
             return;

@@ -98,13 +98,13 @@ class EditMicroSwab extends EditRecord
                 })->get();
             CheckList::where('id', $data['id'])->update(['status' => 1]);
             Notification::make()
-                ->title('ATP Submitted!')
+                ->title('micro Swab Submitted!')
                 ->success()
-                ->body('Updated ATP Form, kindly view and approve')
+                ->body('Created micro Swab Form, kindly view and approve')
                 ->actions([
                     SendNote::make('View and Approve')
                         ->button()
-                        ->url('/atp-check/'.$this->record->id)
+                        ->url('/micro-swabs/'.$this->record->id)
                         ->markAsRead(),
                 ])
                 ->sendToDatabase($recipient);
