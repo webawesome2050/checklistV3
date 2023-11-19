@@ -3,40 +3,30 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\GmpSiteOneResource\Pages;
-use App\Filament\Resources\GmpSiteOneResource\RelationManagers;
+use App\Models\CheckList;
+use App\Models\CheckList as GmpSiteOne;
+use App\Models\CheckListItem;
+use App\Models\Role;
 use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Tabs\Tab;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Table;
-
-use App\Models\Role;
-use App\Models\CheckList;
-use App\Models\CheckListItem;
-use App\Models\EntriesMaster;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\Text;
 use Filament\Tables\Actions\Action;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Hidden;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\Wizard;
-use Illuminate\Support\Facades\Route;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs\Tab;
-use Filament\Forms\Components\Textarea;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TimePicker;
+use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use App\Models\CheckList as GmpSiteOne;
-use Filament\Forms\Components\DateTimePicker;
-use App\Models\CheckListItemsEntry as Entries;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-
-
+use Illuminate\Support\Facades\Route;
 
 class GmpSiteOneResource extends Resource
 {
@@ -44,21 +34,22 @@ class GmpSiteOneResource extends Resource
 
     // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    // protected static ?string $navigationGroup = 'QC Forms';
+    protected static ?string $navigationGroup = 'Site 34 Forms';
 
-     // protected static ?string $navigationGroup = 'QC Forms';
-     protected static ?string $navigationGroup = 'Site 34 Forms';
-     protected static ?string $navigationLabel = 'GMP';
-     protected static ?string $breadcrumb = 'GMP';
-     protected static ?int $navigationSort = 13;
-     public static function getNavigationBadge(): ?string
-     {
-         return static::getModel()::where('type_id',7)->count();
-     }
+    protected static ?string $navigationLabel = 'GMP';
 
+    protected static ?string $breadcrumb = 'GMP';
 
-     public static function form(Form $form): Form
-    { 
+    protected static ?int $navigationSort = 13;
 
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::where('type_id', 7)->count();
+    }
+
+    public static function form(Form $form): Form
+    {
 
         // $currentUrl = request()->url();
         // $parts = explode('/', $currentUrl);
@@ -66,27 +57,27 @@ class GmpSiteOneResource extends Resource
         // $id = 2;
         // $id = Route::current()->parameter('record');
 
-        $url = request()->url(); 
+        $url = request()->url();
         preg_match('/\/checklists\/(\d+)\/edit/', $url, $matches);
         if (isset($matches[1])) {
             $id = $matches[1];
-            session(['checklist_id' => $id]); 
+            session(['checklist_id' => $id]);
         } else {
             $id = session('checklist_id');
-        } 
+        }
 
         $checklistItems = CheckListItem::where('check_list_id', 4)->get();
- 
-            $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
+
+        $checklistItemsBySectionAndSubsection = $checklistItems->groupBy(['section_id', 'sub_section_id']);
         foreach ($checklistItemsBySectionAndSubsection as $sectionId => $subsectionGroups) {
             $sectionName = $subsectionGroups->first()->first()->section->name;
-            $itemCount = count($subsectionGroups); 
-            $sectionName =   $sectionName;
+            $itemCount = count($subsectionGroups);
+            $sectionName = $sectionName;
 
             $sectionComponents = [];
-            $subsectionNameArray  = [];
+            $subsectionNameArray = [];
             foreach ($subsectionGroups as $subsectionId => $checklistItemsInSubsection) {
-                $subsectionName = $checklistItemsInSubsection->first()->first()->subSection->name; 
+                $subsectionName = $checklistItemsInSubsection->first()->first()->subSection->name;
 
                 $matchingItem = $checklistItemsInSubsection->first(function ($item) use ($subsectionId) {
                     return $item->sub_section_id === $subsectionId;
@@ -97,118 +88,118 @@ class GmpSiteOneResource extends Resource
                 });
 
                 if ($matchingItem) {
-                    $subsectionName = $matchingItem->subSection->name;  
+                    $subsectionName = $matchingItem->subSection->name;
                     $subsectionSection = Section::make($subsectionName)
                     // ->description('Step Description')
-                    ->extraAttributes([
-                        'class' => 'section-portion cursor-pointer'
-                    ])
-                    ->columns(4)
-                    ->compact()
-                    ->collapsible(); // Set the section to be collapsed by default
-                    
+                        ->extraAttributes([
+                            'class' => 'section-portion cursor-pointer',
+                        ])
+                        ->columns(4)
+                        ->compact()
+                        ->collapsible(); // Set the section to be collapsed by default
+
                 } else {
                     $subsectionSection = Section::make($sectionName)
-                    ->extraAttributes([
-                        'class' => 'section-portion cursor-pointer'
-                    ])
+                        ->extraAttributes([
+                            'class' => 'section-portion cursor-pointer',
+                        ])
                     // ->description('Step Description')
-                    ->columns(4)
-                    ->collapsible()
-                    ->compact();
+                        ->columns(4)
+                        ->collapsible()
+                        ->compact();
                     // ->collapsed(); // Set the section to be collapsed by default
                 }
-                
+
                 $formFields = [];
                 $stepFields = [];
                 foreach ($checklistItemsInSubsection as $checklistItem) {
 
                     $description = $checklistItem->m_frequency ? 'M Frequency =>'.$checklistItem->m_frequency : '';
-                    $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
-                    $description.=$checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
+                    $description .= $checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
+                    $description .= $checklistItem->a_frequency ? ' ---- A. Frequency =>'.$checklistItem->a_frequency : '';
 
-                    $stepFields[]   =  
+                    $stepFields[] =
                  Section::make($checklistItem->name)
-                 ->aside()
+                     ->aside()
                 //  ->description($description)
-                // ->description($checklistItem->is_approved ? '' : 'Pending') 
-                ->schema([ 
-                     $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
-                        ->label('Condition')
-                        ->options([
-                            'Accept' => 'Accepted',
-                            'Accepted after Corrective Actions' => 'Accepted after Corrective Actions'
-                        ])
-                        ->native(false),
-                        $formFields[] =  Hidden::make("entry_id_$checklistItem->id"),
-                        $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                        ->rows(1),  
-                        // $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Person Responsible')->name('micro_SPC_swab'),
-                        // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
-                        // $formFields[] = Select::make("TP_check_RLU_$checklistItem->id")
-                        //     ->label('ATP check RLU')
-                        //     ->options([
-                        //         'Pass' => 'Pass',
-                        //         'Fail' => 'Fail'
-                        //     ]),
-                        // $formFields[] = Select::make("action_taken_$checklistItem->id")
-                        //     ->label('Action Taken')
-                        //     ->options([
-                        //         'Yes' => 'Yes',
-                        //         'No' => 'No'
-                        //     ]),
+                // ->description($checklistItem->is_approved ? '' : 'Pending')
+                     ->schema([
+                         $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
+                             ->label('Condition')
+                             ->options([
+                                 'Accept' => 'Accepted',
+                                 'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
+                             ])
+                             ->native(false),
+                         $formFields[] = Hidden::make("entry_id_$checklistItem->id"),
+                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
+                             ->rows(1),
+                         // $formFields[] = TextInput::make("micro_SPC_swab_$checklistItem->id")->label('Person Responsible')->name('micro_SPC_swab'),
+                         // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
+                         // $formFields[] = Select::make("TP_check_RLU_$checklistItem->id")
+                         //     ->label('ATP check RLU')
+                         //     ->options([
+                         //         'Pass' => 'Pass',
+                         //         'Fail' => 'Fail'
+                         //     ]),
+                         // $formFields[] = Select::make("action_taken_$checklistItem->id")
+                         //     ->label('Action Taken')
+                         //     ->options([
+                         //         'Yes' => 'Yes',
+                         //         'No' => 'No'
+                         //     ]),
 
-                        $formFields[] = Radio::make("action_taken_$checklistItem->id")
-                        ->label('Action Taken')
-                        ->inline()
-                        ->options([
-                            'Yes' => 'Yes',
-                            'No' => 'No'
-                        ]), 
-                    ])->columns(4)->compact(); 
-                } 
+                         $formFields[] = Radio::make("action_taken_$checklistItem->id")
+                             ->label('Action Taken')
+                             ->inline()
+                             ->options([
+                                 'Yes' => 'Yes',
+                                 'No' => 'No',
+                             ]),
+                     ])->columns(4)->compact();
+                }
 
-                $subsectionSection->schema($stepFields); 
-                $sectionComponents[] = $subsectionSection; 
+                $subsectionSection->schema($stepFields);
+                $sectionComponents[] = $subsectionSection;
             }
             $sectionStep = Tab::make($sectionName)->schema($sectionComponents);
             $wizardSteps[] = $sectionStep;
         }
-       
+
         // $form->schema([
         //     Tabs::make('Label')->tabs($wizardSteps),
         // ])->columns(1);
 
         return $form
-        ->schema([
-            Forms\Components\Section::make()
-                ->schema([
-                    Forms\Components\TextInput::make('person_name')
-                    ->label('Person Name')
-                    ->maxLength(255)
-                    ->required(), 
-                    Hidden::make('id'),
-                    DatePicker::make('date')
-                    ->required()
-                    ->native(false),
-                    TimePicker::make('time')
-                    ->required(), 
-                    // DateTimePicker::make('entry_detail')
-                    // ->label('Entry Date Detail')
-                    // ->required()
-                    // ->native(false),
-                ])
-               ->columns(3)
-                ->columnSpan(['lg' =>5]),
+            ->schema([
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('person_name')
+                            ->label('Person Name')
+                            ->maxLength(255)
+                            ->required(),
+                        Hidden::make('id'),
+                        DatePicker::make('date')
+                            ->required()
+                            ->native(false),
+                        TimePicker::make('time')
+                            ->required(),
+                        // DateTimePicker::make('entry_detail')
+                        // ->label('Entry Date Detail')
+                        // ->required()
+                        // ->native(false),
+                    ])
+                    ->columns(3)
+                    ->columnSpan(['lg' => 5]),
 
-            Forms\Components\Section::make()
-                ->schema([
-                    Tabs::make('Label')->tabs($wizardSteps)
-                ])
-                // ->columns(4)
-                ->columnSpan(['lg' => 12]),
-        ])
-        ->columns(12); 
+                Forms\Components\Section::make()
+                    ->schema([
+                        Tabs::make('Label')->tabs($wizardSteps),
+                    ])
+                    // ->columns(4)
+                    ->columnSpan(['lg' => 12]),
+            ])
+            ->columns(12);
 
         return $form
             ->schema([
@@ -216,25 +207,22 @@ class GmpSiteOneResource extends Resource
                     ->schema([
                         Hidden::make('id'),
                         DateTimePicker::make('entry_detail')
-                        ->label('Entry Detail')
-                        ->native(false),
+                            ->label('Entry Detail')
+                            ->native(false),
                         // DateTimePicker::make('next_inspection_detail')
                         // ->label('Next Inspectin Date')
                         // ->native(false),
                     ])
-                    ->columnSpan(['lg' =>3]),
+                    ->columnSpan(['lg' => 3]),
 
                 Forms\Components\Section::make()
                     ->schema([
-                        Tabs::make('Label')->tabs($wizardSteps)
-                     
+                        Tabs::make('Label')->tabs($wizardSteps),
+
                     ])
-                    ->columnSpan(['lg' => 9])
+                    ->columnSpan(['lg' => 9]),
             ])
             ->columns(3);
-
-         
-        
 
         // return $form;
     }
@@ -243,30 +231,36 @@ class GmpSiteOneResource extends Resource
     {
         return $table
             ->columns([
-                //
-                // TextColumn::make('id'),
-                TextColumn::make('name'),
-                TextColumn::make('site.name'),
-                Tables\Columns\IconColumn::make('is_approved')
-                ->boolean(),
-                // TextColumn::make('')
-                // ->label('Status')
-                // ->description(function (QcFormTypeTwo $record) {
-                //     $res= $record->is_approved == false;
-                //     if ($res){
-                //         return "Pending";
-                //     }
-                //     else{
-                //         return "Approved";
-                //     }
-                // }),
+                TextColumn::make('name')
+                    ->searchable(),
                 TextColumn::make('created_at')
-                ->dateTime()
-                ->label('Created on')
-                ->sortable(),
-                // TextColumn::make('checklist.name'),
+                    ->dateTime()
+                    ->label('Created on')->searchable(),
+                Tables\Columns\IconColumn::make('is_approved')
+                    ->boolean(),
+                TextColumn::make('')
+                    ->label('Approval Status')
+                    ->description(function (CheckList $record) {
+                        $res = $record->is_approved == false;
+                        if ($res) {
+                            return 'Pending';
+                        } else {
+                            return 'Approved';
+                        }
+                    }),
+                TextColumn::make('status1')
+                    ->label('Submission Status')
+                    ->badge()
+                    ->description(function (CheckList $record) {
+                        $res = $record->status == false;
+                        if ($res) {
+                            return 'In Progress';
+                        } else {
+                            return 'Submitted';
+                        }
+                    }),
             ])
-            ->striped() 
+            ->striped()
             ->filters([
                 //
             ])
@@ -280,32 +274,36 @@ class GmpSiteOneResource extends Resource
             ->actions([
 
                 Action::make('Download Report')->label('Download Report')
-                ->url(fn (CheckList $record): string => route('generate.gmp', $record))
-                ->openUrlInNewTab()
-                ->visible(function (CheckList $record): bool {
-                    return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
-                })
-                ->icon('heroicon-m-arrow-down-on-square'),
+                    ->url(fn (CheckList $record): string => route('generate.gmp', $record))
+                    ->openUrlInNewTab()
+                    ->visible(function (CheckList $record): bool {
+                        return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                    })
+                    ->icon('heroicon-m-arrow-down-on-square'),
                 // ->action(fn (CheckList $record) => $record->delete()),
-                
 
-                // auth()->user()->hasRole(Role::ROLES['approver']) ?   
+                // auth()->user()->hasRole(Role::ROLES['approver']) ?
                 // Tables\Actions\ViewAction::make()->label('View and Approve')
                 // ->visible(auth()->user()->hasRole(Role::ROLES['admin'])),
-                
+
+                // Tables\Actions\ViewAction::make()->label('View and Approve')
+                //     ->visible(function (CheckList $record): bool {
+                //         return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                //     }),
+                // Tables\Actions\EditAction::make()
+                //     ->visible(function (CheckList $record): bool {
+                //         return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                //     }),
+
                 Tables\Actions\ViewAction::make()->label('View and Approve')
-                // ->visible((fn (CheckList $record): bool => !$record->is_approved)),
-                // ->visible((fn (CheckList $record): bool => !$record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']))),
-                ->visible(function (CheckList $record): bool {
-                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
-                }),
+                    ->visible(function (CheckList $record): bool {
+                        return ($record->status && ! $record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']) || auth()->user()->hasRole(Role::ROLES['admin']));
+                    }),
                 Tables\Actions\EditAction::make()
-                ->visible(function (CheckList $record): bool {
-                    return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
-                }),
-                //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
+                    ->visible(function (CheckList $record): bool {
+                        return (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                    }),
             ])
-            
 
             // ->actions([
             //     Tables\Actions\ViewAction::make()->label('View and Approve')
@@ -319,9 +317,9 @@ class GmpSiteOneResource extends Resource
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
             ]
-        )
-        ->modifyQueryUsing(fn (Builder $query) => $query
-        ->where('type_id', 7));
+            )
+            ->modifyQueryUsing(fn (Builder $query) => $query
+                ->where('type_id', 7));
     }
 
     public static function getRelations(): array
@@ -330,7 +328,7 @@ class GmpSiteOneResource extends Resource
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -339,5 +337,5 @@ class GmpSiteOneResource extends Resource
             'view' => Pages\ViewGmpSiteOne::route('/{record}'),
             'edit' => Pages\EditGmpSiteOne::route('/{record}/edit'),
         ];
-    }    
+    }
 }
