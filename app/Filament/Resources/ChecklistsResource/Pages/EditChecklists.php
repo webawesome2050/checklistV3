@@ -52,7 +52,7 @@ class EditChecklists extends EditRecord
             $this->callHook('afterValidate');
             $data = $this->mutateFormDataBeforeSave($data);
             $this->callHook('beforeSave');
-            dd($data);
+            // dd($data);
             foreach ($data as $fieldKey => $fieldValue) {
                 $matches = [];
                 if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
@@ -80,7 +80,7 @@ class EditChecklists extends EditRecord
 
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
                     \Log::info('before entryData', $entryData['sub_section_items']);
-                    $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }
                 \Log::info('entryData', $entryData);
 
@@ -161,7 +161,7 @@ class EditChecklists extends EditRecord
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
                     \Log::info('before entryData', $entryData['sub_section_items']);
-                    $entryData['sub_section_items'] = implode(',', $entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }
                 \Log::info('entryData', $entryData);
                 $query = Entries::where('check_list_items_id', $checklistItemId)
