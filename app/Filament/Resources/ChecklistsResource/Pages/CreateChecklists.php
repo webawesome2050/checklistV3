@@ -40,6 +40,15 @@ class CreateChecklists extends CreateRecord
         ];
     }
 
+    public function getCreateFormAction(): Action
+    {
+        return Action::make('create')
+        // ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
+            ->label('Submit')
+            ->submit('create')
+            ->keyBindings(['mod+s']);
+    }
+
     public function create(bool $another = false): void
     {
         $this->authorizeAccess();
@@ -153,15 +162,6 @@ class CreateChecklists extends CreateRecord
 
         $this->redirect('/checklists');
 
-    }
-
-    public function getCreateFormAction(): Action
-    {
-        return Action::make('create')
-        // ->label(__('filament-panels::resources/pages/create-record.form.actions.create.label'))
-            ->label('Submit')
-            ->submit('create')
-            ->keyBindings(['mod+s']);
     }
 
     public function mount(): void
