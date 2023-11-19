@@ -4,9 +4,11 @@ namespace App\Filament\Resources\QcFormTypeTwoResource\Pages;
 
 use App\Filament\Resources\QcFormTypeTwoResource;
 // use Symfony\Component\Routing\Route;
+use App\Models\CheckList;
 use App\Models\CheckListItemsEntry as Entries;
 use App\Models\User;
 use Filament\Actions\Action;
+use Filament\Notifications\Actions\Action as SendNote;
 use Filament\Notifications\Notification;
 use Filament\Pages\Actions;
 use Filament\Resources\Pages\EditRecord;
