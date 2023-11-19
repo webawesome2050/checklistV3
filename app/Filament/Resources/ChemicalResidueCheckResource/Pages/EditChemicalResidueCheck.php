@@ -98,13 +98,13 @@ class EditChemicalResidueCheck extends EditRecord
                 })->get();
             CheckList::where('id', $data['id'])->update(['status' => 1]);
             Notification::make()
-                ->title('ATP Submitted!')
+                ->title('Chemical Residue Check Submitted!')
                 ->success()
-                ->body('Updated ATP Form, kindly view and approve')
+                ->body('Updated Chemical Residue Check Form, kindly view and approve')
                 ->actions([
                     SendNote::make('View and Approve')
                         ->button()
-                        ->url('/chemical-residue-check/'.$this->record->id)
+                        ->url('/chemical-residue-checks/'.$this->record->id)
                         ->markAsRead(),
                 ])
                 ->sendToDatabase($recipient);
