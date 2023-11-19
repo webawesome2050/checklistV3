@@ -2,26 +2,22 @@
 
 namespace App\Filament\Resources;
 
-use Filament\Forms;
-use App\Models\Role;
-use Filament\Tables;
+use App\Filament\Resources\FormTvResource\Pages;
 use App\Models\FormTv;
-use Filament\Infolists;
+use App\Models\Role;
+use Awcodes\FilamentTableRepeater\Components\TableRepeater;
+use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\TimePicker;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
-use Filament\Tables\Table;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
-use Filament\Forms\Components\Toggle;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\TimePicker;
-use Illuminate\Database\Eloquent\Builder;
-use App\Filament\Resources\FormTvResource\Pages;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use App\Filament\Resources\FormTvResource\RelationManagers;
-use Awcodes\FilamentTableRepeater\Components\TableRepeater;
-// use Filament\Actions\Action;
+use Filament\Tables;
 use Filament\Tables\Actions\Action;
+// use Filament\Actions\Action;
+use Filament\Tables\Table;
 
 class FormTvResource extends Resource
 {
@@ -33,52 +29,51 @@ class FormTvResource extends Resource
     protected static ?string $navigationGroup = 'Site 1263 Forms';
 
     protected static ?string $navigationLabel = 'TV - Storage Temp';
-    protected static ?int $navigationSort = 5;
 
+    protected static ?int $navigationSort = 5;
 
     public static function getNavigationBadge(): ?string
     {
         return static::getModel()::count();
     }
 
-    
     public static function form(Form $form): Form
     {
         return $form
-        ->schema([
-            Forms\Components\Section::make()
-                ->schema([
-                    Forms\Components\TextInput::make('name')->label('Person name')
-                    ->maxLength(255)
-                    ->required(),
-                    DatePicker::make('date')
-                    ->required()
-                    ->native(false),
-                    TimePicker::make('time')
-                    ->required(),  
-                Forms\Components\Textarea::make('notes')
-                    ->label('Comments')
-                    ->rows(1)
-                    // ->columnSpanFull(),
-                ])
-                ->columns(2)
-                ->columnSpan(['lg' =>4]),
+            ->schema([
+                Forms\Components\Section::make()
+                    ->schema([
+                        Forms\Components\TextInput::make('name')->label('Person name')
+                            ->maxLength(255)
+                            ->required(),
+                        DatePicker::make('date')
+                            ->required()
+                            ->native(false),
+                        TimePicker::make('time')
+                            ->required(),
+                        Forms\Components\Textarea::make('notes')
+                            ->label('Comments')
+                            ->rows(1),
+                        // ->columnSpanFull(),
+                    ])
+                    ->columns(2)
+                    ->columnSpan(['lg' => 4]),
 
-            Forms\Components\Section::make()
-                ->schema([ 
-                    // DatePicker::make('date'),
-                    // TimePicker::make('time'), 
-                    TextInput::make('temp_storage_1'),
-                    TextInput::make('temp_storage_2'),
-                    TextInput::make('temp_storage_3'),
-                    TextInput::make('verified_by'),
-                    // Toggle::make('is_verified')
-                    // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
-                ])
-                ->columns(2)
-                ->columnSpan(['lg' => 5]),
-        ])
-        ->columns(12); 
+                Forms\Components\Section::make()
+                    ->schema([
+                        // DatePicker::make('date'),
+                        // TimePicker::make('time'),
+                        TextInput::make('temp_storage_1'),
+                        TextInput::make('temp_storage_2'),
+                        TextInput::make('temp_storage_3'),
+                        TextInput::make('verified_by'),
+                        // Toggle::make('is_verified')
+                        // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
+                    ])
+                    ->columns(2)
+                    ->columnSpan(['lg' => 5]),
+            ])
+            ->columns(12);
 
         return $form
             ->schema([
@@ -95,19 +90,19 @@ class FormTvResource extends Resource
                     ->maxLength(65535)
                     ->required()
                     ->columnSpanFull(),
-            TableRepeater::make('tv_lines')
-            ->relationship()
-            ->schema([ 
-                TextInput::make('temp_storage_1'),
-                TextInput::make('temp_storage_2'),
-                TextInput::make('temp_storage_3'),
-                Toggle::make('is_verified')
-                ->visible(auth()->user()->hasRole(Role::ROLES['approver'])), 
-                // TextInput::make('is_verified'),
-                // TextInput::make('is_verified'),
-            ])
-            ->label('Temperature Daily Verification')
-            ->columnSpan('full')
+                TableRepeater::make('tv_lines')
+                    ->relationship()
+                    ->schema([
+                        TextInput::make('temp_storage_1'),
+                        TextInput::make('temp_storage_2'),
+                        TextInput::make('temp_storage_3'),
+                        Toggle::make('is_verified')
+                            ->visible(auth()->user()->hasRole(Role::ROLES['approver'])),
+                        // TextInput::make('is_verified'),
+                        // TextInput::make('is_verified'),
+                    ])
+                    ->label('Temperature Daily Verification')
+                    ->columnSpan('full'),
             ]);
     }
 
@@ -115,7 +110,6 @@ class FormTvResource extends Resource
     {
 
         //   dd(auth()->user()->hasRole(Role::ROLES['approver']));
-
 
         return $table
             ->columns([
@@ -152,27 +146,27 @@ class FormTvResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([ 
-                    // Tables\Actions\EditAction::make()->label('View and Approve')
-                    // ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
-                    //  Tables\Actions\EditAction::make()
-                    //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])), 
+            ->actions([
+                // Tables\Actions\EditAction::make()->label('View and Approve')
+                // ->hidden(!auth()->user()->hasRole(Role::ROLES['approver'])),
+                //  Tables\Actions\EditAction::make()
+                //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
 
-                    Action::make('Download Report')->label('Download Report')
+                Action::make('Download Report')->label('Download Report')
                     ->url(fn (FormTv $record): string => route('generate.tvs', $record))
                     ->openUrlInNewTab()
-                    // ->visible(function (FormTv $record): bool {
-                    //     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
-                    // })
+                // ->visible(function (FormTv $record): bool {
+                //     return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                // })
                     ->icon('heroicon-m-arrow-down-on-square'),
 
-                    Tables\Actions\ViewAction::make()->label('View and Approve')
+                Tables\Actions\ViewAction::make()->label('View and Approve')
                     ->visible(function (FormTv $record): bool {
-                        return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
-                    Tables\Actions\EditAction::make()
+                Tables\Actions\EditAction::make()
                     ->visible(function (FormTv $record): bool {
-                        return (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (!$record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
             ])
 
@@ -185,17 +179,15 @@ class FormTvResource extends Resource
             //          ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             // ])
             ->bulkActions([
-                
+
                 // Tables\Actions\BulkActionGroup::make([
-                //     Tables\Actions\DeleteBulkAction::make(),
+                Tables\Actions\DeleteBulkAction::make(),
                 // ]),
             ])
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make()->label('New Temperature Verification'),
             ]);
     }
-    
-
 
     // public static function infolist(Infolist $infolist): Infolist
     // {
@@ -208,14 +200,14 @@ class FormTvResource extends Resource
     //                             ->schema([
     //                                 \Filament\Infolists\Components\Group::make([
     //                                     \Filament\Infolists\Components\TextEntry::make('name'),
-                                      
+
     //                                 ]),
     //                                 \Filament\Infolists\Components\TextEntry::make('version'),
     //                                 \Filament\Infolists\Components\TextEntry::make('issued_by')
     //                                     ->badge()
     //                                     ->date()
-    //                                     ->color('success'), 
-    //                             ]), 
+    //                                     ->color('success'),
+    //                             ]),
     //                     ])->from('lg'),
     //                 ]),
     //             \Filament\Infolists\Components\Section::make('Content')
@@ -229,14 +221,13 @@ class FormTvResource extends Resource
     //         ]);
     // }
 
-    
     public static function getRelations(): array
     {
         return [
             //
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
@@ -245,5 +236,5 @@ class FormTvResource extends Resource
             'edit' => Pages\EditFormTv::route('/{record}/edit'),
             'view' => Pages\ViewFormTvs::route('/{record}'),
         ];
-    }    
+    }
 }
