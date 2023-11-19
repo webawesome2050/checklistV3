@@ -172,7 +172,7 @@ class CreateMicroSwabSiteOne extends CreateRecord
                     ->actions([
                         Action2::make('View and Approve')
                             ->button()
-                            ->url('micro-swab-site-ones'.$entryId)
+                            ->url('/micro-swab-site-ones/'.$entryId)
                             ->markAsRead(),
                     ])
                     ->sendToDatabase($recipient);

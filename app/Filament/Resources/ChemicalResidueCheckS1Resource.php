@@ -206,25 +206,34 @@ class ChemicalResidueCheckS1Resource extends Resource
     {
         return $table
             ->columns([
-                //
-                // TextColumn::make('id'),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
-                    ->label('Created on'),
+                    ->label('Created on')->searchable(),
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean(),
                 TextColumn::make('')
-                    ->label('Status')
+                    ->label('Approval Status')
                     ->description(function (CheckList $record) {
-                        $res = $record->is_approved == 0;
+                        $res = $record->is_approved == false;
                         if ($res) {
                             return 'Pending';
                         } else {
                             return 'Approved';
                         }
                     }),
-                TextColumn::make('site.name'),
+                TextColumn::make('status1')
+                    ->label('Submission Status')
+                    ->badge()
+                    ->description(function (CheckList $record) {
+                        $res = $record->status == false;
+                        if ($res) {
+                            return 'In Progress';
+                        } else {
+                            return 'Submitted';
+                        }
+                    }),
             ])
             ->striped()
             ->filters([
@@ -240,11 +249,11 @@ class ChemicalResidueCheckS1Resource extends Resource
                     ->icon('heroicon-m-arrow-down-on-square'),
                 Tables\Actions\ViewAction::make()->label('View and Approve')
                     ->visible(function (CheckList $record): bool {
-                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return ($record->status && ! $record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']) || auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
                 Tables\Actions\EditAction::make()
                     ->visible(function (CheckList $record): bool {
-                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
             ])
             ->bulkActions([
