@@ -119,29 +119,84 @@ class MicroSwabResource extends Resource
 
                 if ($matchingItem) {
 
-                    $isParent = $matchingItem->subSection->is_parent;
-                    $hasParentSubSection = $matchingItem->subSection->parent_sub_section_id !== null;
-                    $sectionClass = 'section-portion cursor-pointer';
-                    // If it has a parent sub-section, change the class
-                    if ($hasParentSubSection) {
-                        $sectionClass = 'alternate-class';
-                    }
+                    // $isParent = $matchingItem->subSection->is_parent;
+                    // $hasParentSubSection = $matchingItem->subSection->parent_sub_section_id !== null;
+                    // $sectionClass = 'section-portion cursor-pointer';
+                    // // If it has a parent sub-section, change the class
+                    // if ($hasParentSubSection) {
+                    //     $sectionClass = 'alternate-class';
+                    // }
 
-                    $subsectionName = $matchingItem->subSection->name;
-                    $subsectionSection = Section::make($subsectionName)
-                        ->extraAttributes([
-                            'class' => $sectionClass,
-                        ])
-                        ->collapsible()
-                    // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
-                        ->columns(4)
-                        ->compact();
+                    // $subsectionName = $matchingItem->subSection->name;
+                    // $subsectionSection = Section::make($subsectionName)
+                    //     ->extraAttributes([
+                    //         'class' => $sectionClass,
+                    //     ])
+                    //     ->collapsible()
+                    //     ->columns(4)
+                    //     ->compact();
+
+                    if ($sectionName == 'HIGH RISK AREA') {
+                        $subsectionName = $matchingItem->subSection->name;
+                        $subsectionSection = Section::make($subsectionName)
+                            ->extraAttributes([
+                                'class' => 'section-portion-orange cursor-pointer',
+                            ])
+                            // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '')
+                            ->columns(4)
+                        // ->collapsed()
+                            ->collapsible()
+                            ->compact();
+                    } elseif ($sectionName == 'BASE PACKING AREA') {
+                        $subsectionName = $matchingItem->subSection->name;
+                        $subsectionSection = Section::make($subsectionName)
+                            ->extraAttributes([
+                                'class' => 'section-portion-yellow cursor-pointer',
+                            ])
+                        // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                            ->columns(4)
+                            ->collapsible()
+                            ->compact();
+                    } elseif ($sectionName == 'KITCHEN AREA') {
+                        $subsectionName = $matchingItem->subSection->name;
+                        $subsectionSection = Section::make($subsectionName)
+                            ->extraAttributes([
+                                'class' => 'section-portion-green cursor-pointer',
+                            ])
+                        // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                            ->columns(4)
+                            ->collapsible()
+                            ->compact();
+                    } else {
+
+                        $isParent = $matchingItem->subSection->is_parent;
+                        $hasParentSubSection = $matchingItem->subSection->parent_sub_section_id !== null;
+                        $sectionClass = 'section-portion cursor-pointer';
+                        // If it has a parent sub-section, change the class
+                        if ($hasParentSubSection) {
+                            $sectionClass = 'alternate-class';
+                        }
+                        // // ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '' )
+                        $subsectionName = $matchingItem->subSection->name;
+                        // $subsectionName = $matchingItem->subSection->sequence_number." <=> ".$matchingItem->subSection->name;
+                        $subsectionName = $matchingItem->subSection->name;
+                        $subsectionSection = Section::make($subsectionName)
+                            ->extraAttributes([
+                                'class' => $sectionClass,
+                            ])
+                            ->columns(4)
+                            ->collapsible()
+                            ->compact();
+                    }
 
                 } else {
                     $subsectionSection = Section::make('Section')
+                        ->extraAttributes([
+                            'class' => 'section-portion cursor-pointer',
+                        ])
                         ->columns(4)
                         ->compact()
-                        ->collapsed(); // Set the section to be collapsed by default
+                        ->collapsible(); // Set the section to be collapsed by default
                 }
                 if (count($subSectionItems) > 0) {
                     // \Log::info($formFields);
@@ -224,25 +279,34 @@ class MicroSwabResource extends Resource
     {
         return $table
             ->columns([
-                //
-                // TextColumn::make('id'),
-                TextColumn::make('name'),
+                TextColumn::make('name')
+                    ->searchable(),
                 TextColumn::make('created_at')
                     ->dateTime()
-                    ->label('Created on'),
+                    ->label('Created on')->searchable(),
                 Tables\Columns\IconColumn::make('is_approved')
                     ->boolean(),
                 TextColumn::make('')
-                    ->label('Status')
+                    ->label('Approval Status')
                     ->description(function (CheckList $record) {
-                        $res = $record->is_approved == 0;
+                        $res = $record->is_approved == false;
                         if ($res) {
                             return 'Pending';
                         } else {
                             return 'Approved';
                         }
                     }),
-                TextColumn::make('site.name'),
+                TextColumn::make('status1')
+                    ->label('Submission Status')
+                    ->badge()
+                    ->description(function (CheckList $record) {
+                        $res = $record->status == false;
+                        if ($res) {
+                            return 'In Progress';
+                        } else {
+                            return 'Submitted';
+                        }
+                    }),
             ])
             ->striped()
             ->filters([
@@ -256,13 +320,21 @@ class MicroSwabResource extends Resource
                         return ($record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || ($record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                     })
                     ->icon('heroicon-m-arrow-down-on-square'),
+                // Tables\Actions\ViewAction::make()->label('View and Approve')
+                //     ->visible(function (CheckList $record): bool {
+                //         return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                //     }),
+                // Tables\Actions\EditAction::make()
+                //     ->visible(function (CheckList $record): bool {
+                //         return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                //     }),
                 Tables\Actions\ViewAction::make()->label('View and Approve')
                     ->visible(function (CheckList $record): bool {
-                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return ($record->status && ! $record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']) || auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
                 Tables\Actions\EditAction::make()
                     ->visible(function (CheckList $record): bool {
-                        return (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
+                        return (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
             ])
             ->bulkActions([

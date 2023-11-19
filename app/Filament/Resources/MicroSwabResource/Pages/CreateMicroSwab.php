@@ -186,14 +186,13 @@ class CreateMicroSwab extends CreateRecord
 
         $this->getCreatedNotification()?->send();
 
-        if ($another) {
-            // Ensure that the form record is anonymized so that relationships aren't loaded.
-            $this->form->model($this->record::class);
-            $this->record = null;
-            $this->fillForm();
+        // if ($another) {
+        //     $this->form->model($this->record::class);
+        //     $this->record = null;
+        //     $this->fillForm();
 
-            return;
-        }
+        //     return;
+        // }
 
         // $this->redirect($this->getRedirectUrl());
 
