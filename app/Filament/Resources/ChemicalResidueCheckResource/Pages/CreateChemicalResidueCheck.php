@@ -8,7 +8,6 @@ use App\Models\CheckListItemsEntry;
 use App\Models\SubSectionItem;
 use App\Models\User;
 use Filament\Actions\Action;
-use Filament\Notifications\Actions\Action as Action2;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 
@@ -153,14 +152,13 @@ class CreateChemicalResidueCheck extends CreateRecord
             \Log::info($recipient);
 
             Notification::make()
-                ->title('Pre-Op forms Submitted!')
+                ->title('Chemical Residue Check Submitted!')
                 ->success()
-                        // ->url(fn (CheckList $record): string => route('generate.pdf', $record))
-                ->body('Created Pre-Op forms Form, kindly view and approve')
+                ->body('Created Chemical Residue Check Form, kindly view and approve')
                 ->actions([
-                    Action2::make('View and Approve')
+                    SendNote::make('View and Approve')
                         ->button()
-                        ->url('/checklists/'.$entryId)
+                        ->url('/chemical-residue-checks/'.$this->record->id)
                         ->markAsRead(),
                 ])
                 ->sendToDatabase($recipient);
