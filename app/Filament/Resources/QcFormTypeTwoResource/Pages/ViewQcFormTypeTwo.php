@@ -3,25 +3,18 @@
 namespace App\Filament\Resources\QcFormTypeTwoResource\Pages;
 
 use App\Filament\Resources\QcFormTypeTwoResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
-
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Support\Enums\Alignment;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
-
-use Illuminate\Support\Facades\Route;
-
-
 use App\Models\CheckListItemsEntry as Entries;
-
+use Filament\Actions;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class ViewQcFormTypeTwo extends ViewRecord
 {
     protected static string $resource = QcFormTypeTwoResource::class;
+
     protected static ?string $title = 'GMP';
 
     protected function getHeaderActions(): array
@@ -32,27 +25,26 @@ class ViewQcFormTypeTwo extends ViewRecord
                 ->modalHeading('Approve this Checklist Form')
                 ->modalSubmitActionLabel('Approve')
                 ->modalIcon('heroicon-o-bolt')
-                ->form([ 
-                        Toggle::make('is_approved')->label('Approve'),
+                ->form([
+                    Toggle::make('is_approved')->label('Approve'),
                     TextArea::make('comments')
-                        ->rows(10) 
+                        ->rows(10),
                 ])
-                ->action(function (array $data): void { 
+                ->action(function (array $data): void {
                     $user = Auth::user();
                     $this->record->approved_by = $user->name;
                     $this->record->comments = $data['comments'];
-                    $this->record->is_approved = true; // $data['status']; 
+                    $this->record->is_approved = true; // $data['status'];
                     $this->record->save();
                     $this->redirect('/qc-form-type-twos');
                 })
-                ->visible(function (array $data) { 
-                    return !$this->record->is_approved;
-                })
-                // ->slideOver()
-                // ->visible(auth()->user()->))
+                ->visible(function (array $data) {
+                    return ! $this->record->is_approved;
+                }),
+            // ->slideOver()
+            // ->visible(auth()->user()->))
         ];
-    } 
-
+    }
 
     public function mount($record): void
     {
@@ -68,9 +60,7 @@ class ViewQcFormTypeTwo extends ViewRecord
         $this->fillExistingEntries(); // Add this line to fill existing entries
 
         $this->previousUrl = url()->previous();
-    } 
-
-
+    }
 
     protected function fillExistingEntries(): void
     {
@@ -78,7 +68,7 @@ class ViewQcFormTypeTwo extends ViewRecord
         // dd($id);
         $existingEntries = Entries::where('entry_id', $id)->get();
         // dd($existingEntries);
-    
+
         foreach ($existingEntries as $entry) {
             $checklistItemId = $entry->check_list_items_id;
             $fieldsToUpdate = [
@@ -90,16 +80,15 @@ class ViewQcFormTypeTwo extends ViewRecord
                 'action_taken',
                 'entry_id',
                 'entry_detail',
-                'person_name', 
+                'person_name',
                 'date',
-                'time'
+                'time',
             ];
-    
+
             foreach ($fieldsToUpdate as $fieldName) {
                 $fullFieldName = "{$fieldName}_$checklistItemId";
                 $this->data[$fullFieldName] = $entry->$fieldName;
             }
         }
     }
-    
 }

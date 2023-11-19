@@ -358,8 +358,6 @@ class ChecklistsResource extends Resource
                 // ->visible(auth()->user()->hasRole(Role::ROLES['admin'])),
 
                 Tables\Actions\ViewAction::make()->label('View and Approve')
-                // ->visible((fn (CheckList $record): bool => !$record->is_approved)),
-                // ->visible((fn (CheckList $record): bool => !$record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']))),
                     ->visible(function (CheckList $record): bool {
                         return ($record->status && ! $record->is_approved) && (auth()->user()->hasRole(Role::ROLES['approver']) || auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
@@ -367,7 +365,6 @@ class ChecklistsResource extends Resource
                     ->visible(function (CheckList $record): bool {
                         return (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['approver'])) || (! $record->status && ! $record->is_approved && auth()->user()->hasRole(Role::ROLES['admin']));
                     }),
-                //  ->hidden(auth()->user()->hasRole(Role::ROLES['approver'])),
             ])
             ->bulkActions([
                 Tables\Actions\DeleteBulkAction::make(),
