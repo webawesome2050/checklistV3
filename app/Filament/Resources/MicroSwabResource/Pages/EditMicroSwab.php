@@ -96,7 +96,7 @@ class EditMicroSwab extends EditRecord
                 ->whereHas('roles', function ($query) {
                     $query->where('role_id', 3);
                 })->get();
-
+            CheckList::where('id', $data['id'])->update(['status' => 1]);
             Notification::make()
                 ->title('ATP Submitted!')
                 ->success()
@@ -108,6 +108,80 @@ class EditMicroSwab extends EditRecord
                         ->markAsRead(),
                 ])
                 ->sendToDatabase($recipient);
+
+            $this->callHook('afterSave');
+        } catch (Halt $exception) {
+            return;
+        }
+
+        $this->getSavedNotification()?->send();
+
+        if ($shouldRedirect && ($redirectUrl = $this->getRedirectUrl())) {
+            $this->redirect($redirectUrl);
+        }
+    }
+
+    public function saveAnother(bool $shouldRedirect = true): void
+    {
+
+        $this->authorizeAccess();
+        try {
+            $this->callHook('beforeValidate');
+            $data = $this->form->getState();
+            $this->callHook('afterValidate');
+            $data = $this->mutateFormDataBeforeSave($data);
+            $this->callHook('beforeSave');
+
+            foreach ($data as $fieldKey => $fieldValue) {
+                $matches = [];
+                if (preg_match('/^(.+)_(\d+)$/', $fieldKey, $matches)) {
+                    $fieldName = $matches[1];
+                    $checklistItemId = $matches[2];
+                    $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+
+                } else {
+                    $dataByChecklistItem[$checklistItemId][$fieldName] = $fieldValue;
+                }
+            }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
+            foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
+                if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
+                    \Log::info('before entryData', $entryData['sub_section_items']);
+                    $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
+                }
+                $query = Entries::where('check_list_items_id', $checklistItemId)
+                    ->where('entry_id', $entryData['entry_id']);
+                $record = $query->first();
+                if ($record) {
+                    $this->handleRecordUpdate($record, $entryData);
+                }
+            }
+
+            $recipient = User::whereHas('sites', function ($query) {
+                $query->where('site_id', 2);
+            })
+                ->whereHas('roles', function ($query) {
+                    $query->where('role_id', 3);
+                })->get();
+            // CheckList::where('id', $data['id'])->update(['status' => 1]);
+            // Notification::make()
+            //     ->title('ATP Submitted!')
+            //     ->success()
+            //     ->body('Updated ATP Form, kindly view and approve')
+            //     ->actions([
+            //         SendNote::make('View and Approve')
+            //             ->button()
+            //             ->url('/atp-check/'.$this->record->id)
+            //             ->markAsRead(),
+            //     ])
+            //     ->sendToDatabase($recipient);
 
             $this->callHook('afterSave');
         } catch (Halt $exception) {

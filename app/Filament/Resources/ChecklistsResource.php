@@ -303,8 +303,6 @@ class ChecklistsResource extends Resource
         // dd(Table::when('entry_id', 2));
         return $table
             ->columns([
-                //
-                // TextColumn::make('id'),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('created_at')
@@ -322,7 +320,6 @@ class ChecklistsResource extends Resource
                             return 'Approved';
                         }
                     }),
-
                 TextColumn::make('status1')
                     ->label('Submission Status')
                     ->badge()
@@ -334,9 +331,6 @@ class ChecklistsResource extends Resource
                             return 'Submitted';
                         }
                     }),
-                // TextColumn::make('site.name')
-                // ->searchable(),
-                // TextColumn::make('checklist.name'),
             ])
             ->striped()
             ->filters([
