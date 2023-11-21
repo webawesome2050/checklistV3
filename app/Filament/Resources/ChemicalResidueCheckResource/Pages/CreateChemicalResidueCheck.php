@@ -22,7 +22,7 @@ class CreateChemicalResidueCheck extends CreateRecord
         return [
             $this->getCreateFormAction(),
             Action::make('saveAnother')
-                ->label('Save and Continue')
+                ->label('Submit and Continue')
                 ->action('createAnother')
                 ->keyBindings(['mod+shift+s'])
                 ->color('gray'),

@@ -163,7 +163,7 @@ class ATPFormS1Resource extends Resource
                      ->schema([
                          // $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
                          $formFields[] = Textinput::make("ATP_check_RLU_{$checklistItem->id}")
-                             ->numeric()
+                            //  ->numeric()
                              ->label('ATP check RLU'),
                          $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
                              ->rows(1),

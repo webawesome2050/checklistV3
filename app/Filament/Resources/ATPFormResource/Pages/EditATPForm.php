@@ -32,7 +32,7 @@ class EditATPForm extends EditRecord
         return [
             $this->getSaveFormAction(),
             Action::make('saveAnother')
-                ->label('Save and Continue')
+                ->label('Submit and Continue')
                 ->action('saveAnother')
                 ->keyBindings(['mod+shift+s'])
                 ->color('gray'),
