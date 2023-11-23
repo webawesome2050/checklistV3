@@ -78,7 +78,7 @@ class EditChemicalResidueCheckS1 extends EditRecord
 
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
-                    \Log::info('before entryData', $entryData['sub_section_items']);
+                    // \Log::info('before entryData', $entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }
                 $query = Entries::where('check_list_items_id', $checklistItemId)
@@ -152,7 +152,7 @@ class EditChemicalResidueCheckS1 extends EditRecord
 
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
-                    \Log::info('before entryData', $entryData['sub_section_items']);
+                    // \Log::info('before entryData', $entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }
                 $query = Entries::where('check_list_items_id', $checklistItemId)

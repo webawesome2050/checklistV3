@@ -2,15 +2,15 @@
 
 namespace App\Providers;
 
-use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Schema;
-use Filament\Navigation\NavigationItem;
-use Illuminate\Support\ServiceProvider;
-use App\Filament\Resources\RoleResource;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\NavigationBuilder;
 use App\Filament\Resources\ChecklistsResource;
 use App\Filament\Resources\EntriesMasterResource;
+use App\Filament\Resources\RoleResource;
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationBuilder;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -32,7 +32,7 @@ class AppServiceProvider extends ServiceProvider
     public function boot()
     {
         Schema::defaultStringLength(191);
-
+        // date_default_timezone_set('Australia/Sydney');
         // Filament::navigation(function (NavigationBuilder $builder): NavigationBuilder {
         //     return $builder->items([
         //         NavigationItem::make('Dashboard')
@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
         //         ...ChecklistsResource::getNavigationItems(),
         //         ...EntriesMasterResource::getNavigationItems(),
         //         ...RoleResource::getNavigationItems(),
-                
+
         //     ]);
         // });
 
@@ -63,8 +63,6 @@ class AppServiceProvider extends ServiceProvider
         //         ]),
         //     ]);
         // });
-
-
 
     }
 }
