@@ -82,7 +82,7 @@ class EditATPForm extends EditRecord
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
 
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
-                    // \Log::info('before entryData', $entryData['sub_section_items']);
+                    // // \Log::info('before entryData', $entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }
                 // \Log::info('entryData', $entryData);
@@ -160,7 +160,7 @@ class EditATPForm extends EditRecord
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
 
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
-                    // \Log::info('before entryData', $entryData['sub_section_items']);
+                    // // \Log::info('before entryData', $entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }
                 // \Log::info('entryData', $entryData);

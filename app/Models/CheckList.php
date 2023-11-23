@@ -33,9 +33,8 @@ class CheckList extends Model
         'date',
         'time',
         'finish_time',
-        'status'
+        'status',
     ];
-
 
     public function section()
     {
@@ -49,18 +48,16 @@ class CheckList extends Model
 
     public function TemperatureChecklist()
     {
-        return $this->hasMany(TemperatureChecklist::class,"checklist_id");
+        return $this->hasMany(TemperatureChecklist::class, 'checklist_id');
     }
-
 
     public function details()
     {
-        return $this->hasOne(CheckListDetail::class,"checklist_id");
+        return $this->hasOne(CheckListDetail::class, 'checklist_id');
     }
 
     public function site()
     {
         return $this->belongsTo(Site::class, 'site_id');
     }
-
 }

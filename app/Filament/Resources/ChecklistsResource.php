@@ -226,13 +226,14 @@ class ChecklistsResource extends Resource
                                         ])
                                         ->native(false),
 
-                                    $formFields[] = Select::make("ATP_check_RLU_{$checklistItem->id}")
-                                        ->label('ATP')
-                                        ->options($optionsValue)
-                                        ->native(false)
+                                    $formFields[] = Textinput::make("ATP_check_RLU_{$checklistItem->id}")
+                                    //  ->numeric()
+                                        ->label('ATP check RLU')
                                         ->visible($sectionName == 'HIGH RISK AREA'),
-                                    // $formFields[] = TextInput::hidden()
-                                    // ->label('ChemicalResidueCheck')->name('chemical_residue_check'),
+                                    // Select::make("ATP_check_RLU_{$checklistItem->id}")
+                                    //     ->label('ATP')
+                                    //     ->options($optionsValue)
+                                    //     ->native(false)
                                     $formFields[] = Hidden::make("entry_id_$checklistItem->id"),
                                     // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
 
