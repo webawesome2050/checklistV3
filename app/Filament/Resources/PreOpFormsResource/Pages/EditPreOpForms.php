@@ -66,6 +66,18 @@ class EditPreOpForms extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                // 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+                'finish_time' => $data['finish_time'],
+                'inspected_by' => $data['inspected_by'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $record = Entries::
                 // where('check_list_items_id', $checklistItemId)
@@ -125,6 +137,7 @@ class EditPreOpForms extends EditRecord
 
     public function save(bool $shouldRedirect = true): void
     {
+
         $this->authorizeAccess();
         try {
             $this->callHook('beforeValidate');
@@ -148,6 +161,18 @@ class EditPreOpForms extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                // 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+                'finish_time' => $data['finish_time'],
+                'inspected_by' => $data['inspected_by'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 // $record = Entries::
                 // where('check_list_items_id', $checklistItemId)
@@ -280,6 +305,7 @@ class EditPreOpForms extends EditRecord
                 'entry_detail',
                 'date',
                 'time',
+                'inspected_by',
             ];
 
             foreach ($fieldsToUpdate as $fieldName) {

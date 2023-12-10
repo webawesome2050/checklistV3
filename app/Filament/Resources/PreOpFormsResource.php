@@ -170,38 +170,38 @@ class PreOpFormsResource extends Resource
                     if (! $matchingItem->subSection->is_parent) {
                         $stepFields[] =
                  Section::make($checklistItem->name)
-                         ->description($description)
-                         ->aside()
-                         ->schema([
-                             $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
-                                 ->label('Visual insp allergen free')
-                                 ->options([
-                                     'Accept' => 'Accept',
-                                     'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
-                                     'Not in Use' => 'Not in Use',
-                                 ])
-                                 ->native(false),
+                     ->description($description)
+                     ->aside()
+                     ->schema([
+                         $formFields[] = Select::make("visual_insp_allergen_free_{$checklistItem->id}")
+                             ->label('Visual insp allergen free')
+                             ->options([
+                                 'Accept' => 'Accept',
+                                 'Accepted after Corrective Actions' => 'Accepted after Corrective Actions',
+                                 'Not in Use' => 'Not in Use',
+                             ])
+                             ->native(false),
 
-                             $formFields[] = Select::make("ATP_check_RLU_{$checklistItem->id}")
-                                 ->label('ATP')
-                                 ->options($optionsValue)
-                                 ->native(false)
-                                 ->visible($sectionName == 'HIGH RISK AREA'),
-                             // $formFields[] = TextInput::hidden()
-                             // ->label('ChemicalResidueCheck')->name('chemical_residue_check'),
-                             $formFields[] = Hidden::make("entry_id_$checklistItem->id"),
-                             // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
+                         $formFields[] = Select::make("ATP_check_RLU_{$checklistItem->id}")
+                             ->label('ATP')
+                             ->options($optionsValue)
+                             ->native(false)
+                             ->visible($sectionName == 'HIGH RISK AREA'),
+                         // $formFields[] = TextInput::hidden()
+                         // ->label('ChemicalResidueCheck')->name('chemical_residue_check'),
+                         $formFields[] = Hidden::make("entry_id_$checklistItem->id"),
+                         // $formFields[] = TextInput::make("chemical_residue_check_$checklistItem->id")->label('Chemical Residue Check')->name('chemical_residue_check'),
 
-                             $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                                 ->rows(1),
-                             $formFields[] = Radio::make("action_taken_$checklistItem->id")
-                                 ->label('Action Taken')
-                                 ->options([
-                                     'Yes' => 'Yes',
-                                     'No' => 'No',
-                                 ])
-                                 ->inline(),
-                         ])->columns(4)->compact();
+                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
+                             ->rows(1),
+                         $formFields[] = Radio::make("action_taken_$checklistItem->id")
+                             ->label('Action Taken')
+                             ->options([
+                                 'Yes' => 'Yes',
+                                 'No' => 'No',
+                             ])
+                             ->inline(),
+                     ])->columns(4)->compact();
                     }
                 }
 
@@ -229,6 +229,13 @@ class PreOpFormsResource extends Resource
                             ->native(false),
                         TimePicker::make('time')
                             ->required(),
+
+                        TimePicker::make('time')->label('Start Time')
+                            ->required(),
+                        TimePicker::make('finish_time')->label('End Time'),
+                        Forms\Components\TextInput::make('inspected_by')
+                            ->label('Verified By'),
+
                         // DateTimePicker::make('entry_detail')
                         // ->label('Entry Date Detail')
                         // ->required()

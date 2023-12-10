@@ -35,10 +35,7 @@ class ChecklistsResource extends Resource
 {
     protected static ?string $model = CheckList::class;
 
-    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-    // protected static ?string $title = 'QC Forms';
     protected static ?string $navigationGroup = 'Site 1263 Forms';
-    // protected static ?string $navigationLabel = 'Cleanliness Checklist';
 
     protected static ?int $navigationSort = 1;
 

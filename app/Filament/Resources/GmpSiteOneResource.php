@@ -182,8 +182,11 @@ class GmpSiteOneResource extends Resource
                         DatePicker::make('date')
                             ->required()
                             ->native(false),
-                        TimePicker::make('time')
+                        TimePicker::make('time')->label('Start Time')
                             ->required(),
+                        TimePicker::make('finish_time')->label('End Time'),
+                        Forms\Components\TextInput::make('inspected_by')
+                            ->label('Verified By'),
                         // DateTimePicker::make('entry_detail')
                         // ->label('Entry Date Detail')
                         // ->required()

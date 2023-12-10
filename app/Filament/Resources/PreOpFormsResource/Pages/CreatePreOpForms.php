@@ -112,6 +112,7 @@ class CreatePreOpForms extends CreateRecord
                     'date' => $data['date'],
                     'time' => $data['time'],
                     'person_name' => $data['person_name'],
+                    'inspected_by' => $data['inspected_by'],
                     'status' => 0,
                 ]);
             }

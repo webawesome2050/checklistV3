@@ -64,6 +64,18 @@ class EditGmpSiteOne extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                // 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+                'finish_time' => $data['finish_time'],
+                'inspected_by' => $data['inspected_by'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
             // dd(@$dataByChecklistItem);
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 $record = Entries::where('check_list_items_id', $checklistItemId)
@@ -133,6 +145,17 @@ class EditGmpSiteOne extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                // 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+                'finish_time' => $data['finish_time'],
+                'inspected_by' => $data['inspected_by'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
             // dd(@$dataByChecklistItem);
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 $record = Entries::where('check_list_items_id', $checklistItemId)
@@ -142,6 +165,17 @@ class EditGmpSiteOne extends EditRecord
                     $this->handleRecordUpdate($record, $entryData);
                 }
             }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                // 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+                'finish_time' => $data['finish_time'],
+                'inspected_by' => $data['inspected_by'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
 
             $recipient = User::whereHas('sites', function ($query) {
                 $query->where('site_id', 1);
@@ -229,6 +263,9 @@ class EditGmpSiteOne extends EditRecord
                 'person_name',
                 'date',
                 'time',
+                'finish_time',
+                'inspected_by',
+                'status',
             ];
 
             foreach ($fieldsToUpdate as $fieldName) {

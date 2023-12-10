@@ -63,6 +63,18 @@ class EditQcFormTypeTwo extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                // 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+                'finish_time' => $data['finish_time'],
+                'inspected_by' => $data['inspected_by'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
             // dd(@$dataByChecklistItem);
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 $record = Entries::where('check_list_items_id', $checklistItemId)
@@ -120,6 +132,18 @@ class EditQcFormTypeTwo extends EditRecord
                     // dd('No Match Found !');
                 }
             }
+
+            $checkList = CheckList::find($data['id']);
+            $checkList->update([
+                // 'entry_detail' => $data['entry_detail'],
+                'person_name' => $data['person_name'],
+                'date' => $data['date'],
+                'time' => $data['time'],
+                'finish_time' => $data['finish_time'],
+                'inspected_by' => $data['inspected_by'],
+                // 'next_inspection_detail' => $data['next_inspection_detail'],
+            ]);
+
             // dd(@$dataByChecklistItem);
             foreach ($dataByChecklistItem as $checklistItemId => $entryData) {
                 $record = Entries::where('check_list_items_id', $checklistItemId)

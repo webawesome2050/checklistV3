@@ -83,6 +83,8 @@ class ViewQcFormTypeTwo extends ViewRecord
                 'person_name',
                 'date',
                 'time',
+                'finish_time',
+                'inspected_by',
             ];
 
             foreach ($fieldsToUpdate as $fieldName) {

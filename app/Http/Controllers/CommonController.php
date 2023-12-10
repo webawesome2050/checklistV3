@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
-use Carbon\Carbon;
-use App\Models\FormTv;
-use App\Models\FormHat;
-use App\Models\Section;
-use App\Models\FormTvSite2;
-use Illuminate\Http\Request;
 use App\Models\CheckListItem;
-use App\Models\SubSectionItem;
-use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\CheckListItemsEntry;
+use App\Models\FormHat;
+use App\Models\FormTv;
+use App\Models\FormTvSite2;
+use App\Models\Section;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
+use Illuminate\Http\Request;
 
 class CommonController extends Controller
-{ 
-    public function generatePDF(Request $request) { 
+{
+    public function generatePDF(Request $request)
+    {
         // dd($request->entry_id);
         // Fetch the data with relationships and section/subsection information
         // 'checkList.person_name',
@@ -23,7 +23,7 @@ class CommonController extends Controller
             ->where('entry_id', $request->entry_id)
             ->get();
 
-            // dd($checklistItemsEntries->checkList);
+        // dd($checklistItemsEntries->checkList);
         // Initialize an array to store data by sections
         $dataBySections = [];
 
@@ -31,12 +31,12 @@ class CommonController extends Controller
 
             $checklist = $item->checkList;
             $itemDataOverall = [
-                'person_name' =>  $checklist->person_name ?? '',
-                'time'        =>  $checklist->time ?? '',
+                'person_name' => $checklist->person_name ?? '',
+                'time' => $checklist->time ?? '',
                 'finish_time' => $checklist->finish_time ?? '',
-                'date'        => $checklist->date ?? '',
+                'date' => $checklist->date ?? '',
                 'approved_by' => $checklist->approved_by ?? '',
-                'inspected_by' => $checklist->inspected_by ?? ''
+                'inspected_by' => $checklist->inspected_by ?? '',
             ];
 
             // Get the related section and subsection information from checkListItem
@@ -83,17 +83,16 @@ class CommonController extends Controller
 
         $canvas->set_opacity(.5);
 
-        $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-        20, array(1,0,0),3,2,-30);
-
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
 
         // $pdf->setWatermarkImage(public_path('logo.png'));
-        
+
         return $pdf->stream();
     }
 
-
-    public function generatePDFATP(Request $request) { 
+    public function generatePDFATP(Request $request)
+    {
         // Fetch the data with relationships and section/subsection information
         $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
             ->where('entry_id', $request->entry_id)
@@ -104,15 +103,14 @@ class CommonController extends Controller
 
         foreach ($checklistItemsEntries as $item) {
 
-
             $checklist = $item->checkList;
             $itemDataOverall = [
-                'person_name' =>  $checklist->person_name ?? '',
-                'time'        =>  $checklist->time ?? '',
+                'person_name' => $checklist->person_name ?? '',
+                'time' => $checklist->time ?? '',
                 'finish_time' => $checklist->finish_time ?? '',
-                'date'        => $checklist->date ?? '',
+                'date' => $checklist->date ?? '',
                 'approved_by' => $checklist->approved_by ?? '',
-                'inspected_by' => $checklist->inspected_by ?? ''
+                'inspected_by' => $checklist->inspected_by ?? '',
             ];
 
             // Get the related section and subsection information from checkListItem
@@ -156,364 +154,382 @@ class CommonController extends Controller
 
         $canvas->set_opacity(.5);
 
-        $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-        20, array(1,0,0),3,2,-30);
-
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
 
         // $pdf->setWatermarkImage(public_path('logo.png'));
-        
+
         return $pdf->stream();
     }
 
-
-    public function generatePDFGMP(Request $request) { 
-           // Fetch the data with relationships and section/subsection information
-           $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
-           ->where('entry_id', $request->entry_id)
-           ->get();
-
-       // Initialize an array to store data by sections
-       $dataBySections = [];
-
-       foreach ($checklistItemsEntries as $item) {
-
-
-        $checklist = $item->checkList;
-        $itemDataOverall = [
-            'person_name' =>  $checklist->person_name ?? '',
-            'time'        =>  $checklist->time ?? '',
-            'finish_time' => $checklist->finish_time ?? '',
-            'date'        => $checklist->date ?? '',
-            'approved_by' => $checklist->approved_by ?? '',
-            'inspected_by' => $checklist->inspected_by ?? ''
-        ];
-
-           // Get the related section and subsection information from checkListItem
-           $sectionName = $item->checkListItem->section->name ?? '';
-           $subSectionName = $item->checkListItem->subSection->name ?? '';
-
-           // Create an array for the item with keys and values
-           $itemData = [
-               'Sub-Section' => $subSectionName,
-               'Checklist Item' => $item->checkListItem->name ?? '',
-               'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
-               'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
-               'Chemical Residue Check' => $item->chemical_residue_check ?? '',
-               'TP Check RLU' => $item->TP_check_RLU ?? '',
-               'Comments & Corrective Actions' => $item->comments_corrective_actions ?? '',
-               'Action Taken' => $item->action_taken ?? '',
-               // 'Is Approved' => $item->is_approved ?? '',
-           ];
-
-           // Append the item data to the corresponding section in the array
-           $dataBySections[$sectionName][$subSectionName][] = $itemData;
-       }
-
-       // Pass the data to the Blade view
-       $data = [
-           'dataBySections' => $dataBySections,
-       ];
-
-       // dd($data);
-
-       $pdf = Pdf::loadView('gmp', ['dataBySections' => $dataBySections]);
-
-       $pdf->setPaper('L');
-       $pdf->output();
-       $canvas = $pdf->getDomPDF()->getCanvas();
-
-       $height = $canvas->get_height();
-       $width = $canvas->get_width();
-
-       // $canvas->set_opacity(.1,"Multiply");
-
-       $canvas->set_opacity(.5);
-
-       $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-       20, array(1,0,0),3,2,-30);
-
-
-       // $pdf->setWatermarkImage(public_path('logo.png'));
-       
-       return $pdf->stream();
-    }
-
-
-    public function generatePDFChemical(Request $request) { 
+    public function generatePDFGMP(Request $request)
+    {
         // Fetch the data with relationships and section/subsection information
         $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
-        ->where('entry_id', $request->entry_id)
-        ->get();
+            ->where('entry_id', $request->entry_id)
+            ->get();
 
-    // Initialize an array to store data by sections
-    $dataBySections = [];
+        // Initialize an array to store data by sections
+        $dataBySections = [];
 
-    foreach ($checklistItemsEntries as $item) {
+        //    foreach ($checklistItemsEntries as $item) {
 
-        $checklist = $item->checkList;
-        $itemDataOverall = [
-            'person_name' =>  $checklist->person_name ?? '',
-            'time'        =>  $checklist->time ?? '',
-            'finish_time' => $checklist->finish_time ?? '',
-            'date'        => $checklist->date ?? '',
-            'approved_by' => $checklist->approved_by ?? '',
-            'inspected_by' => $checklist->inspected_by ?? ''
+        //     $checklist = $item->checkList;
+        //     $itemDataOverall = [
+        //         'person_name' =>  $checklist->person_name ?? '',
+        //         'time'        =>  $checklist->time ?? '',
+        //         'finish_time' => $checklist->finish_time ?? '',
+        //         'date'        => $checklist->date ?? '',
+        //         'approved_by' => $checklist->approved_by ?? '',
+        //         'inspected_by' => $checklist->inspected_by ?? ''
+        //     ];
+
+        //     // Get the related section and subsection information from checkListItem
+        //     $sectionName = $item->checkListItem->section->name ?? '';
+        //     $subSectionName = $item->checkListItem->subSection->name ?? '';
+
+        //     // Create an array for the item with keys and values
+        //     $itemData = [
+        //         'Sub-Section' => $subSectionName,
+        //         'Checklist Item' => $item->checkListItem->name ?? '',
+        //         'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
+        //         'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
+        //         'Chemical Residue Check' => $item->chemical_residue_check ?? '',
+        //         'TP Check RLU' => $item->TP_check_RLU ?? '',
+        //         'Comments & Corrective Actions' => $item->comments_corrective_actions ?? '',
+        //         'Action Taken' => $item->action_taken ?? '',
+        //         // 'Is Approved' => $item->is_approved ?? '',
+        //     ];
+
+        //     // Append the item data to the corresponding section in the array
+        //     $dataBySections[$sectionName][$subSectionName][] = $itemData;
+        //     $dataBySections['overallData'] = $itemDataOverall;
+        // }
+
+        foreach ($checklistItemsEntries as $item) {
+
+            $checklist = $item->checkList;
+            $itemDataOverall = [
+                'person_name' => $checklist->person_name ?? '',
+                'time' => $checklist->time ?? '',
+                'finish_time' => $checklist->finish_time ?? '',
+                'date' => $checklist->date ?? '',
+                'approved_by' => $checklist->approved_by ?? '',
+                'inspected_by' => $checklist->inspected_by ?? '',
+            ];
+
+            // Get the related section and subsection information from checkListItem
+            $sectionName = $item->checkListItem->section->name ?? '';
+            $subSectionName = $item->checkListItem->subSection->name ?? '';
+
+            // Create an array for the item with keys and values
+            $itemData = [
+                'Sub-Section' => $subSectionName,
+                'Checklist Item' => $item->checkListItem->name ?? '',
+                'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
+                'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
+                'Chemical Residue Check' => $item->chemical_residue_check ?? '',
+                'TP Check RLU' => $item->TP_check_RLU ?? '',
+                'Comments & Corrective Actions' => $item->comments_corrective_actions ?? '',
+                'Action Taken' => $item->action_taken ?? '',
+                // 'Is Approved' => $item->is_approved ?? '',
+            ];
+
+            // Append the item data to the corresponding section in the array
+            $dataBySections[$sectionName][$subSectionName][] = $itemData;
+            $dataBySections['overallData'] = $itemDataOverall;
+        }
+
+        // Pass the data to the Blade view
+        $data = [
+            'dataBySections' => $dataBySections,
         ];
 
-        // Get the related section and subsection information from checkListItem
-        $sectionName = $item->checkListItem->section->name ?? '';
-        $subSectionName = $item->checkListItem->subSection->name ?? '';
+        // dd($data);
 
-        // Create an array for the item with keys and values
-        $itemData = [
-            'Sub-Section' => $subSectionName,
-            'Checklist Item' => $item->checkListItem->name ?? '',
-            'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
-            'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
-            'Chemical Residue Check' => $item->chemical_residue_check ?? '',
-            'TP Check RLU' => $item->TP_check_RLU ?? '',
-            'Comments & Corrective Actions' => $item->comments_corrective_actions ?? '',
-            'Action Taken' => $item->action_taken ?? '',
-            // 'Is Approved' => $item->is_approved ?? '',
+        $pdf = Pdf::loadView('gmp', ['dataBySections' => $dataBySections]);
+
+        $pdf->setPaper('L');
+        $pdf->output();
+        $canvas = $pdf->getDomPDF()->getCanvas();
+
+        $height = $canvas->get_height();
+        $width = $canvas->get_width();
+
+        // $canvas->set_opacity(.1,"Multiply");
+
+        $canvas->set_opacity(.5);
+
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
+
+        // $pdf->setWatermarkImage(public_path('logo.png'));
+
+        return $pdf->stream();
+    }
+
+    public function generatePDFChemical(Request $request)
+    {
+        // Fetch the data with relationships and section/subsection information
+        $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
+            ->where('entry_id', $request->entry_id)
+            ->get();
+
+        // Initialize an array to store data by sections
+        $dataBySections = [];
+
+        foreach ($checklistItemsEntries as $item) {
+
+            $checklist = $item->checkList;
+            $itemDataOverall = [
+                'person_name' => $checklist->person_name ?? '',
+                'time' => $checklist->time ?? '',
+                'finish_time' => $checklist->finish_time ?? '',
+                'date' => $checklist->date ?? '',
+                'approved_by' => $checklist->approved_by ?? '',
+                'inspected_by' => $checklist->inspected_by ?? '',
+            ];
+
+            // Get the related section and subsection information from checkListItem
+            $sectionName = $item->checkListItem->section->name ?? '';
+            $subSectionName = $item->checkListItem->subSection->name ?? '';
+
+            // Create an array for the item with keys and values
+            $itemData = [
+                'Sub-Section' => $subSectionName,
+                'Checklist Item' => $item->checkListItem->name ?? '',
+                'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
+                'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
+                'Chemical Residue Check' => $item->chemical_residue_check ?? '',
+                'TP Check RLU' => $item->TP_check_RLU ?? '',
+                'Comments & Corrective Actions' => $item->comments_corrective_actions ?? '',
+                'Action Taken' => $item->action_taken ?? '',
+                // 'Is Approved' => $item->is_approved ?? '',
+            ];
+
+            // Append the item data to the corresponding section in the array
+            $dataBySections[$sectionName][$subSectionName][] = $itemData;
+        }
+
+        // Pass the data to the Blade view
+        $data = [
+            'dataBySections' => $dataBySections,
         ];
 
-        // Append the item data to the corresponding section in the array
-        $dataBySections[$sectionName][$subSectionName][] = $itemData;
+        // dd($data);
+
+        $pdf = Pdf::loadView('chemical', ['dataBySections' => $dataBySections]);
+
+        $pdf->setPaper('L');
+        $pdf->output();
+        $canvas = $pdf->getDomPDF()->getCanvas();
+
+        $height = $canvas->get_height();
+        $width = $canvas->get_width();
+
+        // $canvas->set_opacity(.1,"Multiply");
+
+        $canvas->set_opacity(.5);
+
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
+
+        // $pdf->setWatermarkImage(public_path('logo.png'));
+
+        return $pdf->stream();
     }
 
-    // Pass the data to the Blade view
-    $data = [
-        'dataBySections' => $dataBySections,
-    ];
+    public function generatePDFMicro(Request $request)
+    {
+        // Fetch the data with relationships and section/subsection information
+        $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
+            ->where('entry_id', $request->entry_id)
+            ->get();
 
-    // dd($data);
+        // Initialize an array to store data by sections
+        $dataBySections = [];
 
-    $pdf = Pdf::loadView('chemical', ['dataBySections' => $dataBySections]);
+        foreach ($checklistItemsEntries as $item) {
 
-    $pdf->setPaper('L');
-    $pdf->output();
-    $canvas = $pdf->getDomPDF()->getCanvas();
+            $checklist = $item->checkList;
+            $itemDataOverall = [
+                'person_name' => $checklist->person_name ?? '',
+                'time' => $checklist->time ?? '',
+                'finish_time' => $checklist->finish_time ?? '',
+                'date' => $checklist->date ?? '',
+                'approved_by' => $checklist->approved_by ?? '',
+                'inspected_by' => $checklist->inspected_by ?? '',
+            ];
 
-    $height = $canvas->get_height();
-    $width = $canvas->get_width();
+            // Get the related section and subsection information from checkListItem
+            $sectionName = $item->checkListItem->section->name ?? '';
+            $subSectionName = $item->checkListItem->subSection->name ?? '';
 
-    // $canvas->set_opacity(.1,"Multiply");
+            // Create an array for the item with keys and values
+            $itemData = [
+                'Sub-Section' => $subSectionName,
+                'Checklist Item' => $item->checkListItem->name ?? '',
+                'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
+                'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
+                'Chemical Residue Check' => $item->chemical_residue_check ?? '',
+                'TP Check RLU' => $item->TP_check_RLU ?? '',
+                'Comments & Corrective Actions' => $item->comments_corrective_actions ?? '',
+                'Action Taken' => $item->action_taken ?? '',
+                // 'Is Approved' => $item->is_approved ?? '',
+            ];
 
-    $canvas->set_opacity(.5);
+            // Append the item data to the corresponding section in the array
+            $dataBySections[$sectionName][$subSectionName][] = $itemData;
+        }
 
-    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-    20, array(1,0,0),3,2,-30);
+        // Pass the data to the Blade view
+        $data = [
+            'dataBySections' => $dataBySections,
+        ];
 
+        // dd($data);
 
-    // $pdf->setWatermarkImage(public_path('logo.png'));
-    
-    return $pdf->stream();
- }
+        $pdf = Pdf::loadView('micro', ['dataBySections' => $dataBySections]);
 
+        $pdf->setPaper('L');
+        $pdf->output();
+        $canvas = $pdf->getDomPDF()->getCanvas();
 
- public function generatePDFMicro(Request $request) 
- { 
-    // Fetch the data with relationships and section/subsection information
-    $checklistItemsEntries = CheckListItemsEntry::with('checkListItem.section', 'checkListItem.subSection')
-    ->where('entry_id', $request->entry_id)
-    ->get();
+        $height = $canvas->get_height();
+        $width = $canvas->get_width();
 
-    // Initialize an array to store data by sections
-    $dataBySections = [];
+        // $canvas->set_opacity(.1,"Multiply");
 
-    foreach ($checklistItemsEntries as $item) {
+        $canvas->set_opacity(.5);
 
-    $checklist = $item->checkList;
-    $itemDataOverall = [
-        'person_name' =>  $checklist->person_name ?? '',
-        'time'        =>  $checklist->time ?? '',
-        'finish_time' => $checklist->finish_time ?? '',
-        'date'        => $checklist->date ?? '',
-        'approved_by' => $checklist->approved_by ?? '',
-        'inspected_by' => $checklist->inspected_by ?? ''
-    ];
-    
-    // Get the related section and subsection information from checkListItem
-    $sectionName = $item->checkListItem->section->name ?? '';
-    $subSectionName = $item->checkListItem->subSection->name ?? '';
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
 
-    // Create an array for the item with keys and values
-    $itemData = [
-        'Sub-Section' => $subSectionName,
-        'Checklist Item' => $item->checkListItem->name ?? '',
-        'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
-        'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
-        'Chemical Residue Check' => $item->chemical_residue_check ?? '',
-        'TP Check RLU' => $item->TP_check_RLU ?? '',
-        'Comments & Corrective Actions' => $item->comments_corrective_actions ?? '',
-        'Action Taken' => $item->action_taken ?? '',
-        // 'Is Approved' => $item->is_approved ?? '',
-    ];
+        // $pdf->setWatermarkImage(public_path('logo.png'));
 
-    // Append the item data to the corresponding section in the array
-    $dataBySections[$sectionName][$subSectionName][] = $itemData;
+        return $pdf->stream();
     }
 
-    // Pass the data to the Blade view
-    $data = [
-        'dataBySections' => $dataBySections,
-    ];
+    public function generatePDFHAT(Request $request)
+    {
+        // dd($request->entry_id);
+        $record = FormHat::find($request->entry_id);
+        if ($record) {
+            // Extract the date from the retrieved record.
+            $date = $record->date;
+            // Calculate the start and end of the month for the extracted date.
+            $startOfMonth = Carbon::parse($date)->startOfMonth();
+            $endOfMonth = Carbon::parse($date)->endOfMonth();
 
-    // dd($data);
+            // Query the database to get all records within the same month as the extracted date.
+            $recordsWithinMonth = FormHat::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
 
-    $pdf = Pdf::loadView('micro', ['dataBySections' => $dataBySections]);
+            // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+        }
+        // dd($recordsWithinMonth);
+        // $data = [
+        //     'dataBySections' => $recordsWithinMonth,
+        // ];
 
-    $pdf->setPaper('L');
-    $pdf->output();
-    $canvas = $pdf->getDomPDF()->getCanvas();
+        $pdf = Pdf::loadView('hat', ['dataBySections' => $recordsWithinMonth]);
 
-    $height = $canvas->get_height();
-    $width = $canvas->get_width();
+        $pdf->setPaper('L');
+        $pdf->output();
+        $canvas = $pdf->getDomPDF()->getCanvas();
 
-    // $canvas->set_opacity(.1,"Multiply");
+        $height = $canvas->get_height();
+        $width = $canvas->get_width();
 
-    $canvas->set_opacity(.5);
+        // $canvas->set_opacity(.1,"Multiply");
 
-    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-    20, array(1,0,0),3,2,-30);
+        $canvas->set_opacity(.5);
 
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
 
-    // $pdf->setWatermarkImage(public_path('logo.png'));
+        // $pdf->setWatermarkImage(public_path('logo.png'));
 
-    return $pdf->stream();
-}
-
-
-
-
-public function generatePDFHAT(Request $request) 
- { 
-    // dd($request->entry_id);
-    $record = FormHat::find($request->entry_id);
-    if ($record) {
-        // Extract the date from the retrieved record.
-        $date = $record->date;
-        // Calculate the start and end of the month for the extracted date.
-        $startOfMonth = Carbon::parse($date)->startOfMonth();
-        $endOfMonth = Carbon::parse($date)->endOfMonth();
-
-        // Query the database to get all records within the same month as the extracted date.
-        $recordsWithinMonth = FormHat::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
-
-        // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+        return $pdf->stream();
     }
-    // dd($recordsWithinMonth);
-    // $data = [
-    //     'dataBySections' => $recordsWithinMonth,
-    // ];
 
-    $pdf = Pdf::loadView('hat', ['dataBySections' => $recordsWithinMonth]);
+    public function generatePDFTVC(Request $request)
+    {
+        // dd($request->entry_id);
+        $record = FormTvSite2::find($request->entry_id);
+        if ($record) {
+            // Extract the date from the retrieved record.
+            $date = $record->date;
+            // Calculate the start and end of the month for the extracted date.
+            $startOfMonth = Carbon::parse($date)->startOfMonth();
+            $endOfMonth = Carbon::parse($date)->endOfMonth();
 
-    $pdf->setPaper('L');
-    $pdf->output();
-    $canvas = $pdf->getDomPDF()->getCanvas();
+            // Query the database to get all records within the same month as the extracted date.
+            $recordsWithinMonth = FormTvSite2::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
 
-    $height = $canvas->get_height();
-    $width = $canvas->get_width();
+            // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+        }
+        // dd($recordsWithinMonth);
+        // $data = [
+        //     'dataBySections' => $recordsWithinMonth,
+        // ];
 
-    // $canvas->set_opacity(.1,"Multiply");
+        $pdf = Pdf::loadView('tvchiller', ['dataBySections' => $recordsWithinMonth]);
+        // $pdf = PDF::loadView('pdf.test_pdf')->setPaper('a4', 'landscape');
+        $pdf->setPaper('L', 'landscape');
+        $pdf->output();
+        $canvas = $pdf->getDomPDF()->getCanvas();
 
-    $canvas->set_opacity(.5);
+        $height = $canvas->get_height();
+        $width = $canvas->get_width();
 
-    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-    20, array(1,0,0),3,2,-30);
+        // $canvas->set_opacity(.1,"Multiply");
 
+        $canvas->set_opacity(.5);
 
-    // $pdf->setWatermarkImage(public_path('logo.png'));
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
 
-    return $pdf->stream();
-}
+        // $pdf->setWatermarkImage(public_path('logo.png'));
 
-
-public function generatePDFTVC(Request $request) 
- { 
-    // dd($request->entry_id);
-    $record = FormTvSite2::find($request->entry_id);
-    if ($record) {
-        // Extract the date from the retrieved record.
-        $date = $record->date;
-        // Calculate the start and end of the month for the extracted date.
-        $startOfMonth = Carbon::parse($date)->startOfMonth();
-        $endOfMonth = Carbon::parse($date)->endOfMonth();
-
-        // Query the database to get all records within the same month as the extracted date.
-        $recordsWithinMonth = FormTvSite2::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
-
-        // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+        return $pdf->stream();
     }
-    // dd($recordsWithinMonth);
-    // $data = [
-    //     'dataBySections' => $recordsWithinMonth,
-    // ];
 
-    $pdf = Pdf::loadView('tvchiller', ['dataBySections' => $recordsWithinMonth]);
-    // $pdf = PDF::loadView('pdf.test_pdf')->setPaper('a4', 'landscape');
-    $pdf->setPaper('L','landscape');
-    $pdf->output();
-    $canvas = $pdf->getDomPDF()->getCanvas();
+    public function generatePDFTVS(Request $request)
+    {
+        $record = FormTv::find($request->entry_id);
+        if ($record) {
+            // Extract the date from the retrieved record.
+            $date = $record->date;
+            // Calculate the start and end of the month for the extracted date.
+            $startOfMonth = Carbon::parse($date)->startOfMonth();
+            $endOfMonth = Carbon::parse($date)->endOfMonth();
+            // Query the database to get all records within the same month as the extracted date.
+            $recordsWithinMonth = FormTv::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
+            // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+        }
+        // dd($recordsWithinMonth);
+        // $data = [
+        //     'dataBySections' => $recordsWithinMonth,
+        // ];
 
-    $height = $canvas->get_height();
-    $width = $canvas->get_width();
+        $pdf = Pdf::loadView('tvs', ['dataBySections' => $recordsWithinMonth]);
+        // $pdf = PDF::loadView('pdf.test_pdf')->setPaper('a4', 'landscape');
+        $pdf->setPaper('L', 'landscape');
+        $pdf->output();
+        $canvas = $pdf->getDomPDF()->getCanvas();
 
-    // $canvas->set_opacity(.1,"Multiply");
+        $height = $canvas->get_height();
+        $width = $canvas->get_width();
 
-    $canvas->set_opacity(.5);
+        // $canvas->set_opacity(.1,"Multiply");
 
-    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-    20, array(1,0,0),3,2,-30);
+        $canvas->set_opacity(.5);
 
+        $canvas->page_text($width / 3, $height / 2, 'AIF.com - verified', null,
+            20, [1, 0, 0], 3, 2, -30);
 
-    // $pdf->setWatermarkImage(public_path('logo.png'));
+        // $pdf->setWatermarkImage(public_path('logo.png'));
 
-    return $pdf->stream();
-}
-
-
-public function generatePDFTVS(Request $request) 
- { 
-    $record = FormTv::find($request->entry_id);
-    if ($record) {
-        // Extract the date from the retrieved record.
-        $date = $record->date;
-        // Calculate the start and end of the month for the extracted date.
-        $startOfMonth = Carbon::parse($date)->startOfMonth();
-        $endOfMonth = Carbon::parse($date)->endOfMonth();
-        // Query the database to get all records within the same month as the extracted date.
-        $recordsWithinMonth = FormTv::whereBetween('date', [$startOfMonth, $endOfMonth])->get();
-        // Now, $recordsWithinMonth contains all records within the same month as the 'id' parameter.
+        return $pdf->stream();
     }
-    // dd($recordsWithinMonth);
-    // $data = [
-    //     'dataBySections' => $recordsWithinMonth,
-    // ];
-
-    $pdf = Pdf::loadView('tvs', ['dataBySections' => $recordsWithinMonth]);
-    // $pdf = PDF::loadView('pdf.test_pdf')->setPaper('a4', 'landscape');
-    $pdf->setPaper('L','landscape');
-    $pdf->output();
-    $canvas = $pdf->getDomPDF()->getCanvas();
-
-    $height = $canvas->get_height();
-    $width = $canvas->get_width();
-
-    // $canvas->set_opacity(.1,"Multiply");
-
-    $canvas->set_opacity(.5);
-
-    $canvas->page_text($width/3, $height/2, 'AIF.com - verified', null,
-    20, array(1,0,0),3,2,-30);
-
-
-    // $pdf->setWatermarkImage(public_path('logo.png'));
-
-    return $pdf->stream();
-}
-
-
-
 }

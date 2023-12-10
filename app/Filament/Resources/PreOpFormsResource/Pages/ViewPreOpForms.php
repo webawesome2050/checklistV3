@@ -2,22 +2,14 @@
 
 namespace App\Filament\Resources\PreOpFormsResource\Pages;
 
-
-
-use Filament\Actions;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Support\Enums\Alignment;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
-use Illuminate\Support\Facades\Route;
-
-use App\Models\CheckListItemsEntry as Entries;
-
-
 use App\Filament\Resources\PreOpFormsResource;
+use App\Models\CheckListItemsEntry as Entries;
+use Filament\Actions;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class ViewPreOpForms extends ViewRecord
 {
@@ -31,25 +23,26 @@ class ViewPreOpForms extends ViewRecord
                 ->modalHeading('Approve this Checklist Form')
                 ->modalSubmitActionLabel('Approve')
                 ->modalIcon('heroicon-o-bolt')
-                ->form([ 
+                ->form([
                     Toggle::make('is_approved')->label('Approve'),
                     TextArea::make('comments')
-                        ->rows(10) 
+                        ->rows(10),
                 ])
-                ->action(function (array $data): void { 
+                ->action(function (array $data): void {
+                    $user = Auth::user();
+                    $this->record->approved_by = $user->name;
                     $this->record->comments = $data['comments'];
-                    $this->record->is_approved = true; // $data['status']; 
+                    $this->record->is_approved = true; // $data['status'];
                     $this->record->save();
                     $this->redirect('/pre-op-forms');
                 })
                 // ->slideOver()
                 // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
-                ->visible(function (array $data) { 
-                    return !$this->record->is_approved;
-                })
+                ->visible(function (array $data) {
+                    return ! $this->record->is_approved;
+                }),
         ];
-    } 
-    
+    }
 
     public function mount($record): void
     {
@@ -65,9 +58,7 @@ class ViewPreOpForms extends ViewRecord
         $this->fillExistingEntries(); // Add this line to fill existing entries
 
         $this->previousUrl = url()->previous();
-    } 
-
-
+    }
 
     protected function fillExistingEntries(): void
     {
@@ -75,7 +66,7 @@ class ViewPreOpForms extends ViewRecord
         // dd($id);
         $existingEntries = Entries::where('entry_id', $id)->get();
         // dd($existingEntries);
-    
+
         foreach ($existingEntries as $entry) {
             $checklistItemId = $entry->check_list_items_id;
             $fieldsToUpdate = [
@@ -91,9 +82,10 @@ class ViewPreOpForms extends ViewRecord
                 'person_name',
                 'entry_detail',
                 'date',
-                'time'
+                'time',
+                'inspected_by',
             ];
-    
+
             // foreach ($fieldsToUpdate as $fieldName) {
             //     $fullFieldName = "{$fieldName}_$checklistItemId";
             //     $this->data[$fullFieldName] = $entry->$fieldName;
@@ -108,8 +100,6 @@ class ViewPreOpForms extends ViewRecord
                 }
             }
 
-            
         }
     }
-    
 }

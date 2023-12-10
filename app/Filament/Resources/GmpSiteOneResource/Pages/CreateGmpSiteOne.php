@@ -61,7 +61,9 @@ class CreateGmpSiteOne extends CreateRecord
                     // 'entry_detail' => $data['entry_detail'],
                     'date' => $data['date'],
                     'time' => $data['time'],
+                    'finish_time' => $data['finish_time'],
                     'person_name' => $data['person_name'],
+                    'inspected_by' => $data['inspected_by'],
                     'type_id' => 7,
                     'status' => 1,
                 ]);
@@ -72,7 +74,9 @@ class CreateGmpSiteOne extends CreateRecord
                     // 'entry_detail' => $data['entry_detail'],
                     'date' => $data['date'],
                     'time' => $data['time'],
+                    'finish_time' => $data['finish_time'],
                     'person_name' => $data['person_name'],
+                    'inspected_by' => $data['inspected_by'],
                     'type_id' => 7,
                     'status' => 0,
                 ]);
