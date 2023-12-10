@@ -217,27 +217,30 @@ class ATPFormResource extends Resource
                     // $description.=$checklistItem->c_frequency ? ' ---- C. Frequency =>'.$checklistItem->c_frequency : '';
                     $description = $checklistItem->a_frequency ? ' ATP check RLU. Frequency =>'.$checklistItem->a_frequency : '';
 
-                    $stepFields[] =
-                 Section::make($checklistItem->name)
-                     ->description($description)
-                     ->aside()
-                     ->schema([
-                         // $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
-                         $formFields[] = Textinput::make("ATP_check_RLU_{$checklistItem->id}")
-                            //  ->numeric()
-                             ->label('ATP check RLU'),
-                         $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
-                             ->rows(1),
-                         Radio::make("action_taken_$checklistItem->id")->label('Is Testing Done')
-                             ->options([
-                                 'Yes' => 'Pass',
-                                 'No' => 'Fail',
-                             ]),
-                         // ->options($optionsValue)
-                         $formFields[] = Hidden::make("entry_id_$checklistItem->id"),
+                    if (! $matchingItem->subSection->is_parent) {
+                        $stepFields[] =
+                         Section::make($checklistItem->name)
+                             ->description($description)
+                             ->aside()
+                             ->schema([
+                                 // $formFields[] =  Select::make("ATP_check_RLU_{$checklistItem->id}")
+                                 $formFields[] = Textinput::make("ATP_check_RLU_{$checklistItem->id}")
+                                    //  ->numeric()
+                                     ->label('ATP check RLU'),
+                                 $formFields[] = Textarea::make("comments_corrective_actions_$checklistItem->id")->label('Comments & Corrective Actions')->name('comments_corrective_actions')
+                                     ->rows(1),
+                                 Radio::make("action_taken_$checklistItem->id")->label('Is Testing Done')
+                                     ->options([
+                                         'Yes' => 'Pass',
+                                         'No' => 'Fail',
+                                     ]),
+                                 // ->options($optionsValue)
+                                 $formFields[] = Hidden::make("entry_id_$checklistItem->id"),
 
-                     ])->columns(3)->compact();
+                             ])->columns(3)->compact();
+                    }
                 }
+
                 $subsectionSection->schema($stepFields);
                 $sectionComponents[] = $subsectionSection;
             }
