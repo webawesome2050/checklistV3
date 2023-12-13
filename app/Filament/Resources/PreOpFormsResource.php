@@ -227,8 +227,8 @@ class PreOpFormsResource extends Resource
                         DatePicker::make('date')
                             ->required()
                             ->native(false),
-                        TimePicker::make('time')
-                            ->required(),
+                        // TimePicker::make('time')
+                        //     ->required(),
 
                         TimePicker::make('time')->label('Start Time')
                             ->required(),

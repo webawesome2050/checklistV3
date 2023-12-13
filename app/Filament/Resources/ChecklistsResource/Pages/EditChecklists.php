@@ -89,8 +89,9 @@ class EditChecklists extends EditRecord
                 //     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 // }
 
+                // \Log::info($entryData['sub_section_items']);
+                // dd('wait');
                 if (is_array($entryData) && array_key_exists('sub_section_items', $entryData) && $entryData['sub_section_items'] != null) {
-                    // \Log::info('before entryData', $entryData['sub_section_items']);
                     $entryData['sub_section_items'] = implode(', ', $entryData['sub_section_items']);
                 }
                 \Log::info('entryData', $entryData);
@@ -313,8 +314,10 @@ class EditChecklists extends EditRecord
 
             foreach ($fieldsToUpdate as $fieldName) {
                 $fullFieldName = "{$fieldName}_$checklistItemId";
-                if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != '') {
+                if ($fieldName === 'sub_section_items' && is_string($entry->$fieldName) && $entry->$fieldName != null) {
                     $this->data[$fullFieldName] = explode(', ', $entry->$fieldName);
+                } elseif ($fieldName === 'sub_section_items' && $entry->$fieldName == null) {
+                    $this->data[$fullFieldName] = []; //explode(', ', $entry->$fieldName);
                 } else {
                     $this->data[$fullFieldName] = $entry->$fieldName;
                 }

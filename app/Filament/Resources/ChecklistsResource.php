@@ -100,7 +100,7 @@ class ChecklistsResource extends Resource
                         // $radioOptions["sub_section_item_{$subSectionItem->id}"] = $subSectionItem->name;
                         $radioOptions[$subSectionItem->name] = $subSectionItem->name;
                     }
-                    // \Log::info($radioOptions);
+                    \Log::info($radioOptions);
                     $itemCode = CheckboxList::make("sub_section_items_$subsectionId")
                         ->label('')
                         ->options($radioOptions);
