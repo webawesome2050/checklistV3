@@ -356,7 +356,7 @@ class CommonController extends Controller
                 'person_name' => $checklist->person_name ?? '',
                 'time' => $checklist->time ?? '',
                 'finish_time' => $checklist->finish_time ?? '',
-                'date' => $checklist->date ?? '',
+                'date' => $checklist->entry_detail ?? '',
                 'approved_by' => $checklist->approved_by ?? '',
                 'inspected_by' => $checklist->inspected_by ?? '',
             ];
@@ -380,6 +380,7 @@ class CommonController extends Controller
 
             // Append the item data to the corresponding section in the array
             $dataBySections[$sectionName][$subSectionName][] = $itemData;
+            $dataBySections['overallData'] = $itemDataOverall;
         }
 
         // Pass the data to the Blade view

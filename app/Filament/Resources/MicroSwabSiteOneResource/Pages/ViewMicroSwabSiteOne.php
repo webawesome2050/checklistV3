@@ -3,30 +3,18 @@
 namespace App\Filament\Resources\MicroSwabSiteOneResource\Pages;
 
 use App\Filament\Resources\MicroSwabSiteOneResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
-
-use App\Models\CheckList;
-use App\Models\SubSectionItem;
-use Illuminate\Support\Facades\Route;
-
-
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
-use Filament\Support\Enums\Alignment;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Placeholder;
-use App\Filament\Resources\ATPFormResource;
- 
-
 use App\Models\CheckListItemsEntry as Entries;
+use Filament\Actions;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 class ViewMicroSwabSiteOne extends ViewRecord
 {
     protected static string $resource = MicroSwabSiteOneResource::class;
 
-    
     protected function getHeaderActions(): array
     {
         return [
@@ -35,25 +23,26 @@ class ViewMicroSwabSiteOne extends ViewRecord
                 ->modalHeading('Approve this Checklist Form')
                 ->modalSubmitActionLabel('Approve')
                 ->modalIcon('heroicon-o-bolt')
-                ->form([ 
+                ->form([
                     Toggle::make('is_approved')->label('Approve'),
                     TextArea::make('comments')
-                        ->rows(10) 
+                        ->rows(10),
                 ])
-                ->action(function (array $data): void { 
+                ->action(function (array $data): void {
+                    $user = Auth::user();
+                    $this->record->approved_by = $user->name;
                     $this->record->comments = $data['comments'];
-                    $this->record->is_approved = true; // $data['status']; 
+                    $this->record->is_approved = true; // $data['status'];
                     $this->record->save();
                     $this->redirect('/micro-swab-site-ones/');
                 })
                 // ->slideOver()
                 // ->visible(auth()->user()->hasRole(Role::ROLES['approver']))
-                ->visible(function (array $data) { 
-                    return !$this->record->is_approved;
-                })
+                ->visible(function (array $data) {
+                    return ! $this->record->is_approved;
+                }),
         ];
     }
-
 
     public function mount($record): void
     {
@@ -69,7 +58,7 @@ class ViewMicroSwabSiteOne extends ViewRecord
         $this->fillExistingEntries(); // Add this line to fill existing entries
 
         $this->previousUrl = url()->previous();
-    } 
+    }
 
     protected function fillExistingEntries(): void
     {
@@ -78,7 +67,7 @@ class ViewMicroSwabSiteOne extends ViewRecord
         // $existingEntries = Entries::with('checkListItem')->where('entry_id', $id)->get();
         $existingEntries = Entries::where('entry_id', $id)->get();
         // dd($existingEntries);
-    
+
         // 'visual_insp_allergen_free',
         // 'micro_SPC_swab',
         // 'chemical_residue_check',
@@ -89,7 +78,7 @@ class ViewMicroSwabSiteOne extends ViewRecord
 
         foreach ($existingEntries as $entry) {
             $checklistItemId = $entry->check_list_items_id;
-            $fieldsToUpdate = [ 
+            $fieldsToUpdate = [
                 'entry_id',
                 'micro_SPC_swab',
                 // 'next_inspection_detail',
@@ -97,9 +86,9 @@ class ViewMicroSwabSiteOne extends ViewRecord
                 'sub_section_items',
                 'person_name',
                 'sub_section_items',
-                'comments_corrective_actions'
+                'comments_corrective_actions',
             ];
-    
+
             foreach ($fieldsToUpdate as $fieldName) {
                 $fullFieldName = "{$fieldName}_$checklistItemId";
                 $this->data[$fullFieldName] = $entry->$fieldName;
@@ -107,6 +96,4 @@ class ViewMicroSwabSiteOne extends ViewRecord
         }
         // dd($this->data);
     }
-
-
 }
