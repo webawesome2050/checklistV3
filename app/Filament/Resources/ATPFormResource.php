@@ -179,6 +179,7 @@ class ATPFormResource extends Resource
                             ->extraAttributes([
                                 'class' => $sectionClass,
                             ])
+                            ->description($matchingItem->subSection->atp_frequency ? 'ATP check RLU Frequency => '.$matchingItem->subSection->atp_frequency : '')
                             ->columns(4)
                             ->collapsible()
                             ->compact();
