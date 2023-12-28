@@ -41,6 +41,9 @@ class CommonController extends Controller
 
             // Get the related section and subsection information from checkListItem
             $sectionName = $item->checkListItem->section->name ?? '';
+            $sectionAtpFrequency = $item->checkListItem->section->atp_frequency ?? '';
+
+
             $subSectionName = $item->checkListItem->subSection->name ?? '';
 
             // Create an array for the item with keys and values
@@ -115,12 +118,17 @@ class CommonController extends Controller
 
             // Get the related section and subsection information from checkListItem
             $sectionName = $item->checkListItem->section->name ?? '';
+            $sectionAtpFrequency = $item->checkListItem->section->atp_frequency ?? '4654';
             $subSectionName = $item->checkListItem->subSection->name ?? '';
+            $subSectionAtpFrequency = $item->checkListItem->subSection->atp_frequency ?? '';
+            // dd($subSectionAtpFrequency);
 
             // Create an array for the item with keys and values
             $itemData = [
                 'Sub-Section' => $subSectionName,
+                'AtpFrequency' => $subSectionAtpFrequency,
                 'Checklist Item' => $item->checkListItem->name ?? '',
+                'Checklist Item ATP' => $item->checkListItem->subSection->atp_frequency ?? '',
                 'Visual Insp Allergen Free' => $item->visual_insp_allergen_free ?? '',
                 'Micro SPC Swab' => $item->micro_SPC_swab ?? '',
                 'Chemical Residue Check' => $item->chemical_residue_check ?? '',
