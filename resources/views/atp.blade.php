@@ -141,8 +141,9 @@ table tr.items td {
                     <tr>
                         {{-- <th class="left-text" colspan="4">{{ $subSectionName }}</th> --}}
                         <th class="left-text" colspan="4">{{ $subSectionName }}
-                            <p style="font-size:10px;font-weight:normal"> ATP Frequency:
-                                {{ $subSectionData[0]['AtpFrequency'] }} </p>
+                            <p style="font-size:10px;font-weight:normal">
+                                {{ $subSectionData[0]['AtpFrequency'] ? 'ATP check RLU Frequency => ' . $subSectionData[0]['AtpFrequency'] : '' }}
+                            </p>
                         </th>
 
                     </tr>
